@@ -14,9 +14,11 @@ export abstract class PostRepository {
   abstract findAll({
     filterOptions,
     paginationOptions,
+    followingUserIds,
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
+    followingUserIds?: (number | string)[];
   }): Promise<Post[]>;
 
   abstract findOne(id: number): Promise<NullableType<Post>>;

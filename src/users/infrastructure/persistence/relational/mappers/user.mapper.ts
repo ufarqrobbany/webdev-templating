@@ -23,6 +23,18 @@ export class UserMapper {
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
     domainEntity.deletedAt = raw.deletedAt;
+
+    if (raw.following) {
+      domainEntity.following = raw.following.map((userEntity) =>
+        UserMapper.toDomain(userEntity),
+      );
+    }
+    if (raw.followers) {
+      domainEntity.followers = raw.followers.map((userEntity) =>
+        UserMapper.toDomain(userEntity),
+      );
+    }
+
     return domainEntity;
   }
 
@@ -67,6 +79,18 @@ export class UserMapper {
     persistenceEntity.createdAt = domainEntity.createdAt;
     persistenceEntity.updatedAt = domainEntity.updatedAt;
     persistenceEntity.deletedAt = domainEntity.deletedAt;
+
+    if (domainEntity.following) {
+      persistenceEntity.following = domainEntity.following.map((userDomain) =>
+        UserMapper.toPersistence(userDomain),
+      );
+    }
+    if (domainEntity.followers) {
+      persistenceEntity.followers = domainEntity.followers.map((userDomain) =>
+        UserMapper.toPersistence(userDomain),
+      );
+    }
+    
     return persistenceEntity;
   }
 }

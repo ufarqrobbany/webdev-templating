@@ -1,3 +1,43 @@
 <h1>{{pageTitle}}</h1>
 <p>{{pesan}}</p>
+
+{{#if user}}
+  {{!-- Tampilkan ini hanya jika user login --}}
+  <p><a href="/logout">Logout</a></p>
+{{else}}
+  {{!-- Tampilkan ini jika user anonim --}}
+  <p><a href="/login">Login</a> atau <a href="/register">Register</a> untuk mem-follow user.</p>
+{{/if}}
+
+
+<h2>Postingan</h2>
+
+<div class="post-list">
+  {{#if posts.length}}
+    {{#each posts}}
+      <div class="post-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+        <p>
+          <strong>
+            {{#if this.author}}
+              {{this.author.firstName}} {{this.author.lastName}}
+            {{else}}
+              User Anonim
+            {{/if}}
+          </strong>
+          <small> - {{this.createdAt}}</small>
+        </p>
+        <p>{{this.content}}</p>
+      </div>
+    {{/each}}
+  {{else}}
+    {{!-- Pesan berbeda jika login vs anonim --}}
+    {{#if user}}
+      <p>Timeline Anda kosong. Coba follow beberapa user!</p>
+    {{else}}
+      <p>Belum ada postingan untuk ditampilkan.</p>
+    {{/if}}
+  {{/if}}
+</div>
+
 {{> footer}}
+<hr>

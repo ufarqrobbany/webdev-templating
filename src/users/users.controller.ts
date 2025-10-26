@@ -11,6 +11,7 @@ import {
   HttpStatus,
   HttpCode,
   SerializeOptions,
+  Request,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -37,7 +38,7 @@ import { RolesGuard } from '../roles/roles.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 
 @ApiBearerAuth()
-@Roles(RoleEnum.admin)
+// @Roles(RoleEnum.admin)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Users')
 @Controller({
@@ -67,6 +68,7 @@ export class UsersController {
   })
   @Get()
   @HttpCode(HttpStatus.OK)
+  @Roles(RoleEnum.admin)
   async findAll(
     @Query() query: QueryUserDto,
   ): Promise<InfinityPaginationResponseDto<User>> {
@@ -102,6 +104,7 @@ export class UsersController {
     type: String,
     required: true,
   })
+  @Roles(RoleEnum.admin)
   findOne(@Param('id') id: User['id']): Promise<NullableType<User>> {
     return this.usersService.findById(id);
   }
@@ -119,6 +122,7 @@ export class UsersController {
     type: String,
     required: true,
   })
+  @Roles(RoleEnum.admin)
   update(
     @Param('id') id: User['id'],
     @Body() updateProfileDto: UpdateUserDto,
@@ -133,7 +137,30 @@ export class UsersController {
     required: true,
   })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Roles(RoleEnum.admin)
   remove(@Param('id') id: User['id']): Promise<void> {
     return this.usersService.remove(id);
+  }
+
+  @Post(':id/follow')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Roles(RoleEnum.admin, RoleEnum.user) // <-- PERBOLEHKAN USER
+  @ApiParam({ name: 'id', type: String, required: true })
+  follow(
+    @Request() req, // Ambil user yang sedang login
+    @Param('id') id: User['id'], // Ambil id user yang ingin di-follow
+  ): Promise<void> {
+    return this.usersService.follow(req.user.id, id);
+  }
+
+  @Delete(':id/follow')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Roles(RoleEnum.admin, RoleEnum.user) // <-- PERBOLEHKAN USER
+  @ApiParam({ name: 'id', type: String, required: true })
+  unfollow(
+    @Request() req, // Ambil user yang sedang login
+    @Param('id') id: User['id'], // Ambil id user yang ingin di-unfollow
+  ): Promise<void> {
+    return this.usersService.unfollow(req.user.id, id);
   }
 }
