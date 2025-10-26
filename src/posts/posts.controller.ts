@@ -1,30 +1,32 @@
 import {
   Controller,
   Get,
-  Post, // Ini adalah decorator @Post, biarkan
+  Post,
   Body,
   Patch,
   Param,
   Delete,
   Query,
   DefaultValuePipe,
-  ParseIntPipe, // <--- TAMBAHKAN INI
+  ParseIntPipe,
   HttpCode,
   HttpStatus,
-  UseGuards, // <--- TAMBAHKAN INI (untuk otentikasi)
+  UseGuards,
+  Request,
 } from '@nestjs/common';
+
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FindAllPostsDto } from './dto/find-all-posts.dto';
-import { PostDto } from './dto/post.dto'; // <--- UBAH: Gunakan DTO
+import { PostDto } from './dto/post.dto';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
 } from 'src/utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
-import { AuthGuard } from '@nestjs/passport'; // <--- TAMBAHKAN INI
+import { AuthGuard } from '@nestjs/passport';
 
 // HAPUS IMPORT INI (jika ada):
 // import { Post } from './domain/post';
@@ -40,9 +42,12 @@ export class PostsController {
   @UseGuards(AuthGuard('jwt')) // <-- Menjaga endpoint ini (opsional tapi disarankan)
   @Post() // <-- Ini decorator, biarkan
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createPostDto: CreatePostDto): Promise<PostDto> { // <--- UBAH TIPE RETURN
-    // Nanti kita akan tambahkan user ID di sini
-    return this.postsService.create(createPostDto);
+  create(
+    @Body() createPostDto: CreatePostDto, 
+    @Request() req,
+    ): Promise<PostDto> {
+    const user = req.user;
+    return this.postsService.create(user, createPostDto);;
   }
 
   @Get()

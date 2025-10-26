@@ -27,15 +27,32 @@ export class PostRelationalRepository implements PostRepository {
   async findAll({
     filterOptions,
     paginationOptions,
+    followingUserIds,
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
+    followingUserIds?: (number | string)[];
   }): Promise<Post[]> {
+    const where: any = {};
+
+    // Jika daftar ID yang di-follow diberikan (user sedang login)
+    if (followingUserIds && followingUserIds.length > 0) {
+      where.author = { id: In(followingUserIds.map(id => Number(id))) };
+    } else if (followingUserIds && followingUserIds.length === 0) {
+      // Jika user login tapi tidak follow siapa-siapa, kembalikan array kosong
+      return [];
+    }
+    // Jika followingUserIds tidak diberikan (undefined), 'where' tetap kosong
+    // dan semua postingan akan diambil (untuk user anonim)
+
     const entities = await this.postRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+      where: where, 
+      order: { createdAt: 'DESC' },
+      relations: ['author'],
     });
-    
+
     return entities.map((post) => PostMapper.toDomain(post));
   }
 
@@ -62,15 +79,20 @@ export class PostRelationalRepository implements PostRepository {
     });
 
     if (!entity) {
-      return null; 
+      return null;
     }
 
-    const updatedPayload = {
-      ...entity,
-      ...payload,
+    // 1. Ubah payload domain (Partial<Post>) menjadi payload persistence
+    const persistencePayload = PostMapper.toPersistence(payload as Post);
+
+    // 2. Gabungkan, pastikan ID dari entity asli (DB) yang dipakai
+    const updatedEntityPayload = {
+      ...entity, // <-- Ambil semua nilai lama (termasuk ID yang benar)
+      ...persistencePayload, // <-- Timpa dengan nilai baru
+      id: entity.id, // <-- Pastikan ID-nya adalah ID yang lama (anti-gagal)
     };
 
-    const updatedEntity = await this.postRepository.save(updatedPayload);
+    const updatedEntity = await this.postRepository.save(updatedEntityPayload);
     return PostMapper.toDomain(updatedEntity);
   }
 

@@ -1,4 +1,4 @@
-import * as hbs from 'hbs';
+import hbs = require('hbs');
 
 // Variabel ini akan menyimpan konten 'region' secara sementara
 const blocks = {};

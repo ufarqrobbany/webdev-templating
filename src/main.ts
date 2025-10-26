@@ -16,7 +16,7 @@ import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
 // --- TAMBAHAN IMPORT UNTUK TEMPLATING ---
 import { NestExpressApplication } from '@nestjs/platform-express'; // <-- Ganti NestFactory dengan ini di create()
 import * as path from 'path';
-import * as hbs from 'hbs';
+import hbs = require('hbs');
 import { VIEW_SERVICE } from './core/view/view.constants'; // <-- Token service
 import { ViewService } from './core/view/view.service'; // <-- Class service
 // import { registerHbsHelpers } from './core/view/helpers/hbs.helpers'; // <-- Fungsi pendaftaran helper

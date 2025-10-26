@@ -2,6 +2,7 @@ import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../utils/types/nullable.type';
@@ -18,12 +19,17 @@ import { FileType } from '../files/domain/file';
 import { Role } from '../roles/domain/role';
 import { Status } from '../statuses/domain/status';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from './infrastructure/persistence/relational/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
+    @InjectRepository(UserEntity)
+    private readonly userEntityRepository: Repository<UserEntity>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -284,5 +290,63 @@ export class UsersService {
 
   async remove(id: User['id']): Promise<void> {
     await this.usersRepository.remove(id);
+  }
+
+  async follow(
+    currentUserId: User['id'],
+    userIdToFollow: User['id'],
+  ): Promise<void> {
+    if (String(currentUserId) === String(userIdToFollow)) {
+      throw new UnprocessableEntityException('Anda tidak bisa mem-follow diri sendiri.');
+    }
+
+    // Ambil kedua user
+    const [currentUser, userToFollow] = await Promise.all([
+      this.userEntityRepository.findOne({
+        where: { id: Number(currentUserId) },
+        relations: ['following'], // ambil data relasi 'following'
+      }),
+      this.userEntityRepository.findOneBy({ id: Number(userIdToFollow) }),
+    ]);
+
+    // Cek apakah kedua user ada
+    if (!currentUser || !userToFollow) {
+      throw new NotFoundException('User tidak ditemukan.');
+    }
+
+    // Cek apakah sudah follow
+    const isAlreadyFollowing = currentUser.following.some(
+      (user) => user.id === userToFollow.id,
+    );
+
+    if (isAlreadyFollowing) {
+      // Jika sudah follow, tidak perlu lakukan apa-apa
+      return;
+    }
+
+    // Tambahkan userToFollow ke daftar following currentUser
+    currentUser.following.push(userToFollow);
+    await this.userEntityRepository.save(currentUser);
+  }
+
+  async unfollow(
+    currentUserId: User['id'],
+    userIdToUnfollow: User['id'],
+  ): Promise<void> {
+    const currentUser = await this.userEntityRepository.findOne({
+      where: { id: Number(currentUserId) },
+      relations: ['following'],
+    });
+
+    if (!currentUser) {
+      throw new NotFoundException('User tidak ditemukan.');
+    }
+
+    // Hapus user dari daftar 'following'
+    currentUser.following = currentUser.following.filter(
+      (user) => user.id !== Number(userIdToUnfollow),
+    );
+
+    await this.userEntityRepository.save(currentUser);
   }
 }

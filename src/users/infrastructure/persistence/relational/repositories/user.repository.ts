@@ -68,6 +68,7 @@ export class UsersRelationalRepository implements UserRepository {
   async findByIds(ids: User['id'][]): Promise<User[]> {
     const entities = await this.usersRepository.find({
       where: { id: In(ids) },
+      relations: ['following'],
     });
 
     return entities.map((user) => UserMapper.toDomain(user));
