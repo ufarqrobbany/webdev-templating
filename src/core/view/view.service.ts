@@ -1,4 +1,8 @@
-import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -20,7 +24,11 @@ export class ViewService {
   }
 
   // (a) Abstraksi: Controller hanya akan memanggil fungsi ini
-  public render(res: Response, viewPath: string, data: Record<string, any> = {}): void {
+  public render(
+    res: Response,
+    viewPath: string,
+    data: Record<string, any> = {},
+  ): void {
     const resolvedViewPath = this.resolveViewPath(viewPath);
     const layoutPath = this.resolveViewPath('layouts/main', false);
 
@@ -32,7 +40,10 @@ export class ViewService {
 
     // Memanggil fungsi render Express/HBS yang sebenarnya
     res.render(resolvedViewPath, fullData, (err, html) => {
-      if (err) throw new InternalServerErrorException(`Gagal merender view: ${err.message}`);
+      if (err)
+        throw new InternalServerErrorException(
+          `Gagal merender view: ${err.message}`,
+        );
       res.send(html);
     });
   }
@@ -43,7 +54,12 @@ export class ViewService {
     // verify existence using the .hbs extension but return the path without
     // extension because view engines (layouts) often expect a logical name.
     const checkExt = '.hbs';
-    const activePath = path.join(this.themesDir, this.activeTheme, 'views', `${viewPath}${checkExt}`);
+    const activePath = path.join(
+      this.themesDir,
+      this.activeTheme,
+      'views',
+      `${viewPath}${checkExt}`,
+    );
 
     // 1. Cek di tema aktif
     if (fs.existsSync(activePath)) {
@@ -53,7 +69,12 @@ export class ViewService {
     }
 
     // 2. Jika tidak ada, cek di tema default
-    const defaultPath = path.join(this.themesDir, this.defaultTheme, 'views', `${viewPath}${checkExt}`);
+    const defaultPath = path.join(
+      this.themesDir,
+      this.defaultTheme,
+      'views',
+      `${viewPath}${checkExt}`,
+    );
     if (fs.existsSync(defaultPath)) {
       return withExtension
         ? path.join(this.defaultTheme, 'views', `${viewPath}${checkExt}`)
@@ -65,7 +86,11 @@ export class ViewService {
 
   // (d) Logika Fallback untuk Aset (CSS/JS)
   public getActiveThemeAssetPath(): string {
-    const activeAssetPath = path.join(this.themesDir, this.activeTheme, 'assets');
+    const activeAssetPath = path.join(
+      this.themesDir,
+      this.activeTheme,
+      'assets',
+    );
     if (fs.existsSync(activeAssetPath)) {
       return activeAssetPath;
     }

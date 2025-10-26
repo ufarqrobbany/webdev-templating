@@ -10,7 +10,7 @@ const blocks = {};
 function hbsBlockHelper(name, options) {
   const content = blocks[name];
   delete blocks[name]; // Bersihkan setelah dipakai
-  
+
   if (content) {
     return content; // Kembalikan konten override
   } else {
@@ -32,11 +32,11 @@ try {
   hbs.registerHelper('contentFor', hbsContentForHelper);
   console.log('HBS helpers registered successfully.'); // Tambahkan log untuk debug
 } catch (error) {
-   console.error('Failed to register HBS helpers:', error); // Log jika gagal
+  console.error('Failed to register HBS helpers:', error); // Log jika gagal
 }
 
 // Fungsi ini akan kita panggil di main.ts untuk mendaftarkan helper
 export function registerHbsHelpers(): void {
-//   hbs.handlebars.registerHelper('block', hbsBlockHelper);     // <-- Tambahkan .handlebars
-//   hbs.handlebars.registerHelper('contentFor', hbsContentForHelper); // <-- Tambahkan .handlebars
+  //   hbs.handlebars.registerHelper('block', hbsBlockHelper);     // <-- Tambahkan .handlebars
+  //   hbs.handlebars.registerHelper('contentFor', hbsContentForHelper); // <-- Tambahkan .handlebars
 }

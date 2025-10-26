@@ -45,8 +45,11 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     });
 // </database-block>
 
+import { PostsModule } from './posts/posts.module';
+
 @Module({
   imports: [
+    PostsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

@@ -6,7 +6,7 @@ import { HomeService } from './home.service';
 // --- TAMBAHAN IMPORT UNTUK TEMPLATING ---
 import { Response } from 'express'; // <-- Untuk object response Express
 import { VIEW_SERVICE } from 'src/core/view/view.constants'; // <-- Token service
-import { ViewService } from 'src/core/view/view.service';    // <-- Class service
+import { ViewService } from 'src/core/view/view.service'; // <-- Class service
 // --- AKHIR TAMBAHAN IMPORT ---
 
 @ApiTags('Home')
@@ -21,9 +21,11 @@ export class HomeController {
   // Ganti 'private service: HomeService' menjadi 'private readonly homeService: HomeService'
   // agar konsisten dengan gaya NestJS modern.
   @Get() // Tetap di root ('/')
-  public home(@Res() res: Response) { // <-- Tambahkan @Res() res: Response
+  public home(@Res() res: Response) {
+    // <-- Tambahkan @Res() res: Response
     // Panggil service untuk merender (Abstraksi a)
-    this.viewService.render(res, 'pages/home', { // Path relatif dari folder 'views'
+    this.viewService.render(res, 'pages/home', {
+      // Path relatif dari folder 'views'
       pageTitle: 'Halaman Utama',
       pesan: 'Data ini dikirim dari controller!',
     });

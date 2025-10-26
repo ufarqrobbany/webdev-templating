@@ -9,13 +9,16 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToOne,
+  ManyToMany, // Baru
+  JoinTable, // Baru
+  OneToMany, // Baru
 } from 'typeorm';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
-
 import { AuthProvidersEnum } from '../../../../../auth/auth-providers.enum';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { PostEntity } from '../../../../../posts/infrastructure/persistence/relational/entities/post.entity'; // Baru
 
 @Entity({
   name: 'user',
@@ -71,4 +74,17 @@ export class UserEntity extends EntityRelationalHelper {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  // Baru
+  @OneToMany(() => PostEntity, (post) => post.author)
+  posts: PostEntity[];
+
+  // Baru
+  @ManyToMany(() => UserEntity, (user) => user.followers)
+  @JoinTable()
+  following: UserEntity[];
+
+  // Baru
+  @ManyToMany(() => UserEntity, (user) => user.following)
+  followers: UserEntity[];
 }

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { 
+import {
   ClassSerializerInterceptor,
   ValidationPipe,
   VersioningType,
@@ -16,15 +16,17 @@ import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
 // --- TAMBAHAN IMPORT UNTUK TEMPLATING ---
 import { NestExpressApplication } from '@nestjs/platform-express'; // <-- Ganti NestFactory dengan ini di create()
 import * as path from 'path';
-const hbs: any = require('hbs');
+import * as hbs from 'hbs';
 import { VIEW_SERVICE } from './core/view/view.constants'; // <-- Token service
-import { ViewService } from './core/view/view.service';    // <-- Class service
+import { ViewService } from './core/view/view.service'; // <-- Class service
 // import { registerHbsHelpers } from './core/view/helpers/hbs.helpers'; // <-- Fungsi pendaftaran helper
 // --- AKHIR TAMBAHAN IMPORT ---
 
 async function bootstrap() {
   // const app = await NestFactory.create(AppModule, { cors: true });
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 
@@ -86,19 +88,28 @@ async function bootstrap() {
   // (c) Daftarkan helper kustom kita (block & contentFor) ke HBS
   try {
     if (typeof hbs.registerPartials === 'function') {
-      hbs.registerPartials(path.join(process.cwd(), 'themes/default/views/partials'));
-    } else if (hbs && hbs.handlebars && typeof (hbs.handlebars as any).registerPartials === 'function') {
+      hbs.registerPartials(
+        path.join(process.cwd(), 'themes/default/views/partials'),
+      );
+    } else if (
+      hbs &&
+      hbs.handlebars &&
+      typeof (hbs.handlebars as any).registerPartials === 'function'
+    ) {
       // some builds expose the method on the underlying handlebars instance
-      (hbs.handlebars as any).registerPartials(path.join(process.cwd(), 'themes/default/views/partials'));
+      (hbs.handlebars as any).registerPartials(
+        path.join(process.cwd(), 'themes/default/views/partials'),
+      );
     } else {
       // Last-resort: warn instead of crashing — partials may be unavailable.
       // This keeps the app bootable and makes the issue visible in logs.
       // You can replace this with a manual partials registration if needed.
-      // eslint-disable-next-line no-console
-      console.warn('hbs.registerPartials is not available; theme partials were not registered');
+
+      console.warn(
+        'hbs.registerPartials is not available; theme partials were not registered',
+      );
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.warn('Failed to register hbs partials:', err);
   }
   // registerHbsHelpers();
