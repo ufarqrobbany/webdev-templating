@@ -6,7 +6,7 @@ import { FindAllPostsDto } from './dto/find-all-posts.dto';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 
 import { User } from 'src/users/domain/user';
-import { Post } from './domain/post'; 
+import { Post } from './domain/post';
 
 @Injectable()
 export class PostsService {
@@ -37,18 +37,16 @@ export class PostsService {
     // Jika ada user yang login
     if (currentUser) {
       // Mulai dengan array kosong (hanya akan menampilkan postingan yang di-follow)
-      followingUserIds = []; 
-      
+      followingUserIds = [];
+
       // Jika dia mem-follow seseorang
       if (currentUser.following && currentUser.following.length > 0) {
-        followingUserIds.push(
-          ...currentUser.following.map((user) => user.id),
-        );
+        followingUserIds.push(...currentUser.following.map((user) => user.id));
       }
       // Tambahkan ID user itu sendiri agar postingannya juga muncul
       followingUserIds.push(currentUser.id);
     }
-    
+
     // Jika currentUser null (anonim), followingUserIds akan tetap 'undefined'
     // dan repository akan mengambil semua postingan
 
@@ -59,18 +57,15 @@ export class PostsService {
     });
   }
 
-  findOne(id: number) { 
+  findOne(id: number) {
     return this.postRepository.findOne(id);
   }
 
-  update(
-    id: number, 
-    updatePostDto: UpdatePostDto
-  ) {
+  update(id: number, updatePostDto: UpdatePostDto) {
     return this.postRepository.update(id, updatePostDto);
   }
 
   remove(id: number) {
-    return this.postRepository.softDelete(id); 
+    return this.postRepository.softDelete(id);
   }
 }

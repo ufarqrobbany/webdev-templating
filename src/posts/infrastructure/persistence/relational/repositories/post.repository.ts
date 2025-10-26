@@ -37,7 +37,7 @@ export class PostRelationalRepository implements PostRepository {
 
     // Jika daftar ID yang di-follow diberikan (user sedang login)
     if (followingUserIds && followingUserIds.length > 0) {
-      where.author = { id: In(followingUserIds.map(id => Number(id))) };
+      where.author = { id: In(followingUserIds.map((id) => Number(id))) };
     } else if (followingUserIds && followingUserIds.length === 0) {
       // Jika user login tapi tidak follow siapa-siapa, kembalikan array kosong
       return [];
@@ -48,7 +48,7 @@ export class PostRelationalRepository implements PostRepository {
     const entities = await this.postRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
-      where: where, 
+      where: where,
       order: { createdAt: 'DESC' },
       relations: ['author'],
     });
@@ -64,16 +64,13 @@ export class PostRelationalRepository implements PostRepository {
   }
 
   async findByIds(ids: number[]): Promise<Post[]> {
-    const entities = await this.postRepository.find({ 
-      where: ids.map(id => ({ id })) 
+    const entities = await this.postRepository.find({
+      where: ids.map((id) => ({ id })),
     });
     return entities.map((post) => PostMapper.toDomain(post));
   }
 
-  async update(
-    id: number,
-    payload: Partial<Post>,
-  ): Promise<Post | null> {
+  async update(id: number, payload: Partial<Post>): Promise<Post | null> {
     const entity = await this.postRepository.findOne({
       where: { id: id },
     });

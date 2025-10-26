@@ -90,7 +90,7 @@ export class UserMapper {
         UserMapper.toPersistence(userDomain),
       );
     }
-    
+
     return persistenceEntity;
   }
 }

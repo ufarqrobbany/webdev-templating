@@ -12,7 +12,7 @@ import { DatabaseConfig } from '../database/config/database-config.type';
 import databaseConfig from '../database/config/database.config';
 import { FilesModule } from '../files/files.module';
 import { TypeOrmModule } from '@nestjs/typeorm'; //
-import { UserEntity } from './infrastructure/persistence/relational/entities/user.entity'; 
+import { UserEntity } from './infrastructure/persistence/relational/entities/user.entity';
 
 // <database-block>
 const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)

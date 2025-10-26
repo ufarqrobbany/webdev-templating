@@ -47,8 +47,11 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
 
 import { PostsModule } from './posts/posts.module';
 
+import { CommentsModule } from './comments/comments.module';
+
 @Module({
   imports: [
+    CommentsModule,
     PostsModule,
     ConfigModule.forRoot({
       isGlobal: true,

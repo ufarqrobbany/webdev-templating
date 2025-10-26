@@ -43,11 +43,11 @@ export class PostsController {
   @Post() // <-- Ini decorator, biarkan
   @HttpCode(HttpStatus.CREATED)
   create(
-    @Body() createPostDto: CreatePostDto, 
+    @Body() createPostDto: CreatePostDto,
     @Request() req,
-    ): Promise<PostDto> {
+  ): Promise<PostDto> {
     const user = req.user;
-    return this.postsService.create(user, createPostDto);;
+    return this.postsService.create(user, createPostDto);
   }
 
   @Get()
@@ -59,7 +59,8 @@ export class PostsController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query() filter: FindAllPostsDto,
-  ): Promise<InfinityPaginationResponseDto<PostDto>> { // <--- UBAH INI
+  ): Promise<InfinityPaginationResponseDto<PostDto>> {
+    // <--- UBAH INI
     if (limit > 50) {
       limit = 50;
     }
@@ -78,7 +79,8 @@ export class PostsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<PostDto | null> { // <--- UBAH INI
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<PostDto | null> {
+    // <--- UBAH INI
     return this.postsService.findOne(id);
   }
 
@@ -88,7 +90,8 @@ export class PostsController {
   update(
     @Param('id', ParseIntPipe) id: number, // <--- UBAH INI
     @Body() updatePostDto: UpdatePostDto,
-  ): Promise<PostDto | null> { // <--- UBAH TIPE RETURN
+  ): Promise<PostDto | null> {
+    // <--- UBAH TIPE RETURN
     // Nanti kita tambahkan cek kepemilikan post di sini
     return this.postsService.update(id, updatePostDto);
   }
@@ -96,7 +99,8 @@ export class PostsController {
   @UseGuards(AuthGuard('jwt')) // <-- Menjaga endpoint ini
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> { // <--- UBAH INI
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    // <--- UBAH INI
     // Nanti kita tambahkan cek kepemilikan post di sini
     return this.postsService.remove(id);
   }

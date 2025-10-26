@@ -25,10 +25,7 @@ export abstract class PostRepository {
 
   abstract findByIds(ids: number[]): Promise<Post[]>;
 
-  abstract update(
-    id: number, 
-    payload: DeepPartial<Post>,
-  ): Promise<Post | null>;
+  abstract update(id: number, payload: DeepPartial<Post>): Promise<Post | null>;
 
-  abstract softDelete(id: number): Promise<void>; 
+  abstract softDelete(id: number): Promise<void>;
 }

@@ -6,7 +6,6 @@ import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  
   imports: [ConfigModule, PostsModule, UsersModule],
   controllers: [HomeController],
   providers: [HomeService],

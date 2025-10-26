@@ -297,7 +297,9 @@ export class UsersService {
     userIdToFollow: User['id'],
   ): Promise<void> {
     if (String(currentUserId) === String(userIdToFollow)) {
-      throw new UnprocessableEntityException('Anda tidak bisa mem-follow diri sendiri.');
+      throw new UnprocessableEntityException(
+        'Anda tidak bisa mem-follow diri sendiri.',
+      );
     }
 
     // Ambil kedua user

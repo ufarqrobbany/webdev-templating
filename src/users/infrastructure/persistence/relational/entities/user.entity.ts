@@ -87,4 +87,7 @@ export class UserEntity extends EntityRelationalHelper {
   // Baru
   @ManyToMany(() => UserEntity, (user) => user.following)
   followers: UserEntity[];
+
+  @ManyToMany(() => PostEntity, (post) => post.likedBy)
+  likedPosts: PostEntity[];
 }
