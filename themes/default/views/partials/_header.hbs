@@ -1,0 +1,19 @@
+<header class="main-header">
+  <nav class="main-nav">
+    <a href="/" class="logo">SosmedKita</a>
+
+    <div class="nav-right">
+      {{#if user}}
+        {{!-- Jika user login, tampilkan tombol New Post & Logout --}}
+        <a href="/create-post" class="btn btn-primary">Buat Post</a>
+        <a href="/logout" class="btn btn-secondary">Logout</a>
+      {{else}}
+        {{!-- Jika anonim, tampilkan tombol Login --}}
+        <a href="/login" class="btn btn-primary">Login</a>
+      {{/if}}
+
+      {{!-- Tombol ini akan otomatis ganti ikon (Sun/Moon) pakai CSS --}}
+      <button id="theme-toggle" title="Toggle dark/light mode"></button>
+    </div>
+  </nav>
+</header>

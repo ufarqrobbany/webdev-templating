@@ -3,10 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{{pageTitle}}</title>
+    <title>{{pageTitle}} - SosmedKita</title>
+    {{!-- Panggil CSS kita --}}
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
-    {{{body}}}
+    {{!-- Panggil Header --}}
+    {{> _header}}
+
+    {{!-- Konten Halaman (dibungkus container) --}}
+    <main class="container">
+      {{{body}}}
+    </main>
+
+    {{!-- Panggil Footer --}}
+    {{> _footer}}
+
+    {{!-- 
+      Panggil JS di akhir body.
+      Pastikan file 'themes/default/assets/js/main.js' 
+      (yang kita buat di langkah sebelumnya) ada di sana.
+    --}}
+    <script src="/static/js/main.js"></script>
   </body>
 </html>

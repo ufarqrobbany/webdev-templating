@@ -1,43 +1,210 @@
-<h1>{{pageTitle}}</h1>
-<p>{{pesan}}</p>
+{{!-- Pesan selamat datang --}}
+<div class="card">
+  <h2>{{pageTitle}}</h2>
+  <p>{{pesan}}</p>
+</div>
 
-{{#if user}}
-  {{!-- Tampilkan ini hanya jika user login --}}
-  <p><a href="/logout">Logout</a></p>
-{{else}}
-  {{!-- Tampilkan ini jika user anonim --}}
-  <p><a href="/login">Login</a> atau <a href="/register">Register</a> untuk mem-follow user.</p>
-{{/if}}
-
-
-<h2>Postingan</h2>
-
+{{!-- Daftar Postingan --}}
 <div class="post-list">
   {{#if posts.length}}
     {{#each posts}}
-      <div class="post-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-        <p>
-          <strong>
-            {{#if this.author}}
-              {{this.author.firstName}} {{this.author.lastName}}
-            {{else}}
-              User Anonim
-            {{/if}}
-          </strong>
-          <small> - {{this.createdAt}}</small>
+      <div class="card post-item">
+        <p class="post-author">
+          {{#if this.author}}
+            {{this.author.firstName}} {{this.author.lastName}}
+          {{else}}
+            User Anonim
+          {{/if}}
         </p>
-        <p>{{this.content}}</p>
+        <p class="post-meta">{{this.createdAt}}</p>
+        <p class="post-content">{{this.content}}</p>
+        
+        {{!-- MVP 4: Tombol Follow --}}
+        {{#if ../user}} {{!-- Cek apakah user-nya login --}}
+          {{#if this.author}}
+            {{!-- 
+              Nanti bisa minta Reqi tambahin data
+              'isNotMe' dan 'isFollowing' 
+              biar tombol ini lebih pintar 
+            --}}
+            <form action="/api/users/{{this.author.id}}/follow" method="POST">
+              <button type="submit" class="btn btn-secondary">Follow</button>
+            </form>
+          {{/if}}
+        {{/if}}
+
       </div>
     {{/each}}
   {{else}}
-    {{!-- Pesan berbeda jika login vs anonim --}}
-    {{#if user}}
-      <p>Timeline Anda kosong. Coba follow beberapa user!</p>
-    {{else}}
-      <p>Belum ada postingan untuk ditampilkan.</p>
-    {{/if}}
+    <div class="card text-center">
+      {{!-- Pesan berbeda jika login vs anonim --}}
+      {{#if user}}
+        <p>Timeline Anda kosong. Coba follow beberapa user!</p>
+      {{else}}
+        <p>Belum ada postingan untuk ditampilkan. <a href="/login" class="form-link">Login</a> untuk melihat timeline.</p>
+      {{/if}}
+    </div>
   {{/if}}
 </div>
 
-{{> footer}}
-<hr>
+{{!-- File: themes/default/views/pages/home.hbs
+
+{{!-- Pesan selamat datang --}}
+<div class="card">
+  <h2>{{pageTitle}}</h2>
+  <p>{{pesan}}</p>
+</div>
+
+{{!-- Daftar Postingan --}}
+<div class="post-list">
+  {{#if posts.length}}
+    {{#each posts}}
+      <div class="card post-item">
+        <p class="post-author">
+          {{#if this.author}}
+            {{this.author.firstName}} {{this.author.lastName}}
+          {{else}}
+            User Anonim
+          {{/if}}
+        </p>
+        <p class="post-meta">{{this.createdAt}}</p> {{!-- Idealnya diformat --}}
+
+        {{!-- TAMPILKAN MEDIA JIKA ADA (MVP v2.3) --}}
+        {{#if this.mediaUrl}}
+          {{!-- Cek tipe file (idealnya pake this.mediaType dari backend) --}}
+          {{!-- Helper 'contains' atau 'eq' perlu dibuat/diaktifkan di backend --}}
+          {{#if (contains this.mediaUrl '.mp4')}}
+            <video controls width="100%" style="max-height: 400px; border-radius: 6px; margin-bottom: 10px; display: block;">
+              <source src="{{this.mediaUrl}}" type="video/mp4">
+              Browser Anda tidak mendukung video tag.
+            </video>
+          {{else}}
+            <img src="{{this.mediaUrl}}" alt="Postingan media" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; display: block;">
+          {{/if}}
+        {{/if}}
+        {{!-- AKHIR AREA MEDIA --}}
+
+        {{!-- Tampilkan teks postingan jika ada --}}
+        {{#if this.content}}
+          <p class="post-content">{{this.content}}</p>
+        {{/if}}
+
+        {{!-- Tombol Follow (MVP v1.4) --}}
+        {{#if ../user}} {{!-- Cek apakah user-nya login --}}
+          {{#if this.author}}
+            {{!-- Tampilkan tombol follow hanya jika post bukan milik user yg login --}}
+            {{!-- Helper 'eq' perlu didaftarkan di backend --}}
+            {{#unless (eq this.author.id ../user.id)}}
+              <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
+                {{!-- Nanti bisa ganti teks tombol jadi "Unfollow" jika sudah follow --}}
+                <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+              </form>
+            {{/unless}}
+          {{/if}}
+        {{/if}}
+
+        {{!-- AREA LIKE (MVP v2.1) --}}
+        <div class="post-actions" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+          {{#if ../user}} {{!-- Tombol like hanya muncul jika user login --}}
+            <form action="/api/v1/posts/{{this.id}}/like" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-sm {{#if this.isLikedByCurrentUser}}btn-primary{{else}}btn-secondary{{/if}}">
+                {{#if this.isLikedByCurrentUser}}❤️ Liked{{else}}🤍 Like{{/if}}
+              </button>
+            </form>
+          {{/if}}
+          <span class="like-count" style="color: var(--text-secondary-color); font-size: 0.9em;">
+            {{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}} likes
+          </span>
+        </div>
+        {{!-- AKHIR AREA LIKE --}}
+
+        {{!-- AREA KOMENTAR (MVP v2.2) --}}
+        <div class="post-comments" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+          {{!-- Form Tambah Komentar Utama --}}
+          {{#if ../user}} {{!-- Harus ../user karena masih di #each posts --}}
+            <form action="/api/v1/posts/{{this.id}}/comments" method="POST" class="comment-form" style="margin-bottom: 15px;">
+              <div class="form-group">
+                <textarea name="content" class="form-control" rows="2" placeholder="Tulis komentar..." required style="font-size: 0.9em;"></textarea>
+              </div>
+              <button type="submit" class="btn btn-secondary btn-sm">Kirim</button>
+            </form>
+          {{/if}}
+
+          {{!-- Daftar Komentar --}}
+          <div class="comment-list">
+            {{#if this.comments.length}}
+              <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 0.95em;">Komentar:</h4>
+              {{!-- Loop Komentar Utama --}}
+              {{#each this.comments}}
+                <div class="comment-item" style="margin-bottom: 10px; font-size: 0.9em;">
+                  <p style="margin: 0;">
+                    <strong class="comment-author">
+                      {{#if this.author}}
+                        {{this.author.firstName}} {{this.author.lastName}}
+                      {{else}}
+                        Anonim
+                      {{/if}}
+                    </strong>
+                    <span style="color: var(--text-secondary-color);"> - {{this.createdAt}}</span>
+                  </p>
+                  <p class="comment-content" style="margin: 2px 0 5px 0;">{{this.content}}</p>
+
+                  {{!-- TOMBOL & FORM BALAS --}}
+                  {{#if ../../user}} {{!-- Harus ../../user karena di dalam #each comments --}}
+                    <div class="comment-reply-section">
+                      <button class="btn-link btn-sm js-reply-button" data-comment-id="{{this.id}}" style="background: none; border: none; color: var(--link-color); cursor: pointer; padding: 0; font-size: 0.9em;">
+                        Balas
+                      </button>
+                      {{!-- Form Balasan (Sementara selalu tampil) --}}
+                      <form action="/api/v1/comments/{{this.id}}/replies" method="POST" class="reply-form" id="reply-form-{{this.id}}" style="margin-top: 8px; margin-left: 15px; display: block;"> {{!-- Ganti 'block' ke 'none' jika mau disembunyikan default --}}
+                        <div class="form-group" style="margin-bottom: 5px;">
+                          <textarea name="content" class="form-control" rows="1" placeholder="Tulis balasan..." required style="font-size: 0.95em;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Kirim Balasan</button>
+                      </form>
+                    </div>
+                  {{/if}}
+                  {{!-- AKHIR TOMBOL & FORM BALAS --}}
+
+                  {{!-- AREA TAMPILKAN BALASAN --}}
+                  <div class="comment-replies" style="margin-left: 25px; margin-top: 10px;">
+                    {{#if this.replies.length}}
+                      {{#each this.replies}}
+                        <div class="comment-item reply-item" style="margin-bottom: 8px; font-size: 0.95em;">
+                           <p style="margin: 0;">
+                            <strong class="comment-author">
+                              {{#if this.author}}
+                                {{this.author.firstName}} {{this.author.lastName}}
+                              {{else}}
+                                Anonim
+                              {{/if}}
+                            </strong>
+                            <span style="color: var(--text-secondary-color);"> - {{this.createdAt}}</span>
+                          </p>
+                          <p class="comment-content" style="margin: 2px 0 0 0;">{{this.content}}</p>
+                        </div>
+                      {{/each}}
+                    {{/if}}
+                  </div>
+                  {{!-- AKHIR AREA BALASAN --}}
+
+                </div> {{!-- Akhir .comment-item --}}
+              {{/each}} {{!-- Akhir #each comments --}}
+            {{/if}} {{!-- Akhir if comments.length --}}
+          </div> {{!-- Akhir .comment-list --}}
+        </div> {{!-- Akhir .post-comments --}}
+        {{!-- AKHIR AREA KOMENTAR --}}
+
+      </div> {{!-- Akhir .card .post-item --}}
+    {{/each}} {{!-- Akhir #each posts --}}
+  {{else}}
+    <div class="card text-center">
+      {{!-- Pesan berbeda jika login vs anonim --}}
+      {{#if user}}
+        <p>Timeline Anda kosong. Coba follow beberapa user!</p>
+      {{else}}
+        <p>Belum ada postingan untuk ditampilkan. <a href="/login" class="form-link">Login</a> untuk melihat timeline.</p>
+      {{/if}}
+    </div>
+  {{/if}}
+</div> --}}
