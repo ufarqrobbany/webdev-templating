@@ -63,33 +63,31 @@ export class PostsService {
     filterOptions,
     paginationOptions,
     currentUser,
+    authorId,
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
     currentUser?: User | null;
+    authorId?: number | string; 
   }) {
     let followingUserIds: (number | string)[] | undefined = undefined;
 
-    // Jika ada user yang login
-    if (currentUser) {
-      // Mulai dengan array kosong (hanya akan menampilkan postingan yang di-follow)
+    // Logika followingUserIds hanya relevan jika authorId TIDAK ADA (timeline)
+    if (!authorId && currentUser) {
       followingUserIds = [];
-
-      // Jika dia mem-follow seseorang
       if (currentUser.following && currentUser.following.length > 0) {
-        followingUserIds.push(...currentUser.following.map((user) => user.id));
+        followingUserIds.push(
+          ...currentUser.following.map((user) => user.id),
+        );
       }
-      // Tambahkan ID user itu sendiri agar postingannya juga muncul
       followingUserIds.push(currentUser.id);
     }
-
-    // Jika currentUser null (anonim), followingUserIds akan tetap 'undefined'
-    // dan repository akan mengambil semua postingan
 
     return this.postRepository.findAll({
       filterOptions,
       paginationOptions,
-      followingUserIds,
+      followingUserIds, // Akan undefined jika authorId ada
+      authorId,
     });
   }
 
