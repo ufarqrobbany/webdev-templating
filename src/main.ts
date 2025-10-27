@@ -35,8 +35,7 @@ async function bootstrap() {
   app.setGlobalPrefix(
     configService.getOrThrow('app.apiPrefix', { infer: true }),
     {
-      // Pastikan semua route halaman web ada di exclude
-      exclude: ['/', '/about', '/login', '/register', '/create-post'], 
+      exclude: ['/', '/about', 'login', 'register', 'create-post', 'logout'],
     },
   );
   app.enableVersioning({
