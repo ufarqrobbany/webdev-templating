@@ -61,6 +61,7 @@ export class CommentRelationalRepository implements CommentRepository {
   async findOne(id: number): Promise<NullableType<Comment>> {
     const entity = await this.commentRepository.findOne({
       where: { id },
+      relations: ['post'],
     });
 
     return entity ? CommentMapper.toDomain(entity) : null;

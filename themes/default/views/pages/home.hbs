@@ -60,16 +60,34 @@
 
         {{!-- AREA LIKE (MVP v2.1) --}}
         <div class="post-actions" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
-          {{#if ../user}} {{!-- Tombol like hanya muncul jika user login --}}
-            <form action="/api/v1/posts/{{this.id}}/like" method="POST" style="display: inline;">
-              <button type="submit" class="btn btn-sm {{#if this.isLikedByCurrentUser}}btn-primary{{else}}btn-secondary{{/if}}">
-                {{#if this.isLikedByCurrentUser}}❤️ Liked{{else}}🤍 Like{{/if}}
-              </button>
-            </form>
+          
+          {{#if ../user}} {{!-- Tombol like/unlike hanya muncul jika user login --}}
+
+            {{!-- Logika Kondisional untuk Tombol --}}
+            {{#if this.isLikedByCurrentUser}}
+              {{!-- JIKA SUDAH LIKE: Tampilkan form UNLIKE --}}
+              <form action="/api/v1/posts/{{this.id}}/unlike" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-sm btn-primary">
+                  ❤️ Liked
+                </button>
+              </form>
+            {{else}}
+              {{!-- JIKA BELUM LIKE: Tampilkan form LIKE --}}
+              <form action="/api/v1/posts/{{this.id}}/like" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-sm btn-secondary">
+                  🤍 Like
+                </button>
+              </form>
+            {{/if}}
+            {{!-- Akhir Logika Kondisional --}}
+
           {{/if}}
+
+          {{!-- Tampilkan jumlah like --}}
           <span class="like-count" style="color: var(--text-secondary-color); font-size: 0.9em;">
             {{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}} likes
           </span>
+
         </div>
         {{!-- AKHIR AREA LIKE --}}
 

@@ -33,6 +33,8 @@ import {
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { NullableType } from 'src/utils/types/nullable.type'; // Import NullableType
 import { User } from 'src/users/domain/user'; // Import User
+import { CommentsService } from '../comments/comments.service';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
 @ApiTags('Posts')
 @Controller({
@@ -40,7 +42,7 @@ import { User } from 'src/users/domain/user'; // Import User
   version: '1',
 })
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postsService: PostsService, private readonly commentsService: CommentsService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
@@ -121,5 +123,50 @@ export class PostsController {
     // Jika service butuh user, tambahkan req.user:
     // return this.postsService.remove(id, req.user);
     return this.postsService.remove(id);
+  }
+
+ // ... (imports)
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/like')
+  @HttpCode(HttpStatus.FOUND) 
+  async like(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+    @Res() res: Response, 
+  ): Promise<void> {
+    await this.postsService.like(id, req.user.id);
+    return res.redirect('/'); // <-- UBAH KE '/'
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/unlike') 
+  @HttpCode(HttpStatus.FOUND) 
+  async unlike(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+    @Res() res: Response, 
+  ): Promise<void> {
+    await this.postsService.unlike(id, req.user.id);
+    return res.redirect('/'); // <-- UBAH KE '/'
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/comments')
+  @HttpCode(HttpStatus.FOUND)
+  async createComment(
+    @Param('id', ParseIntPipe) postId: number,
+    @Request() req,
+    @Body() createCommentDto: CreateCommentDto, // DTO ini hanya akan berisi 'content' dari form
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.commentsService.create(req.user, {
+      ...createCommentDto,
+      postId: postId, // Ambil postId dari URL
+    });
+    return res.redirect('/');
   }
 }
