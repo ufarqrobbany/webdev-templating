@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException, // <-- 1. IMPORT
+  HttpStatus, // <-- 2. IMPORT
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostRepository } from './infrastructure/persistence/post.repository';
@@ -7,21 +12,52 @@ import { IPaginationOptions } from 'src/utils/types/pagination-options';
 
 import { User } from 'src/users/domain/user';
 import { Post } from './domain/post';
+import { FilesService } from 'src/files/files.service'; // <-- 3. IMPORT
+import { FileType } from 'src/files/domain/file'; // <-- 4. IMPORT
 
 @Injectable()
 export class PostsService {
   constructor(
     @Inject(PostRepository)
     private readonly postRepository: PostRepository,
+    private readonly filesService: FilesService, // <-- 5. INJECT
   ) {}
 
-  create(user: User, createPostDto: CreatePostDto) {
+  // v-- 6. GANTI SELURUH FUNGSI 'create' --v
+  async create(user: User, createPostDto: CreatePostDto) {
     const postDomain = new Post();
-    postDomain.content = createPostDto.content;
+
+    // v-- PERBAIKAN DI SINI --v
+    
+    // 1. Assign content HANYA jika ada, jika tidak, pastikan null
+    postDomain.content = createPostDto.content ? createPostDto.content : null;
     postDomain.author = user;
+
+    let photo: FileType | null = null;
+    
+    // 2. Pastikan kita HANYA memproses jika 'photo.id' benar-benar ada
+    if (createPostDto.photo?.id) { 
+      const fileObject = await this.filesService.findById(
+        createPostDto.photo.id,
+      );
+      if (!fileObject) {
+        throw new UnprocessableEntityException({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            photo: 'imageNotExists',
+          },
+        });
+      }
+      photo = fileObject;
+    }
+    
+    // 3. Assign foto (yang sudah pasti 'null' atau berisi FileType)
+    postDomain.photo = photo;
+    // ^-- AKHIR PERBAIKAN --^
 
     return this.postRepository.create(postDomain);
   }
+  // ^-- AKHIR PERUBAHAN FUNGSI 'create' --^
 
   findAll({
     filterOptions,

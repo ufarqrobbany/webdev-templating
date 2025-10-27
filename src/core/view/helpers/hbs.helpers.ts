@@ -7,11 +7,13 @@ const blocks = {};
  * (c) Helper 'block': Mendefinisikan area di layout.
  * Penggunaan di Layout: {{{block "sidebar"}}}
  */
- // 👇 HAPUS ': hbs.HelperOptions' 👇
-function hbsBlockHelper(name: string, options): string { 
+// 👇 HAPUS ': hbs.HelperOptions' 👇
+function hbsBlockHelper(name: string, options): string {
   const blockContent = blocks[name];
-  const defaultContent = blockContent ? blockContent.join('\n') : options.fn(this);
-  blocks[name] = []; 
+  const defaultContent = blockContent
+    ? blockContent.join('\n')
+    : options.fn(this);
+  blocks[name] = [];
   return defaultContent;
 }
 
@@ -19,8 +21,8 @@ function hbsBlockHelper(name: string, options): string {
  * (c) Helper 'contentFor': Mengisi/override sebuah 'block'.
  * Penggunaan di Halaman: {{#contentFor "sidebar"}}...{{/contentFor}}
  */
- // 👇 HAPUS ': hbs.HelperOptions' 👇
-function hbsContentForHelper(name: string, options): void { 
+// 👇 HAPUS ': hbs.HelperOptions' 👇
+function hbsContentForHelper(name: string, options): void {
   if (!blocks[name]) {
     blocks[name] = [];
   }
@@ -42,10 +44,10 @@ export function registerHbsHelpers(): void {
   try {
     hbs.registerHelper('block', hbsBlockHelper);
     hbs.registerHelper('contentFor', hbsContentForHelper);
-    hbs.registerHelper('eq', hbsEqHelper); 
+    hbs.registerHelper('eq', hbsEqHelper);
 
-    console.log('HBS helpers (block, contentFor, eq) registered successfully.'); 
+    console.log('HBS helpers (block, contentFor, eq) registered successfully.');
   } catch (error) {
-    console.error('Failed to register HBS helpers:', error); 
+    console.error('Failed to register HBS helpers:', error);
   }
 }

@@ -21,7 +21,7 @@ import { VIEW_SERVICE } from './core/view/view.constants'; // <-- Token service
 import { ViewService } from './core/view/view.service'; // <-- Class service
 import cookieParser from 'cookie-parser';
 // 👇 1. UNCOMMENT IMPORT INI 👇
-import { registerHbsHelpers } from './core/view/helpers/hbs.helpers'; 
+import { registerHbsHelpers } from './core/view/helpers/hbs.helpers';
 // --- AKHIR TAMBAHAN IMPORT ---
 
 async function bootstrap() {
@@ -66,13 +66,13 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   // Daftarkan cookie-parser middleware
-  app.use(cookieParser()); 
+  app.use(cookieParser());
 
   const viewService = app.get<ViewService>(VIEW_SERVICE);
 
   // Sajikan aset statis (CSS/JS)
   app.useStaticAssets(viewService.getActiveThemeAssetPath(), {
-    prefix: '/static/', 
+    prefix: '/static/',
   });
 
   // Set base view directory
@@ -88,11 +88,11 @@ async function bootstrap() {
   );
   // 👇 3. UNCOMMENT PEMANGGILAN INI 👇
   // Panggil fungsi pendaftaran helper dari hbs.helpers.ts
-  registerHbsHelpers(); 
+  registerHbsHelpers();
 
   // Start aplikasi
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
-  console.log(`Application is running on: ${await app.getUrl()}`); 
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 void bootstrap();

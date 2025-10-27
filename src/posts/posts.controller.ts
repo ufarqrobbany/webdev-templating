@@ -50,7 +50,8 @@ export class PostsController {
     @Body() createPostDto: CreatePostDto,
     @Request() req,
     @Res() res: Response, // Inject Response
-  ): Promise<void> { // Return void
+  ): Promise<void> {
+    // Return void
     const user = req.user; // Ambil user dari request
     // Panggil service create (asumsi return PostDto tapi kita abaikan)
     await this.postsService.create(user as User, createPostDto);
