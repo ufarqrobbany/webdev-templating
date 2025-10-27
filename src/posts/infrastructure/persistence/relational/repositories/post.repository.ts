@@ -28,22 +28,26 @@ export class PostRelationalRepository implements PostRepository {
     filterOptions,
     paginationOptions,
     followingUserIds,
+    authorId, // <-- TAMBAHKAN INI
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
     followingUserIds?: (number | string)[];
+    authorId?: number | string; // <-- TAMBAHKAN TIPE INI
   }): Promise<Post[]> {
     const where: any = {};
 
-    // Jika daftar ID yang di-follow diberikan (user sedang login)
-    if (followingUserIds && followingUserIds.length > 0) {
-      where.author = { id: In(followingUserIds.map((id) => Number(id))) };
+    // Filter berdasarkan authorId JIKA diberikan (prioritas utama untuk profil)
+    if (authorId) {
+      where.author = { id: Number(authorId) };
+    }
+    // Jika authorId TIDAK diberikan, baru filter berdasarkan following (untuk timeline)
+    else if (followingUserIds && followingUserIds.length > 0) {
+      where.author = { id: In(followingUserIds.map(id => Number(id))) };
     } else if (followingUserIds && followingUserIds.length === 0) {
-      // Jika user login tapi tidak follow siapa-siapa, kembalikan array kosong
       return [];
     }
-    // Jika followingUserIds tidak diberikan (undefined), 'where' tetap kosong
-    // dan semua postingan akan diambil (untuk user anonim)
+    // Jika authorId dan followingUserIds tidak ada (anonim di timeline), ambil semua
 
     const entities = await this.postRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
