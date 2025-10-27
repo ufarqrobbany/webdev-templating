@@ -10,21 +10,23 @@ import {
   Patch,
   Delete,
   SerializeOptions,
-  Query, // <-- Tambah Query
-  DefaultValuePipe, // <-- Tambah DefaultValuePipe
-  ParseIntPipe, // <-- Tetap ada
-  Param, // <-- Tambah Param
-  Res, // <-- 1. TAMBAH Res
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
+  Param,
+  Res,
+  UseInterceptors, // <-- TAMBAHAN
+  UploadedFile, // <-- TAMBAHAN
 } from '@nestjs/common';
-import { Response } from 'express'; // <-- 2. TAMBAH Response
+import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express'; // <-- TAMBAHAN
+import { Express } from 'express'; // <-- TAMBAHAN (PENTING)
 import { PostsService } from './posts.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from '@nestjs/passport';
-// Ganti DTO jika nama aslinya beda
 import { FindAllPostsDto } from './dto/find-all-posts.dto';
-// Ganti DTO jika nama aslinya beda
 import { PostDto } from './dto/post.dto';
 import {
   InfinityPaginationResponse,
@@ -47,22 +49,25 @@ export class PostsController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  // 3. Modifikasi: Tambah @Res, return jadi Promise<void>
+  @UseInterceptors(FileInterceptor('file')) // <-- TAMBAHAN: Untuk mem-parsing multipart/form-data
   async create(
     @Body() createPostDto: CreatePostDto,
+    @UploadedFile() file: Express.Multer.File, // <-- TAMBAHAN: Untuk menangkap file
     @Request() req,
-    @Res() res: Response, // Inject Response
+    @Res() res: Response,
   ): Promise<void> {
-    // Return void
-    const user = req.user; // Ambil user dari request
-    // Panggil service create (asumsi return PostDto tapi kita abaikan)
-    await this.postsService.create(user as User, createPostDto);
+    const user = req.user as User;
 
-    // 4. Redirect ke homepage
+    // Panggil service create dengan tambahan 'file'
+    // Pastikan service Anda sudah diupdate untuk menerima 'file'
+    await this.postsService.create(user, createPostDto, file); // <-- MODIFIKASI: tambahkan 'file'
+
+    // Redirect ke homepage
     return res.redirect('/');
   }
 
-  // --- BAGIAN BAWAH INI KEMBALI KE KODE ASLI LO ---
+  // --- BAGIAN BAWAH INI SAMA SEPERTI KODE ASLI ANDA ---
+
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
@@ -71,13 +76,12 @@ export class PostsController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query() filter: FindAllPostsDto, // Tetap pake filter FindAllPostsDto
+    @Query() filter: FindAllPostsDto,
   ): Promise<InfinityPaginationResponseDto<PostDto>> {
     if (limit > 50) {
       limit = 50;
     }
 
-    // Panggil service findAll sesuai kode asli lo
     return infinityPagination(
       await this.postsService.findAll({
         filterOptions: filter,
@@ -102,55 +106,41 @@ export class PostsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
-    // Tambahkan @Request req jika service update butuh user
-    // @Request() req,
   ): Promise<PostDto | null> {
-    // Panggil service update sesuai kode asli lo
-    // Jika service butuh user, tambahkan req.user:
-    // return this.postsService.update(id, req.user, updatePostDto);
     return this.postsService.update(id, updatePostDto);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    // Tambahkan @Request req jika service remove butuh user
-    // @Request() req,
-  ): Promise<void> {
-    // Panggil service remove sesuai kode asli lo
-    // Jika service butuh user, tambahkan req.user:
-    // return this.postsService.remove(id, req.user);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.postsService.remove(id);
   }
-
- // ... (imports)
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post(':id/like')
-  @HttpCode(HttpStatus.FOUND) 
+  @HttpCode(HttpStatus.FOUND)
   async like(
     @Param('id', ParseIntPipe) id: number,
     @Request() req,
-    @Res() res: Response, 
+    @Res() res: Response,
   ): Promise<void> {
     await this.postsService.like(id, req.user.id);
-    return res.redirect('/'); // <-- UBAH KE '/'
+    return res.redirect('/');
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @Post(':id/unlike') 
-  @HttpCode(HttpStatus.FOUND) 
+  @Post(':id/unlike')
+  @HttpCode(HttpStatus.FOUND)
   async unlike(
     @Param('id', ParseIntPipe) id: number,
     @Request() req,
-    @Res() res: Response, 
+    @Res() res: Response,
   ): Promise<void> {
     await this.postsService.unlike(id, req.user.id);
-    return res.redirect('/'); // <-- UBAH KE '/'
+    return res.redirect('/');
   }
 
   @ApiBearerAuth()
