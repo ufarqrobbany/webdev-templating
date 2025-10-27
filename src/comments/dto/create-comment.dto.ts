@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'; // <-- MODIFIED
 import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateCommentDto {
@@ -7,17 +7,15 @@ export class CreateCommentDto {
   @IsNotEmpty()
   content: string;
 
-  @ApiProperty({ description: 'ID Postingan', type: Number })
+  // v-- ADDED --v
+  @ApiPropertyOptional({ description: 'ID of the post being commented on' })
   @IsNumber()
-  postId: number; // Sudah number
-
-  // !! PERUBAHAN DI SINI !! parentId menjadi number
-  @ApiProperty({
-    required: false,
-    description: 'ID Komentar induk (jika balasan)',
-    type: Number,
-  })
-  @IsNumber() // Validasi sebagai number
   @IsOptional()
-  parentId?: number; // Tipe data number
+  postId?: number;
+
+  @ApiPropertyOptional({ description: 'ID of the parent comment (for replies)' })
+  @IsNumber()
+  @IsOptional()
+  parentId?: number;
+  // ^-- ADDED --^
 }

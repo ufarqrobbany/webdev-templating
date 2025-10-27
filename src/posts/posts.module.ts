@@ -9,6 +9,7 @@ import { FilesModule } from '../files/files.module'; // <-- 1. IMPORT MODUL INI
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './infrastructure/persistence/relational/entities/post.entity';
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
+import { CommentsModule } from '../comments/comments.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserEntity } from '../users/infrastructure/persistence/relational/entit
     RelationalPostPersistenceModule,
     FilesModule, // <-- 2. TAMBAHKAN MODUL INI DI SINI
     TypeOrmModule.forFeature([PostEntity, UserEntity]),
+    CommentsModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],
