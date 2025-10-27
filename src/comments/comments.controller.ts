@@ -8,13 +8,19 @@ import {
   Delete,
   UseGuards,
   Query,
-  DefaultValuePipe, // <-- ADD
-  ParseIntPipe, // <-- ADD
-  Request, // <-- ADD
+  DefaultValuePipe,
+  ParseIntPipe,
+  Request,
+  NotFoundException,
+  HttpCode,
+  HttpStatus,
+  Res,
+  Req,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Response } from 'express';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -30,7 +36,7 @@ import {
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllCommentsDto } from './dto/find-all-comments.dto';
-import { User } from '../users/domain/user'; // <-- ADD
+import { User } from '../users/domain/user';
 
 @ApiTags('Comments')
 @ApiBearerAuth()
@@ -43,36 +49,55 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  @ApiCreatedResponse({
-    type: Comment,
-  })
-  create(
-    @Request() req: { user: User }, // <-- MODIFIED: Get user from request
+  @ApiCreatedResponse({ type: Comment })
+  @HttpCode(HttpStatus.FOUND)
+  async create(
+    @Request() req: { user: User },
     @Body() createCommentDto: CreateCommentDto,
+    @Res() res: Response,
   ) {
-    return this.commentsService.create(req.user, createCommentDto); // <-- MODIFIED: Pass user
+    await this.commentsService.create(req.user, createCommentDto);
+    return res.redirect('/');
   }
+
+  // v-- MODIFIED METHOD --v
+  @Post(':commentId/replies')
+  @HttpCode(HttpStatus.FOUND) // <-- 1. Tambah HttpCode
+  async createReply( // <-- 2. Tambah async
+    @Param('commentId') parentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @Req() req: any,
+    @Res() res: Response, // <-- 3. Inject @Res
+  ): Promise<void> { // <-- 4. Ubah return type ke Promise<void>
+    
+    // 5. Tambah await
+    await this.commentsService.createReply(
+      req.user,
+      parentId,
+      createCommentDto.content,
+    );
+
+    // 6. Lakukan redirect
+    return res.redirect('/');
+  }
+  // ^-- END OF MODIFICATION --^
 
   @Get()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Comment),
   })
   async findAll(
-    // v-- MODIFIED: Extract page, limit, and filter separately --v
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query() filter: FindAllCommentsDto,
-    // ^-- MODIFIED --^
   ): Promise<InfinityPaginationResponseDto<Comment>> {
-    // const page = query?.page ?? 1; // <-- REMOVE
-    // let limit = query?.limit ?? 10; // <-- REMOVE
     if (limit > 50) {
       limit = 50;
     }
 
     return infinityPagination(
       await this.commentsService.findAllWithPagination({
-        filterOptions: filter, // <-- MODIFIED: Pass filter
+        filterOptions: filter,
         paginationOptions: {
           page,
           limit,
@@ -85,14 +110,14 @@ export class CommentsController {
   @Get(':id')
   @ApiParam({
     name: 'id',
-    type: Number, // <-- MODIFIED: Change type to Number
+    type: Number,
     required: true,
   })
   @ApiOkResponse({
     type: Comment,
   })
   findById(
-    @Param('id', ParseIntPipe) id: number, // <-- MODIFIED: Add ParseIntPipe
+    @Param('id', ParseIntPipe) id: number,
   ) {
     return this.commentsService.findById(id);
   }
@@ -100,14 +125,14 @@ export class CommentsController {
   @Patch(':id')
   @ApiParam({
     name: 'id',
-    type: Number, // <-- MODIFIED: Change type to Number
+    type: Number,
     required: true,
   })
   @ApiOkResponse({
     type: Comment,
   })
   update(
-    @Param('id', ParseIntPipe) id: number, // <-- MODIFIED: Add ParseIntPipe
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
     return this.commentsService.update(id, updateCommentDto);
@@ -116,11 +141,11 @@ export class CommentsController {
   @Delete(':id')
   @ApiParam({
     name: 'id',
-    type: Number, // <-- MODIFIED: Change type to Number
+    type: Number,
     required: true,
   })
   remove(
-    @Param('id', ParseIntPipe) id: number, // <-- MODIFIED: Add ParseIntPipe
+    @Param('id', ParseIntPipe) id: number,
   ) {
     return this.commentsService.remove(id);
   }

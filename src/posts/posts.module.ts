@@ -9,6 +9,7 @@ import { FilesModule } from '../files/files.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './infrastructure/persistence/relational/entities/post.entity';
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
+import { CommentsModule } from '../comments/comments.module';
 
 // v-- PERBAIKAN 4: Ganti nama import module --v
 import { FilesLocalModule } from 'src/files/infrastructure/uploader/local/files.module';
@@ -21,6 +22,7 @@ import { FilesLocalModule } from 'src/files/infrastructure/uploader/local/files.
     FilesModule,
     TypeOrmModule.forFeature([PostEntity, UserEntity]),
     FilesLocalModule, // <-- PERBAIKAN 5: Tambahkan module yang benar
+    CommentsModule,
   ],
   controllers: [PostsController],
   // v-- PERBAIKAN 6: Hapus 'PostRepository' dari providers --v

@@ -74,17 +74,22 @@ export class PostsService {
     filterOptions,
     paginationOptions,
     currentUser,
+    authorId,
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
     currentUser?: User | null;
+    authorId?: number | string; 
   }) {
     let followingUserIds: (number | string)[] | undefined = undefined;
 
-    if (currentUser) {
+    // Logika followingUserIds hanya relevan jika authorId TIDAK ADA (timeline)
+    if (!authorId && currentUser) {
       followingUserIds = [];
       if (currentUser.following && currentUser.following.length > 0) {
-        followingUserIds.push(...currentUser.following.map((user) => user.id));
+        followingUserIds.push(
+          ...currentUser.following.map((user) => user.id),
+        );
       }
       followingUserIds.push(currentUser.id);
     }
@@ -92,7 +97,8 @@ export class PostsService {
     return this.postRepository.findAll({
       filterOptions,
       paginationOptions,
-      followingUserIds,
+      followingUserIds, // Akan undefined jika authorId ada
+      authorId,
     });
   }
 

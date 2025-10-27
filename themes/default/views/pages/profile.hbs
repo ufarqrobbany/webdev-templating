@@ -10,8 +10,8 @@
   {{!-- Info Follower/Following (Contoh, perlu data dari backend) --}}
   <div class="profile-stats" style="display: flex; gap: 20px; margin-top: 15px;">
     <span><strong>{{posts.length}}</strong> Postingan</span> {{!-- Sementara hitung dari array posts --}}
-    <span><strong>{{profileUser.followersCount | 0}}</strong> Pengikut</span> {{!-- Perlu data followersCount --}}
-    <span><strong>{{profileUser.followingCount | 0}}</strong> Mengikuti</span> {{!-- Perlu data followingCount --}}
+    <span><strong>{{profileUser.followersCount}}</strong> Pengikut</span> {{!-- Perlu data followersCount --}}
+    <span><strong>{{profileUser.followingCount}}</strong> Mengikuti</span> {{!-- Perlu data followingCount --}}
   </div>
 
   {{!-- Tombol Follow/Unfollow/Edit --}}
