@@ -1,53 +1,4 @@
-{{!-- Pesan selamat datang --}}
-<div class="card">
-  <h2>{{pageTitle}}</h2>
-  <p>{{pesan}}</p>
-</div>
-
-{{!-- Daftar Postingan --}}
-<div class="post-list">
-  {{#if posts.length}}
-    {{#each posts}}
-      <div class="card post-item">
-        <p class="post-author">
-          {{#if this.author}}
-            {{this.author.firstName}} {{this.author.lastName}}
-          {{else}}
-            User Anonim
-          {{/if}}
-        </p>
-        <p class="post-meta">{{this.createdAt}}</p>
-        <p class="post-content">{{this.content}}</p>
-        
-        {{!-- MVP 4: Tombol Follow --}}
-        {{#if ../user}} {{!-- Cek apakah user-nya login --}}
-          {{#if this.author}}
-            {{!-- 
-              Nanti bisa minta Reqi tambahin data
-              'isNotMe' dan 'isFollowing' 
-              biar tombol ini lebih pintar 
-            --}}
-            <form action="/api/users/{{this.author.id}}/follow" method="POST">
-              <button type="submit" class="btn btn-secondary">Follow</button>
-            </form>
-          {{/if}}
-        {{/if}}
-
-      </div>
-    {{/each}}
-  {{else}}
-    <div class="card text-center">
-      {{!-- Pesan berbeda jika login vs anonim --}}
-      {{#if user}}
-        <p>Timeline Anda kosong. Coba follow beberapa user!</p>
-      {{else}}
-        <p>Belum ada postingan untuk ditampilkan. <a href="/login" class="form-link">Login</a> untuk melihat timeline.</p>
-      {{/if}}
-    </div>
-  {{/if}}
-</div>
-
-{{!-- File: themes/default/views/pages/home.hbs
+{{!-- File: themes/default/views/pages/home.hbs --}}
 
 {{!-- Pesan selamat datang --}}
 <div class="card">
@@ -207,4 +158,4 @@
       {{/if}}
     </div>
   {{/if}}
-</div> --}}
+</div>
