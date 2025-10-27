@@ -17,11 +17,17 @@ export class PostMapper {
       domainEntity.author = UserMapper.toDomain(raw.author);
     }
 
+    if (raw.likedBy) {
+      domainEntity.likedBy = raw.likedBy.map(user => UserMapper.toDomain(user));
+    }
+
     // v-- 3. TAMBAHKAN BLOK INI --v
     if (raw.photo) {
       domainEntity.photo = FileMapper.toDomain(raw.photo);
     }
     // ^-- AKHIR TAMBAHAN --^
+
+    domainEntity.likesCount = raw.likesCount;
 
     return domainEntity;
   }

@@ -2,7 +2,8 @@ import {
   Inject,
   Injectable,
   UnprocessableEntityException, // <-- 1. IMPORT
-  HttpStatus, // <-- 2. IMPORT
+  HttpStatus,
+  NotFoundException, // <-- 2. IMPORT
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -14,6 +15,10 @@ import { User } from 'src/users/domain/user';
 import { Post } from './domain/post';
 import { FilesService } from 'src/files/files.service'; // <-- 3. IMPORT
 import { FileType } from 'src/files/domain/file'; // <-- 4. IMPORT
+import { InjectRepository } from '@nestjs/typeorm';
+import { PostEntity } from './infrastructure/persistence/relational/entities/post.entity';
+import { Repository } from 'typeorm';
+import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -21,6 +26,10 @@ export class PostsService {
     @Inject(PostRepository)
     private readonly postRepository: PostRepository,
     private readonly filesService: FilesService, // <-- 5. INJECT
+    @InjectRepository(PostEntity) // <-- ADD
+    private readonly postEntityRepository: Repository<PostEntity>,
+    @InjectRepository(UserEntity) // <-- ADD
+    private readonly userEntityRepository: Repository<UserEntity>,
   ) {}
 
   // v-- 6. GANTI SELURUH FUNGSI 'create' --v
@@ -103,5 +112,56 @@ export class PostsService {
 
   remove(id: number) {
     return this.postRepository.softDelete(id);
+  }
+
+  async like(postId: number, userId: User['id']): Promise<void> {
+    const [post, user] = await Promise.all([
+      this.postEntityRepository.findOne({
+        where: { id: postId },
+        relations: ['likedBy'],
+      }),
+      this.userEntityRepository.findOne({
+        where: { id: Number(userId) },
+      }),
+    ]);
+
+    if (!post || !user) {
+      throw new NotFoundException('Post or User not found.');
+    }
+
+    const isAlreadyLiked = post.likedBy.some(
+      (likedUser) => likedUser.id === user.id,
+    );
+
+    if (isAlreadyLiked) {
+      return; // Already liked, do nothing
+    }
+
+    post.likedBy.push(user);
+    post.likesCount = (post.likesCount || 0) + 1; // Ensure likesCount is a number
+    await this.postEntityRepository.save(post);
+  }
+
+  async unlike(postId: number, userId: User['id']): Promise<void> {
+    const post = await this.postEntityRepository.findOne({
+      where: { id: postId },
+      relations: ['likedBy'],
+    });
+
+    if (!post) {
+      throw new NotFoundException('Post not found.');
+    }
+
+    const initialLikeCount = post.likedBy.length;
+    post.likedBy = post.likedBy.filter(
+      (likedUser) => likedUser.id !== Number(userId),
+    );
+    const finalLikeCount = post.likedBy.length;
+
+    // Only update count if a user was actually removed
+    if (initialLikeCount > finalLikeCount) {
+      post.likesCount = Math.max(0, (post.likesCount || 0) - 1); // Decrement, ensure not negative
+      await this.postEntityRepository.save(post);
+    }
   }
 }

@@ -50,7 +50,7 @@ export class PostRelationalRepository implements PostRepository {
       take: paginationOptions.limit,
       where: where,
       order: { createdAt: 'DESC' },
-      relations: ['author'],
+      relations: ['author', 'likedBy'],
     });
 
     return entities.map((post) => PostMapper.toDomain(post));

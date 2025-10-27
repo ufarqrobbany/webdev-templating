@@ -45,11 +45,25 @@ export class HomeController {
       pesanSelamatDatang = 'Selamat datang! Ini postingan publik terbaru:';
     }
 
-    // Ambil postingan
-    // Service akan otomatis memfilter berdasarkan currentUser
-    const posts = await this.postsService.findAll({
+    // Ambil postingan (ini adalah array Post[])
+    const rawPosts = await this.postsService.findAll({
       paginationOptions: { page: 1, limit: 20 },
-      currentUser: currentUser, // Teruskan user (bisa null)
+      currentUser: currentUser, 
+    });
+
+    // v-- TAMBAHKAN BLOK LOGIKA INI --v
+    // Proses data post untuk HBS
+    const posts = rawPosts.map(post => {
+      // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
+      const isLikedByCurrentUser = currentUser
+        ? (post.likedBy || []).some(user => user.id === currentUser.id)
+        : false;
+
+      // Kembalikan objek baru yang berisi data post + status like
+      return {
+        ...post,
+        isLikedByCurrentUser: isLikedByCurrentUser,
+      };
     });
 
     this.viewService.render(res, 'pages/home', {

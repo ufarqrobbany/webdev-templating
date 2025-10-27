@@ -18,6 +18,14 @@ export class Post {
   @ApiProperty({ type: () => FileType, nullable: true }) // <-- 3. TAMBAHKAN
   photo?: FileType | null; // <-- 4. TAMBAHKAN
 
+  @Allow()
+  @ApiProperty({ type: () => [User] })
+  likedBy?: User[];
+
+  @Allow()
+  @ApiProperty({ type: Number, example: 0 })
+  likesCount: number;
+
   createdAt: Date;
   updatedAt: Date;
 }

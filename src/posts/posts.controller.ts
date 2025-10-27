@@ -122,4 +122,32 @@ export class PostsController {
     // return this.postsService.remove(id, req.user);
     return this.postsService.remove(id);
   }
+
+ // ... (imports)
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/like')
+  @HttpCode(HttpStatus.FOUND) 
+  async like(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+    @Res() res: Response, 
+  ): Promise<void> {
+    await this.postsService.like(id, req.user.id);
+    return res.redirect('/'); // <-- UBAH KE '/'
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/unlike') 
+  @HttpCode(HttpStatus.FOUND) 
+  async unlike(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+    @Res() res: Response, 
+  ): Promise<void> {
+    await this.postsService.unlike(id, req.user.id);
+    return res.redirect('/'); // <-- UBAH KE '/'
+  }
 }
