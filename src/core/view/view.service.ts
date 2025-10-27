@@ -1,26 +1,25 @@
 import {
-  Inject,
+  // Inject, // <-- Hapus
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+// import { ConfigType } from '@nestjs/config'; // <-- Hapus
 import * as path from 'path';
 import * as fs from 'fs';
 import { Response } from 'express';
-import viewConfig from 'src/config/view.config';
+// import viewConfig from 'src/config/view.config'; // <-- Hapus
 
 @Injectable()
 export class ViewService {
-  private readonly activeTheme: string;
+  private readonly activeTheme: string = 'default'; // <-- Hardcode di sini
   private readonly defaultTheme = 'default';
   private readonly themesDir = path.join(process.cwd(), 'themes');
 
-  constructor(
-    @Inject(viewConfig.KEY)
-    private config: ConfigType<typeof viewConfig>,
-  ) {
-    // Mengambil tema aktif dari config saat service diinisialisasi
-    this.activeTheme = this.config.activeTheme;
+  constructor() {
+    // <-- Hapus semua isi constructor
+    // @Inject(viewConfig.KEY) // <-- Hapus
+    // private config: ConfigType<typeof viewConfig>, // <-- Hapus
+    // this.activeTheme = this.config.activeTheme; // <-- Hapus
   }
 
   // (a) Abstraksi: Controller hanya akan memanggil fungsi ini
@@ -56,7 +55,7 @@ export class ViewService {
     const checkExt = '.hbs';
     const activePath = path.join(
       this.themesDir,
-      this.activeTheme,
+      this.activeTheme, // <-- Ini sekarang selalu 'default'
       'views',
       `${viewPath}${checkExt}`,
     );
@@ -69,6 +68,7 @@ export class ViewService {
     }
 
     // 2. Jika tidak ada, cek di tema default
+    // (Logika ini tetap aman, meskipun activeTheme dan defaultTheme sama)
     const defaultPath = path.join(
       this.themesDir,
       this.defaultTheme,
@@ -88,7 +88,7 @@ export class ViewService {
   public getActiveThemeAssetPath(): string {
     const activeAssetPath = path.join(
       this.themesDir,
-      this.activeTheme,
+      this.activeTheme, // <-- Ini sekarang selalu 'default'
       'assets',
     );
     if (fs.existsSync(activeAssetPath)) {

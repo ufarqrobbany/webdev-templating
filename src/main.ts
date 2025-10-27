@@ -19,6 +19,7 @@ import * as path from 'path';
 import hbs = require('hbs');
 import { VIEW_SERVICE } from './core/view/view.constants'; // <-- Token service
 import { ViewService } from './core/view/view.service'; // <-- Class service
+import cookieParser from 'cookie-parser';
 // import { registerHbsHelpers } from './core/view/helpers/hbs.helpers'; // <-- Fungsi pendaftaran helper
 // --- AKHIR TAMBAHAN IMPORT ---
 
@@ -34,7 +35,7 @@ async function bootstrap() {
   app.setGlobalPrefix(
     configService.getOrThrow('app.apiPrefix', { infer: true }),
     {
-      exclude: ['/', '/about'],
+      exclude: ['/', '/about', 'login', 'register', 'create-post'],
     },
   );
   app.enableVersioning({
@@ -65,6 +66,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
+
+  app.use(cookieParser());
 
   const viewService = app.get<ViewService>(VIEW_SERVICE);
 

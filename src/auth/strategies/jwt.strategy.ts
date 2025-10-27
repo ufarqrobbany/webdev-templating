@@ -5,23 +5,47 @@ import { ConfigService } from '@nestjs/config';
 import { OrNeverType } from '../../utils/types/or-never.type';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { AllConfigType } from '../../config/config.type';
+import { Request } from 'express';
+
+// Fungsi ini akan ngambil token 'accessToken' dari cookie
+const cookieExtractor = (req: Request): string | null => {
+  if (req && req.cookies) {
+    return req.cookies['accessToken'] || null;
+  }
+  return null;
+};
+
+// 👇 BUAT TYPE BARU UNTUK req.user 👇
+type UserPayload = {
+  id: JwtPayloadType['id'];
+  role: JwtPayloadType['role'];
+  sessionId: JwtPayloadType['sessionId'];
+};
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(configService: ConfigService<AllConfigType>) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        cookieExtractor, // Pertama, coba baca dari cookie
+        ExtractJwt.fromAuthHeaderAsBearerToken(), // Kalo gagal, baru cari di header
+      ]),
+      ignoreExpiration: false,
       secretOrKey: configService.getOrThrow('auth.secret', { infer: true }),
     });
   }
 
-  // Why we don't check if the user exists in the database:
-  // https://github.com/brocoders/nestjs-boilerplate/blob/main/docs/auth.md#about-jwt-strategy
-  public validate(payload: JwtPayloadType): OrNeverType<JwtPayloadType> {
+  // 👇 GANTI RETURN TYPE DI SINI 👇
+  public validate(payload: JwtPayloadType): OrNeverType<UserPayload> {
     if (!payload.id) {
       throw new UnauthorizedException();
     }
 
-    return payload;
+    // Objek yang dibalikin udah bener
+    return {
+      id: payload.id,
+      role: payload.role,
+      sessionId: payload.sessionId,
+    };
   }
 }

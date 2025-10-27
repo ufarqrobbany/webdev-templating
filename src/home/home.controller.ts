@@ -5,6 +5,7 @@ import {
   Res,
   UseGuards,
   Request,
+  Redirect, // <-- TAMBAHIN INI
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { ApiTags } from '@nestjs/swagger';
@@ -18,7 +19,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/domain/user';
 
 @ApiTags('Home')
-@Controller()
+@Controller() // <-- Ini controller di root '/'
 @SkipThrottle()
 export class HomeController {
   constructor(
@@ -28,8 +29,7 @@ export class HomeController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Get()
-  // Izinkan user anonim (logout) dan user terotentikasi (login)
+  @Get() // <-- Ini buat halaman '/' (udah ada)
   @UseGuards(AuthGuard(['jwt', 'anonymous']))
   public async home(@Res() res: Response, @Request() req) {
     let currentUser: User | null = null;
@@ -60,10 +60,57 @@ export class HomeController {
     });
   }
 
-  @Get('/about')
+  @Get('/about') // <-- Ini buat halaman '/about' (udah ada)
   public about(@Res() res: Response) {
     this.viewService.render(res, 'pages/about', {
       pageTitle: 'Tentang Kami',
     });
+  }
+
+  // --- 👇 INI DIA ENDPOINT BARU YANG KITA BIKIN 👇 ---
+
+  /**
+   * Menampilkan halaman login
+   */
+  @Get('/login')
+  public loginPage(@Res() res: Response) {
+    this.viewService.render(res, 'pages/login', {
+      pageTitle: 'Login',
+    });
+  }
+
+  /**
+   * Menampilkan halaman register
+   */
+  @Get('/register')
+  public registerPage(@Res() res: Response) {
+    this.viewService.render(res, 'pages/register', {
+      pageTitle: 'Register',
+    });
+  }
+
+  /**
+   * Menampilkan halaman "Buat Postingan" (MVP 2)
+   * Ini harus dilindungi, cuma user login yang boleh
+   */
+  @Get('/create-post')
+  @UseGuards(AuthGuard('jwt')) // <-- Wajib login buat akses ini
+  public createPostPage(@Res() res: Response) {
+    this.viewService.render(res, 'pages/create-post', {
+      pageTitle: 'Buat Postingan Baru',
+      user: (res.req as any).user, // <-- Kirim data user ke view
+    });
+  }
+
+  /**
+   * Handle link logout dari header
+   * Cukup redirect ke login
+   */
+  @Get('/logout')
+  @Redirect('/login', 302) // <-- Langsung redirect ke halaman login
+  public logout() {
+    // Nanti Reqi bisa tambahin logic buat clear httpOnly cookie di sini
+    // Untuk sekarang, redirect aja cukup buat ngetes
+    // (Token di localStorage harusnya di-clear sama JS frontend, tapi kita belum buat)
   }
 }
