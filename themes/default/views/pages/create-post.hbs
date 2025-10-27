@@ -1,0 +1,30 @@
+{{!-- File: themes/default/views/pages/create-post.hbs --}}
+
+<div class="card">
+    <h2>Buat Postingan Baru</h2>
+    
+    {{#if errorMessage}}
+        <div class="error-message">
+        {{errorMessage}}
+        </div>
+    {{/if}}
+
+    {{!-- 👇 MODIFIKASI FORM 👇 --}}
+    {{!-- 1. Tambah enctype="multipart/form-data" --}}
+    <form action="/api/v1/posts" method="POST" enctype="multipart/form-data"> 
+        <div class="form-group">
+        <label for="content">Apa yang kamu pikirkan?</label>
+        {{!-- 2. Hapus 'required' --}}
+        <textarea id="content" name="content" class="form-control" rows="5" placeholder="Tulis sesuatu... (opsional jika ada gambar/video)"></textarea> 
+        </div>
+
+        {{!-- 3. Tambah Input File --}}
+        <div class="form-group">
+        <label for="postMedia">Tambah Foto/Video (Opsional)</label>
+        {{!-- Pastikan 'name="file"' sesuai nama field di backend (@UploadedFile()) --}}
+        <input type="file" id="postMedia" name="file" class="form-control" accept="image/*,video/*"> 
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+</div>

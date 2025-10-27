@@ -1,2 +1,243 @@
-body { font-family: Arial, sans-serif; margin: 24px; }
-footer { color: #666; font-size: 0.9rem; }
+/* =================================================================== */
+/* 1. DEFINISI VARIABEL WARNA (LIGHT & DARK MODE)
+/* =================================================================== */
+:root {
+  --bg-color: #f0f2f5;
+  --card-bg-color: #ffffff;
+  --text-color: #1c1e21;
+  --text-secondary-color: #65676b;
+  --border-color: #dddfe2;
+  --primary-color: #1877f2;
+  --primary-text-color: #ffffff;
+  --link-color: #1877f2;
+  --header-bg: #ffffff;
+  --input-bg: #f5f6f7;
+  --error-bg: rgba(231, 76, 60, 0.1);
+  --error-border: #e74c3c;
+}
+
+body.dark {
+  --bg-color: #18191a;
+  --card-bg-color: #242526;
+  --text-color: #e4e6eb;
+  --text-secondary-color: #b0b3b8;
+  --border-color: #3e4042;
+  --primary-color: #2d88ff;
+  --primary-text-color: #ffffff;
+  --link-color: #2d88ff;
+  --header-bg: #242526;
+  --input-bg: #3a3b3c;
+  --error-bg: rgba(231, 76, 60, 0.2);
+  --error-border: #e74c3c;
+}
+
+/* =================================================================== */
+/* 2. STYLE DASAR & LAYOUT
+/* =================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+main.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =================================================================== */
+/* 3. PARTIALS (HEADER & FOOTER)
+/* =================================================================== */
+.main-header {
+  background-color: var(--header-bg);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.main-nav .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.main-nav .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: var(--text-secondary-color);
+  margin-top: 40px;
+}
+
+/* =================================================================== */
+/* 4. KOMPONEN (CARD, BUTTON, FORM)
+/* =================================================================== */
+.card {
+  background-color: var(--card-bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+}
+
+.btn-secondary {
+  background-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.btn-full {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.form-link {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+.form-link:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: var(--error-border);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* =================================================================== */
+/* 5. STYLE SPESIFIK (POST, TOGGLE)
+/* =================================================================== */
+.post-list .card {
+  padding: 15px 20px;
+}
+.post-item .post-author {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0;
+}
+.post-item .post-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary-color);
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+.post-item .post-content {
+  line-height: 1.5;
+  font-size: 1rem;
+  margin: 0;
+}
+.post-item form {
+  margin-top: 15px;
+}
+
+#theme-toggle {
+  background: var(--border-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.dark #theme-toggle::before {
+  content: '☀️'; /* Sun icon */
+}
+body:not(.dark) #theme-toggle::before {
+  content: '🌙'; /* Moon icon */
+}

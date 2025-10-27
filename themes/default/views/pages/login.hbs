@@ -1,0 +1,26 @@
+<div class="card">
+  <h2 class="text-center">Login</h2>
+
+  {{!-- Tampilkan pesan error jika ada --}}
+  {{#if errorMessage}}
+    <div class="error-message">
+      {{errorMessage}}
+    </div>
+  {{/if}}
+
+  <form action="/api/v1/auth/email/login" method="POST">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Login</button>
+  </form>
+
+  <p class="text-center" style="margin-top: 20px;">
+    Belum punya akun? <a href="/register" class="form-link">Register di sini</a>
+  </p>
+</div>
