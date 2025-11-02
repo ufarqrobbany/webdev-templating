@@ -44,6 +44,23 @@
           <p class="post-content">{{this.content}}</p>
         {{/if}}
 
+        {{!-- TAMPILKAN MEDIA JIKA ADA (MVP v2.3) --}}
+        {{#if this.photo}} {{!-- Cek apakah object photo tersedia --}}
+          {{!-- Cek tipe file menggunakan mimeType dari backend --}}
+          {{!-- Asumsi helper 'contains' sudah tersedia di backend Handlebars Anda --}}
+          {{#if (contains this.photo.mimeType 'video')}}
+            <video controls width="100%" style="max-height: 400px;
+border-radius: 6px; margin-bottom: 10px; display: block;">
+              <source src="{{this.photo.url}}" type="{{this.photo.mimeType}}">
+              Browser Anda tidak mendukung video tag.
+            </video>
+          {{else}}
+            <img src="{{this.photo.url}}" alt="Postingan media" style="width: 100%;
+max-height: 400px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; display: block;">
+          {{/if}}
+        {{/if}}
+        {{!-- AKHIR AREA MEDIA --}}
+
         {{!-- Tombol Follow (MVP v1.4) --}}
         {{#if ../user}} {{!-- Cek apakah user-nya login --}}
           {{#if this.author}}

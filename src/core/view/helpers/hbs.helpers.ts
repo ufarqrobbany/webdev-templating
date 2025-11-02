@@ -40,6 +40,18 @@ function hbsEqHelper(a: any, b: any): boolean {
 }
 
 /**
+ * Helper Handlebars untuk mengecek apakah string mengandung substring.
+ * Usage: {{#if (contains text subtext)}} ... {{/if}}
+ */
+function hbsContainsHelper(haystack: any, needle: any): boolean {
+    if (typeof haystack !== 'string' || typeof needle !== 'string') {
+        return false;
+    }
+    return haystack.includes(needle);
+}
+
+
+/**
  * Fungsi ini akan dipanggil di main.ts untuk mendaftarkan SEMUA helper.
  */
 export function registerHbsHelpers(): void {
@@ -47,8 +59,9 @@ export function registerHbsHelpers(): void {
     hbs.registerHelper('block', hbsBlockHelper);
     hbs.registerHelper('contentFor', hbsContentForHelper);
     hbs.registerHelper('eq', hbsEqHelper);
+    hbs.registerHelper('contains', hbsContainsHelper); // <-- DAFTARKAN HELPER BARU
 
-    console.log('HBS helpers (block, contentFor, eq) registered successfully.');
+    console.log('HBS helpers (block, contentFor, eq, contains) registered successfully.');
   } catch (error) {
     console.error('Failed to register HBS helpers:', error);
   }
