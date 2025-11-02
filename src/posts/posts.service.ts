@@ -20,7 +20,7 @@ import { UserEntity } from '../users/infrastructure/persistence/relational/entit
 import { Express } from 'express';
 
 // v-- PERBAIKAN 1: Ganti nama import service --v
-import { FilesLocalService } from 'src/files/infrastructure/uploader/local/files.service';
+import { FilesS3Service } from 'src/files/infrastructure/uploader/s3/files.service';
 // ^-- Nama class-nya 'FilesLocalService', bukan 'LocalFilesService' --^
 
 @Injectable()
@@ -29,7 +29,7 @@ export class PostsService {
     @Inject(PostRepository)
     private readonly postRepository: PostRepository,
     // v-- PERBAIKAN 2: Ganti nama class yang di-inject --v
-    private readonly filesService: FilesLocalService,
+    private readonly filesService: FilesS3Service,
     // ^-- Sesuaikan dengan import di atas --^
     @InjectRepository(PostEntity)
     private readonly postEntityRepository: Repository<PostEntity>,
@@ -40,7 +40,7 @@ export class PostsService {
   async create(
     user: User,
     createPostDto: CreatePostDto,
-    file: Express.Multer.File | undefined,
+    file: Express.MulterS3.File | undefined,
   ): Promise<Post> {
     if (!createPostDto.content && !file) {
       throw new UnprocessableEntityException({

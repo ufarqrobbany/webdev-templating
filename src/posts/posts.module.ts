@@ -1,3 +1,5 @@
+// src/posts/posts.module.ts
+
 import {
   // do not remove this comment
   Module,
@@ -11,23 +13,24 @@ import { PostEntity } from './infrastructure/persistence/relational/entities/pos
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
 import { CommentsModule } from '../comments/comments.module';
 
-// v-- PERBAIKAN 4: Ganti nama import module --v
-import { FilesLocalModule } from 'src/files/infrastructure/uploader/local/files.module';
-// ^-- Nama class-nya 'FilesLocalModule' --^
+// v-- MODIFIKASI: Ganti import dari FilesLocalModule ke FilesS3Module --v
+import { FilesS3Module } from 'src/files/infrastructure/uploader/s3/files.module';
+// ^-- Sesuaikan dengan FilesS3Service yang diinject di PostsService --^
 
 @Module({
   imports: [
     // do not remove this comment
     RelationalPostPersistenceModule,
-    FilesModule,
+    // Jika Anda ingin mengandalkan konfigurasi dinamis (FILE_DRIVER), Anda dapat menghapus FilesS3Module
+    // dan hanya mengimpor FilesModule, tetapi karena PostsService Anda menginject implementasi SPESIFIK (FilesS3Service),
+    // kita harus mengimpor module spesifiknya (FilesS3Module) di sini.
+    FilesModule, 
     TypeOrmModule.forFeature([PostEntity, UserEntity]),
-    FilesLocalModule, // <-- PERBAIKAN 5: Tambahkan module yang benar
+    FilesS3Module, // <-- MODIFIKASI: Ganti FilesLocalModule dengan FilesS3Module
     CommentsModule,
   ],
   controllers: [PostsController],
-  // v-- PERBAIKAN 6: Hapus 'PostRepository' dari providers --v
   providers: [PostsService],
-  // ^-- Error TS2322 hilang karena PostRepository sudah di-provide oleh RelationalPostPersistenceModule --^
   exports: [PostsService, RelationalPostPersistenceModule],
 })
 export class PostsModule {}

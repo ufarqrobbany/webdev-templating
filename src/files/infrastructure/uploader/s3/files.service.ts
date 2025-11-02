@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '../../../../config/config.type';
 import { FileConfig } from '../../../config/file-config.type'; // <-- Import FileConfig
 
+import { Express } from 'express';
+
 @Injectable()
 export class FilesS3Service {
   constructor(
