@@ -21,6 +21,7 @@ import { FilesLocalModule } from 'src/files/infrastructure/uploader/local/files.
     FilesModule,
     TypeOrmModule.forFeature([PostEntity, UserEntity]),
     FilesLocalModule, // <-- PERBAIKAN 5: Tambahkan module yang benar
+    CommentsModule,
   ],
   controllers: [PostsController],
   // v-- PERBAIKAN 6: Hapus 'PostRepository' dari providers --v

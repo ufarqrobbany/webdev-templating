@@ -33,7 +33,10 @@ import {
   InfinityPaginationResponseDto,
 } from 'src/utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
-import { User } from 'src/users/domain/user';
+import { NullableType } from 'src/utils/types/nullable.type'; // Import NullableType
+import { User } from 'src/users/domain/user'; // Import User
+import { CommentsService } from '../comments/comments.service';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
 @ApiTags('Posts')
 @Controller({
@@ -137,6 +140,23 @@ export class PostsController {
     @Res() res: Response,
   ): Promise<void> {
     await this.postsService.unlike(id, req.user.id);
+    return res.redirect('/');
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/comments')
+  @HttpCode(HttpStatus.FOUND)
+  async createComment(
+    @Param('id', ParseIntPipe) postId: number,
+    @Request() req,
+    @Body() createCommentDto: CreateCommentDto, // DTO ini hanya akan berisi 'content' dari form
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.commentsService.create(req.user, {
+      ...createCommentDto,
+      postId: postId, // Ambil postId dari URL
+    });
     return res.redirect('/');
   }
 }

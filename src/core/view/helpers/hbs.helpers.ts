@@ -17,6 +17,7 @@ function hbsBlockHelper(name: string, options): string {
   return defaultContent;
 }
 
+
 /**
  * (c) Helper 'contentFor': Mengisi/override sebuah 'block'.
  * Penggunaan di Halaman: {{#contentFor "sidebar"}}...{{/contentFor}}
@@ -34,7 +35,8 @@ function hbsContentForHelper(name: string, options): void {
  * Usage: {{#if (eq value1 value2)}} ... {{/if}}
  */
 function hbsEqHelper(a: any, b: any): boolean {
-  return a === b;
+  // Pastikan perbandingan aman, konversi ke string jika perlu
+  return String(a) === String(b);
 }
 
 /**

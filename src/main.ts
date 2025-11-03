@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   ValidationPipe,
   VersioningType,
+  RequestMethod
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
@@ -35,7 +36,7 @@ async function bootstrap() {
   app.setGlobalPrefix(
     configService.getOrThrow('app.apiPrefix', { infer: true }),
     {
-      exclude: ['/', '/about', 'login', 'register', 'create-post', 'logout'],
+      exclude: ['/', '/about', 'login', 'register', 'create-post', 'logout', { path: '/users/:id/profile', method: RequestMethod.GET }],
     },
   );
   app.enableVersioning({
