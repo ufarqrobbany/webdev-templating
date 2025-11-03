@@ -1,0 +1,58 @@
+{{!-- File: themes/default/views/pages/profile-edit.hbs --}}
+
+{{!-- Kita bungkus dengan class khusus agar mudah di-style --}}
+<div class="card profile-edit-card">
+    
+    {{!-- Ganti h2 dengan class agar rapi --}}
+    <h2 class="card-title">Edit Profil</h2>
+
+    {{!-- 
+        Form ini akan mengirim (POST) ke endpoint /api/v1/auth/profile
+        yang ditangani oleh method 'updateProfileForm' di AuthController
+    --}}
+    <form action="/api/v1/auth/profile" method="POST">
+        
+        <div class="form-group">
+        <label for="firstName">Nama Depan</label>
+        <input 
+            type="text" 
+            id="firstName" 
+            name="firstName" 
+            class="form-control" 
+            value="{{user.firstName}}" 
+            required
+        >
+        </div>
+
+        <div class="form-group">
+        <label for="lastName">Nama Belakang</label>
+        <input 
+            type="text" 
+            id="lastName" 
+            name="lastName" 
+            class="form-control" 
+            value="{{user.lastName}}" 
+            required
+        >
+        </div>
+
+        <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-control" 
+            value="{{user.email}}"
+        >
+        {{!-- Pindahkan 'small' ke sini agar bisa di-style juga --}}
+        <small>Mengganti email mungkin memerlukan verifikasi ulang.</small>
+        </div>
+        
+        {{!-- Ganti div dengan class 'form-actions' --}}
+        <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        <a href="/api/v1/auth/profile" class="btn btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>

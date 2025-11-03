@@ -1,30 +1,58 @@
 {{!-- File: themes/default/views/pages/profile.hbs --}}
 
 {{!-- Header Profil --}}
-<div class="card profile-header" style="margin-bottom: 30px;">
-  {{!-- Nanti bisa tambahin foto profil di sini --}}
+<div class="card profile-header" style="margin-bottom: 30px; text-align: center;">
+  
+  {{!-- 
+    PENINGKATAN UI/UX: Foto Profil Interaktif 
+    Hanya interaktif jika ini adalah profil milik user yang sedang login
+  --}}
+  <div class="profile-pic-container" style="position: relative; width: 150px; height: 150px; margin: 0 auto 15px auto;">
+    <img 
+      src="{{#if profileUser.photo}}{{profileUser.photo.path}}{{else}}https://via.placeholder.com/150{{/if}}" 
+      alt="Foto Profil" 
+      class="profile-pic" 
+      style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; display: block;"
+    >
+    
+    {{!-- Tombol upload hanya muncul di profil sendiri --}}
+    {{#if user}} {{!-- Pastikan user login --}}
+      {{#if (eq profileUser.id user.id)}} {{!-- Pastikan ini profilnya sendiri --}}
+        <button class="btn-upload-pic" id="btn-upload-pic" aria-label="Ganti foto profil" style="position: absolute; bottom: 5px; right: 5px; background: rgba(0, 0, 0, 0.6); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s ease;">
+          {{!-- Ganti dengan tag <i> ikon kamera Anda jika ada --}}
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-camera-fill" viewBox="0 0 16 16">
+            <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+            <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
+          </svg>
+        </button>
+        {{!-- Input file tersembunyi yang akan dipicu oleh JS --}}
+        <input type="file" id="file-upload-input" accept="image/*" hidden>
+      {{/if}}
+    {{/if}}
+  </div>
+
   <h2>{{profileUser.firstName}} {{profileUser.lastName}}</h2>
-  {{!-- Nanti bisa tambahin bio di sini --}}
-  {{!-- <p>@{{profileUser.username}}</p> --}}
+  {{!-- <p>@{{profileUser.username}}</p> --}} {{!-- Tetap dikomentari sesuai template user --}}
 
   {{!-- Info Follower/Following (Diperbaiki) --}}
-  <div class="profile-stats" style="display: flex; gap: 20px; margin-top: 15px;">
-    <span><strong>{{posts.length}}</strong> Postingan</span> {{!-- Postingan sudah benar --}}
-    <span><strong>{{followersCount}}</strong> Pengikut</span> {{!-- AKSES LANGSUNG --}}
-    <span><strong>{{followingCount}}</strong> Mengikuti</span> {{!-- AKSES LANGSUNG --}}
+  <div class="profile-stats" style="display: flex; gap: 20px; margin-top: 15px; justify-content: center;">
+    <span><strong>{{posts.length}}</strong> Postingan</span>
+    <span><strong>{{followersCount}}</strong> Pengikut</span>
+    <span><strong>{{followingCount}}</strong> Mengikuti</span>
   </div>
 
   {{!-- Tombol Follow/Unfollow/Edit --}}
-  {{#if user}} {{!-- Cek 
- apakah user yg liat ini login --}}
+  {{#if user}} {{!-- Cek apakah user yg liat ini login --}}
     <div class="profile-actions" style="margin-top: 20px;">
-      {{!-- Jika ini BUKAN profil user yg lagi login --}}
       {{!-- Jika ini BUKAN profil user yg lagi login --}}
       {{#unless (eq profileUser.id user.id)}}
         {{!-- Form Follow/Unfollow --}}
         {{#if isFollowing}}
           {{!-- KASUS: SUDAH FOLLOW -> Tampilkan tombol UNFOLLOW --}}
-          <form action="/api/v1/users/{{profileUser.id}}/follow" method="DELETE" style="display: inline;">
+          {{!-- Pastikan Anda menggunakan method-override agar 'DELETE' berfungsi --}}
+          <form action="/api/v1/users/{{profileUser.id}}/follow" method="POST" style="display: inline;">
+            <input type="hidden" name="_method" value="DELETE">
+          <form action="/api/v1/users/{{profileUser.id}}/unfollow" method="POST" style="display: inline;">
             <button type="submit" class="btn btn-secondary">Unfollow</button> 
           </form>
         {{else}}
@@ -35,7 +63,7 @@
         {{/if}}
       {{else}}
         {{!-- Jika ini profil user yg lagi login, tampilkan tombol Edit --}}
-        <a href="/profile/edit" class="btn btn-secondary">Edit Profil</a>
+        <a href="/api/v1/auth/profile/edit" class="btn btn-secondary">Edit Profil</a>
       {{/unless}}
     </div>
   {{/if}}
@@ -45,8 +73,7 @@
 <h3 style="margin-bottom: 15px;">Postingan:</h3>
 <div class="post-list">
   {{#if posts.length}}
-    {{!-- Kita pakai partial _post-item biar nggak duplikat kode dari home.hbs 
- --}}
+    {{!-- Kita pakai partial _post-item biar nggak duplikat kode dari home.hbs --}}
     {{!-- Ini asumsi kita buat partial baru namanya _post-item.hbs --}}
     {{#each posts}}
       {{> _post-item this}} 

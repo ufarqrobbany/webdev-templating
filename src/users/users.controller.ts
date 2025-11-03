@@ -12,6 +12,7 @@ import {
   HttpCode,
   SerializeOptions,
   Request,
+  Res,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -36,6 +37,7 @@ import { User } from './domain/user';
 import { UsersService } from './users.service';
 import { RolesGuard } from '../roles/roles.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
+import { Response } from 'express';
 
 @ApiBearerAuth()
 // @Roles(RoleEnum.admin)
@@ -144,23 +146,27 @@ export class UsersController {
 
   @Post(':id/follow')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Roles(RoleEnum.admin, RoleEnum.user) // <-- PERBOLEHKAN USER
+  @Roles(RoleEnum.admin, RoleEnum.user)
   @ApiParam({ name: 'id', type: String, required: true })
-  follow(
+  async follow(
     @Request() req, // Ambil user yang sedang login
-    @Param('id') id: User['id'], // Ambil id user yang ingin di-follow
+    @Param('id') id: User['id'],
+    @Res() res: Response,
   ): Promise<void> {
-    return this.usersService.follow(req.user.id, id);
+    await this.usersService.follow(req.user.id, id);
+    return res.redirect('/');
   }
 
-  @Delete(':id/follow')
+  @Post(':id/unfollow')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles(RoleEnum.admin, RoleEnum.user) // <-- PERBOLEHKAN USER
   @ApiParam({ name: 'id', type: String, required: true })
-  unfollow(
+  async unfollow(
     @Request() req, // Ambil user yang sedang login
     @Param('id') id: User['id'], // Ambil id user yang ingin di-unfollow
+    @Res() res: Response,
   ): Promise<void> {
-    return this.usersService.unfollow(req.user.id, id);
+    await this.usersService.unfollow(req.user.id, id);
+    return res.redirect('/');
   }
 }
