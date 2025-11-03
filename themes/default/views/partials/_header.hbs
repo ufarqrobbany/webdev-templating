@@ -1,39 +1,15 @@
 <header class="main-header">
-  <nav class="main-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem;">
-    <a href="/" class="logo" style="text-decoration: none; color: inherit; font-weight: bold;">SosmedKita</a>
+  <nav class="main-nav">
+    <a href="/" class="logo">SosmedKita</a>
 
-    <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+    <div class="nav-right">
       {{#if user}}
-        {{!-- Profile Menu --}}
-        <div class="profile-menu-container" style="position: relative;">
-          <button id="profileButton" class="profile-button" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <div style="line-height: -1; width: 40px; height: 40px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
-              {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
-            </div>
-          </button>
-          {{!-- Dropdown Menu --}}
-          <div id="profileDropdown" class="profile-dropdown" style="display: none; position: absolute; right: 0; top: 120%; background: white; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 200px; z-index: 1000;">
-            {{!-- User Info --}}
-            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
-              <div style="flex-shrink: 0; width: 40px; height: 40px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
-                {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
-              </div>
-              <div>
-                <div style="font-weight: bold;">{{user.firstName}} {{user.lastName}}</div>
-              </div>
-            </div>
-            {{!-- Menu Items --}}
-            <a href="/users/{{user.id}}/profile" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: inherit; text-decoration: none; transition: background-color 0.2s;">
-              <i class="fas fa-user" style="width: 20px;"></i> Profil
-            </a>
-            <a href="/logout" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: inherit; text-decoration: none; border-top: 1px solid var(--border-color); transition: background-color 0.2s;">
-              <i class="fas fa-sign-out-alt" style="width: 20px;"></i> Logout
-            </a>
-          </div>
-        </div>
+        {{!-- Jika user login, tampilkan tombol New Post & Logout --}}
+        <a href="/create-post" class="btn btn-primary">Buat Post</a>
+        <a href="/logout" class="btn btn-secondary">Logout</a>
       {{else}}
         {{!-- Jika anonim, tampilkan tombol Login --}}
-        <a href="/login" class="btn btn-primary" style="text-decoration: none;">Login</a>
+        <a href="/login" class="btn btn-primary">Login</a>
       {{/if}}
 
       {{!-- Tombol ini akan otomatis ganti ikon (Sun/Moon) pakai CSS --}}
