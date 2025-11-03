@@ -285,3 +285,92 @@ body.dark #theme-toggle::before {
 body:not(.dark) #theme-toggle::before {
   content: '🌙'; /* Moon icon */
 }
+
+/* =================================================================== */
+/* 6. STYLE SPESIFIK HALAMAN (PROFIL, DLL)
+/* =================================================================== */
+
+/* Style untuk container foto profil di halaman profil */
+.profile-pic-container {
+  position: relative;
+  width: 150px; /* Sesuaikan dengan ukuran di .hbs */
+  height: 150px; /* Sesuaikan dengan ukuran di .hbs */
+  margin: 0 auto 15px auto; /* Sesuai style inline di .hbs */
+}
+
+/* Tombol upload foto profil */
+.btn-upload-pic {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Sembunyikan secara default */
+  transition: opacity 0.2s ease;
+  z-index: 20; /* Pastikan di atas gambar */
+}
+
+/* Tampilkan tombol upload saat hover di container-nya */
+.profile-pic-container:hover .btn-upload-pic {
+  opacity: 1;
+}
+
+/* Efek loading pada gambar saat mengunggah */
+.profile-pic.loading {
+  opacity: 0.5;
+  filter: blur(2px);
+}
+
+.profile-edit-card {
+  max-width: 500px; /* Batasi lebar form */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 25px 30px; /* Beri padding lebih besar */
+}
+
+/* Style untuk judul "Edit Profil" */
+.profile-edit-card .card-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 30px; /* Beri jarak lebih ke form */
+  color: var(--text-color);
+}
+
+/* Style untuk teks 'small' di bawah input email */
+.profile-edit-card .form-group small {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary-color);
+  line-height: 1.4;
+}
+
+/* Container untuk tombol 'Simpan' dan 'Batal'.
+  Menggunakan flexbox agar rapi dan sama lebar.
+*/
+.profile-edit-card .form-actions {
+  display: flex;
+  gap: 12px; /* Jarak antar tombol */
+  margin-top: 25px; /* Jarak dari form group terakhir */
+}
+
+/* Buat kedua tombol di .form-actions
+  memiliki lebar yang sama (flex: 1)
+*/
+.profile-edit-card .form-actions .btn {
+  flex: 1; 
+  text-align: center; /* Memastikan teks di link <a> juga di tengah */
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
