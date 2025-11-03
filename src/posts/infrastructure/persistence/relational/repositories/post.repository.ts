@@ -62,7 +62,11 @@ export class PostRelationalRepository implements PostRepository {
           },
         },
       },
-      relations: ['author', 'likedBy', 'comments',
+      relations: [
+        'author', 
+        'likedBy',
+        'comments',
+        'photo',
         'comments.author',
         'comments.parent',
         'comments.replies',
@@ -75,6 +79,7 @@ export class PostRelationalRepository implements PostRepository {
   async findOne(id: number): Promise<NullableType<Post>> {
     const entity = await this.postRepository.findOne({
       where: { id },
+      relations: ['author', 'photo']
     });
     return entity ? PostMapper.toDomain(entity) : null;
   }

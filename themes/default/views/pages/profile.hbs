@@ -52,6 +52,7 @@
           {{!-- Pastikan Anda menggunakan method-override agar 'DELETE' berfungsi --}}
           <form action="/api/v1/users/{{profileUser.id}}/follow" method="POST" style="display: inline;">
             <input type="hidden" name="_method" value="DELETE">
+          <form action="/api/v1/users/{{profileUser.id}}/unfollow" method="POST" style="display: inline;">
             <button type="submit" class="btn btn-secondary">Unfollow</button> 
           </form>
         {{else}}

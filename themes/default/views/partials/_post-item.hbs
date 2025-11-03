@@ -34,11 +34,11 @@
       </div>
       {{#if (contains this.photo.mimeType 'video')}}
         <video controls>
-          <source src="{{this.photo.url}}" type="{{this.photo.mimeType}}">
+          <source src="{{this.photo.path}}" type="{{this.photo.mimeType}}">
           Browser Anda tidak mendukung video tag.
         </video>
       {{else}}
-        <img src="{{this.photo.url}}">
+        <img src="{{this.photo.path}}">
       {{/if}}
     </div>
   {{/if}}
@@ -46,11 +46,11 @@
   {{!-- Follow Button --}}
   {{#if ../user}}
     {{#if this.author}}
-      {{#unless (eq this.author.id ../user.id)}}
-        <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
-          <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
-        </form>
-      {{/unless}}
+      {{#unless this.isAuthorFollowedByCurrentUser}} 
+          <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
+            <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+          </form>
+        {{/unless}}
     {{/if}}
   {{/if}}
 
@@ -109,7 +109,7 @@
               </div>
               <strong class="comment-author">
                 {{#if this.author}}
-                  <a href="/users/profile/{{this.author.username}}" style="color: inherit; text-decoration: none; font-weight: bold;">
+                  <a href="/users/{{this.author.id}}/profile" style="color: inherit; text-decoration: none; font-weight: bold;">
                     {{this.author.firstName}} {{this.author.lastName}}
                   </a>
                 {{else}}
@@ -146,7 +146,7 @@
                       </div>
                       <strong class="comment-author">
                         {{#if this.author}}
-                          <a href="/users/profile/{{this.author.username}}" style="color: inherit; text-decoration: none; font-weight: bold;">
+                          <a href="/users/{{this.author.id}}/profile" style="color: inherit; text-decoration: none; font-weight: bold;">
                             {{this.author.firstName}} {{this.author.lastName}}
                           </a>
                         {{else}}
