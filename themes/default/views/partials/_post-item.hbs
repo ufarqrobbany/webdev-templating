@@ -25,8 +25,8 @@
                 {{#unless (eq this.author.id @root.user.id)}}
                   {{!-- Tampilkan Follow hanya jika TIDAK mengikuti penulis (isNotFollowing) --}}
                   {{#unless isFollowing}}
-                    <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 0px; display: inline-block; flex-grow: 1; text-align: right; height: 32px;">
-                      <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+                    <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 0px; margin-left: 12px; display: inline-block; height: 24px;">
+                      <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 14px; font-weight: bold; padding: 8px 16px;">+ Follow</button>
                     </form>
                   {{/unless}}
                 {{/unless}}
