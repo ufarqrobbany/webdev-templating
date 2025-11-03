@@ -7,27 +7,35 @@
   {{!-- Nanti bisa tambahin bio di sini --}}
   {{!-- <p>@{{profileUser.username}}</p> --}}
 
-  {{!-- Info Follower/Following (Contoh, perlu data dari backend) --}}
+  {{!-- Info Follower/Following (Diperbaiki) --}}
   <div class="profile-stats" style="display: flex; gap: 20px; margin-top: 15px;">
-    <span><strong>{{posts.length}}</strong> Postingan</span> {{!-- Sementara hitung dari array posts --}}
-    <span><strong>{{profileUser.followersCount}}</strong> Pengikut</span> {{!-- Perlu data followersCount --}}
-    <span><strong>{{profileUser.followingCount}}</strong> Mengikuti</span> {{!-- Perlu data followingCount --}}
+    <span><strong>{{posts.length}}</strong> Postingan</span> {{!-- Postingan sudah benar --}}
+    <span><strong>{{followersCount}}</strong> Pengikut</span> {{!-- AKSES LANGSUNG --}}
+    <span><strong>{{followingCount}}</strong> Mengikuti</span> {{!-- AKSES LANGSUNG --}}
   </div>
 
   {{!-- Tombol Follow/Unfollow/Edit --}}
-  {{#if user}} {{!-- Cek apakah user yg liat ini login --}}
+  {{#if user}} {{!-- Cek 
+ apakah user yg liat ini login --}}
     <div class="profile-actions" style="margin-top: 20px;">
+      {{!-- Jika ini BUKAN profil user yg lagi login --}}
       {{!-- Jika ini BUKAN profil user yg lagi login --}}
       {{#unless (eq profileUser.id user.id)}}
         {{!-- Form Follow/Unfollow --}}
-        {{!-- Ganti action ke unfollow jika sudah follow (perlu data isFollowing dari backend) --}}
-        <form action="/api/v1/users/{{profileUser.id}}/follow" method="POST" style="display: inline;">
-           {{!-- Ganti teks tombol jika sudah follow --}}
-           <button type="submit" class="btn btn-primary">Follow</button> 
-        </form>
+        {{#if isFollowing}}
+          {{!-- KASUS: SUDAH FOLLOW -> Tampilkan tombol UNFOLLOW --}}
+          <form action="/api/v1/users/{{profileUser.id}}/follow" method="DELETE" style="display: inline;">
+            <button type="submit" class="btn btn-secondary">Unfollow</button> 
+          </form>
+        {{else}}
+          {{!-- KASUS: BELUM FOLLOW -> Tampilkan tombol FOLLOW --}}
+          <form action="/api/v1/users/{{profileUser.id}}/follow" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-primary">Follow</button> 
+          </form>
+        {{/if}}
       {{else}}
         {{!-- Jika ini profil user yg lagi login, tampilkan tombol Edit --}}
-        {{!-- <a href="/profile/edit" class="btn btn-secondary">Edit Profil</a> --}}
+        <a href="/profile/edit" class="btn btn-secondary">Edit Profil</a>
       {{/unless}}
     </div>
   {{/if}}
@@ -37,10 +45,11 @@
 <h3 style="margin-bottom: 15px;">Postingan:</h3>
 <div class="post-list">
   {{#if posts.length}}
-    {{!-- Kita pakai partial _post-item biar nggak duplikat kode dari home.hbs --}}
+    {{!-- Kita pakai partial _post-item biar nggak duplikat kode dari home.hbs 
+ --}}
     {{!-- Ini asumsi kita buat partial baru namanya _post-item.hbs --}}
     {{#each posts}}
-      {{> _post-item post=this currentUser=../user}} 
+      {{> _post-item this}} 
     {{/each}}
   {{else}}
     <div class="card text-center">
