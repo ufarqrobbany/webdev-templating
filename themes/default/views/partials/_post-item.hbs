@@ -1,0 +1,169 @@
+{{!-- File: themes/default/views/partials/_post-item.hbs --}}
+<div class="card post-item">
+  {{!-- Author Info with Avatar --}}
+  <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
+    {{#if this.author}}
+      {{!-- Profile Picture with Initials --}}
+      <div style="width: 40px; height: 40px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 500; font-size: 16px; line-height: 1;">
+        {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
+      </div>
+      {{!-- Author Name and "Anda" Label --}}
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="/users/{{this.author.id}}/profile" style="color: inherit; text-decoration: none; font-weight: bold;">
+          {{this.author.firstName}} {{this.author.lastName}}
+        </a>
+        {{#if (eq this.author.id ../user.id)}}
+          <span style="background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Anda</span>
+        {{/if}}
+      </div>
+    {{else}}
+      <span class="post-author-name">User Anonim</span>
+    {{/if}}
+  </div>
+  <p class="post-meta">{{formatDate this.createdAt}}</p>
+
+  {{!-- Post Content --}}
+  {{#if this.content}}
+    <p class="post-content" style="margin-bottom: 8px;">{{this.content}}</p>
+  {{/if}}
+
+  {{!-- Post Media --}}
+  {{#if this.photo}}
+    <div class="post-media-container" style="margin-top: 8px;">
+      <div class="media-placeholder-icon">
+        <i class="fas fa-camera" style="font-size: 24px; color: #6c757d;"></i>
+      </div>
+      {{#if (contains this.photo.mimeType 'video')}}
+        <video controls>
+          <source src="{{this.photo.url}}" type="{{this.photo.mimeType}}">
+          Browser Anda tidak mendukung video tag.
+        </video>
+      {{else}}
+        <img src="{{this.photo.url}}">
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{!-- Follow Button --}}
+  {{#if ../user}}
+    {{#if this.author}}
+      {{#unless (eq this.author.id ../user.id)}}
+        <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
+          <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+        </form>
+      {{/unless}}
+    {{/if}}
+  {{/if}}
+
+  {{!-- Like Section --}}
+  <div class="post-actions" style="margin-top: 0px; display: flex; align-items: center; gap: 10px;">
+    {{#if ../user}}
+      {{#if this.isLikedByCurrentUser}}
+        <form action="/api/v1/posts/{{this.id}}/unlike" method="POST" style="display: inline; margin: 0;">
+          <button type="submit" class="btn btn-sm btn-primary" style="padding: 4px 8px;">
+            <i class="fas fa-heart" style="font-size: 16px;"></i>
+          </button>
+        </form>
+      {{else}}
+        <form action="/api/v1/posts/{{this.id}}/like" method="POST" style="display: inline; margin: 0;">
+          <button type="submit" class="btn btn-sm btn-secondary" style="padding: 4px 8px;">
+            <i class="far fa-heart" style="font-size: 16px;"></i>
+          </button>
+        </form>
+      {{/if}}
+    {{/if}}
+
+    <span class="like-count" style="color: var(--text-secondary-color); font-size: 0.9em;">
+      {{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}} likes
+    </span>
+  </div>
+
+  {{!-- Comments Section --}}
+  {{#if ../user}}
+    <div class="post-comments" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+  {{else}}
+    {{#if this.comments.length}}
+      <div class="post-comments" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+    {{else}}
+      <div class="post-comments" style="margin-top: 20px; padding-top: 0;">
+    {{/if}}
+  {{/if}}
+    {{!-- Comment Form --}}
+    {{#if ../user}}
+      <form action="/api/v1/posts/{{this.id}}/comments" method="POST" class="comment-form" style="margin-bottom: 15px; display: flex; flex-direction: row; gap: 8px;">
+        <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
+          <input name="content" class="form-control" rows="1" placeholder="Tulis komentar..." required style="font-size: 0.9em;">
+        </div>
+        <button type="submit" class="btn btn-secondary btn-sm">Kirim</button>
+      </form>
+    {{/if}}
+
+    {{!-- Comments List --}}
+    <div class="comment-list">
+      {{#if this.comments.length}}
+        <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 0.95em;">Komentar:</h4>
+        {{#each this.comments}}
+          <div class="comment-item" style="margin-bottom: 10px; font-size: 0.9em;">
+            <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 32px; height: 32px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 500; font-size: 14px; line-height: 1;">
+                {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
+              </div>
+              <strong class="comment-author">
+                {{#if this.author}}
+                  <a href="/users/profile/{{this.author.username}}" style="color: inherit; text-decoration: none; font-weight: bold;">
+                    {{this.author.firstName}} {{this.author.lastName}}
+                  </a>
+                {{else}}
+                  Anonim
+                {{/if}}
+              </strong>
+              <span style="color: var(--text-secondary-color); text-align: right; flex-grow: 1;">{{formatDate this.createdAt}}</span>
+            </div>
+            <p class="comment-content" style="margin: 2px 0 5px 44px;">{{this.content}}</p>
+
+            {{!-- Reply Section --}}
+            {{#if ../../user}}
+              <div class="comment-reply-section">
+                <button class="btn-link btn-sm js-reply-button" data-comment-id="{{this.id}}" style="background: none; border: none; color: var(--link-color); cursor: pointer; padding: 0; font-size: 0.9em; margin-left: 44px;">
+                  Balas
+                </button>
+                <form action="/api/v1/comments/{{this.id}}/replies" method="POST" class="reply-form" id="reply-form-{{this.id}}" style="margin-top: 8px; margin-left: 44px; display: none;">
+                  <div class="form-group" style="margin-bottom: 5px;">
+                    <textarea name="content" class="form-control" rows="1" placeholder="Tulis balasan..." required style="font-size: 0.95em;"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-secondary btn-sm">Kirim Balasan</button>
+                </form>
+              </div>
+            {{/if}}
+
+            {{!-- Replies List --}}
+            <div class="comment-replies" style="margin-left: 42px; margin-top: 10px;">
+              {{#if this.replies.length}}
+                {{#each this.replies}}
+                  <div class="comment-item reply-item" style="margin-bottom: 8px; font-size: 0.95em;">
+                    <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 32px; height: 32px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 500; font-size: 14px; line-height: 1;">
+                        {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
+                      </div>
+                      <strong class="comment-author">
+                        {{#if this.author}}
+                          <a href="/users/profile/{{this.author.username}}" style="color: inherit; text-decoration: none; font-weight: bold;">
+                            {{this.author.firstName}} {{this.author.lastName}}
+                          </a>
+                        {{else}}
+                          Anonim
+                        {{/if}}
+                      </strong>
+                      <span style="color: var(--text-secondary-color); text-align: right; flex-grow: 1;">{{formatDate this.createdAt}}</span>
+                    </div>
+                    <p class="comment-content" style="margin: 2px 0 0 44px;">{{this.content}}</p>
+                  </div>
+                {{/each}}
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      {{/if}}
+    </div>
+  </div>
+</div>
