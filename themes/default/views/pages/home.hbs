@@ -135,6 +135,7 @@
           {{!-- Form Tambah Komentar Utama --}}
           {{#if ../user}} {{!-- Harus ../user karena masih di #each posts --}}
             <form action="/api/v1/posts/{{this.id}}/comments" method="POST" class="comment-form" style="margin-bottom: 15px; display: flex; flex-direction: row; gap: 8px;">
+              <input type="hidden" name="postId" value="{{this.id}}">
               <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
                 <input name="content" class="form-control" rows="1" placeholder="Tulis komentar..." required style="font-size: 0.9em;"></input>
               </div>
@@ -174,6 +175,7 @@
                       </button>
                       {{!-- Form Balasan (Hidden by default) --}}
                       <form action="/api/v1/comments/{{this.id}}/replies" method="POST" class="reply-form" id="reply-form-{{this.id}}" style="display: none; margin-left: 44px; margin-bottom: 15px; flex-direction: row; gap: 8px;">
+                        <input type="hidden" name="postId" value="{{../id}}">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
                           <input name="content" class="form-control" rows="1" placeholder="Tulis balasan..." required style="font-size: 0.95em;"></input>
                         </div>
