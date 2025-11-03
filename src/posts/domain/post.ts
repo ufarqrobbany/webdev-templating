@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Allow } from 'class-validator';
 import { User } from '../../users/domain/user';
 import { FileType } from '../../files/domain/file'; // <-- 1. IMPORT
-import { Comment } from '../../comments/domain/comment';
 
 export class Post {
   @Allow()
@@ -26,10 +25,6 @@ export class Post {
   @Allow()
   @ApiProperty({ type: Number, example: 0 })
   likesCount: number;
-
-  @Allow()
-  @ApiProperty({ type: () => [Comment] })
-  comments?: Comment[];
 
   createdAt: Date;
   updatedAt: Date;

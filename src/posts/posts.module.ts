@@ -11,7 +11,6 @@ import { FilesModule } from '../files/files.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './infrastructure/persistence/relational/entities/post.entity';
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
-import { CommentsModule } from '../comments/comments.module';
 
 // v-- MODIFIKASI: Ganti import dari FilesLocalModule ke FilesS3Module --v
 import { FilesS3Module } from 'src/files/infrastructure/uploader/s3/files.module';

@@ -44,7 +44,7 @@ import { CreateCommentDto } from '../comments/dto/create-comment.dto';
   version: '1',
 })
 export class PostsController {
-  constructor(private readonly postsService: PostsService, private readonly commentsService: CommentsService) {}
+  constructor(private readonly postsService: PostsService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
