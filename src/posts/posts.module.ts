@@ -12,7 +12,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './infrastructure/persistence/relational/entities/post.entity';
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
 
-// v-- MODIFIKASI: Ganti import dari FilesLocalModule ke FilesS3Module --v
 import { FilesS3Module } from 'src/files/infrastructure/uploader/s3/files.module';
 import { CommentsModule } from '../comments/comments.module';
 // ^-- Sesuaikan dengan FilesS3Service yang diinject di PostsService --^

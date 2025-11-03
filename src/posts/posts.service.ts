@@ -85,13 +85,20 @@ export class PostsService {
 
     // Logika followingUserIds hanya relevan jika authorId TIDAK ADA (timeline)
     if (!authorId && currentUser) {
-      followingUserIds = [];
+      // Cek apakah user mem-follow seseorang
       if (currentUser.following && currentUser.following.length > 0) {
+        // KASUS 1: User SUDAH follow orang.
+        // Tampilkan postingan dari orang yang di-follow + diri sendiri.
+        followingUserIds = [];
         followingUserIds.push(
           ...currentUser.following.map((user) => user.id),
         );
+        followingUserIds.push(currentUser.id);
+      } else {
+        // KASUS 2: User BELUM follow siapa pun.
+        // Biarkan followingUserIds = undefined agar repository mengambil SEMUA postingan.
+        followingUserIds = undefined;
       }
-      followingUserIds.push(currentUser.id);
     }
 
     return this.postRepository.findAll({

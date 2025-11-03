@@ -60,6 +60,8 @@ export class UsersRelationalRepository implements UserRepository {
   async findById(id: User['id']): Promise<NullableType<User>> {
     const entity = await this.usersRepository.findOne({
       where: { id: Number(id) },
+      // 👇 TAMBAHKAN RELASI followers dan following di sini
+      relations: ['followers', 'following'], 
     });
 
     return entity ? UserMapper.toDomain(entity) : null;

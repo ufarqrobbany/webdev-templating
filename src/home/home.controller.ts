@@ -119,16 +119,16 @@ export class HomeController {
     });
   }
 
-  @Get('users/:id/profile') // <-- Rute baru kita
-  @UseGuards(AuthGuard(['jwt', 'anonymous'])) // Bisa dilihat oleh anonim & user login
+  @Get('users/:id/profile')
+  @UseGuards(AuthGuard(['jwt', 'anonymous']))
   public async userProfile(
-    @Param('id', ParseIntPipe) id: number, // Ambil ID dari URL
+    @Param('id', ParseIntPipe) id: number,
     @Res() res: Response,
     @Request() req,
   ) {
     let currentUser: User | null = null;
     if (req.user) {
-      // Ambil data user yang sedang login (jika ada)
+      // Ambil data user yang sedang login (termasuk relasi 'following')
       currentUser = await this.usersService.findById(req.user.id);
     }
 
@@ -139,31 +139,43 @@ export class HomeController {
       throw new NotFoundException('User tidak ditemukan.');
     }
 
-    // Ambil postingan HANYA dari user profil ini
-    const posts = await this.postsService.findAll({
-      paginationOptions: { page: 1, limit: 20 }, // Ambil 20 postingan
+    // 1. Ambil postingan mentah dari user profil ini
+    const rawPosts = await this.postsService.findAll({
+      paginationOptions: { page: 1, limit: 20 },  
       authorId: id, // Filter berdasarkan ID user profil
-      // currentUser tidak perlu diteruskan di sini karena filter authorId lebih spesifik
+      currentUser: currentUser, // Penting untuk memuat relasi likedBy
     });
 
-    // TODO: Tambahkan logika untuk cek 'isFollowing' jika diperlukan di view
-    // const isFollowing = currentUser?.following?.some(u => u.id === profileUser.id);
+    // 2. Proses data post untuk menambahkan status like oleh currentUser
+    const posts = rawPosts.map(post => {
+      // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
+      const isLikedByCurrentUser = currentUser
+        ? (post.likedBy || []).some(user => user.id === currentUser.id)
+        : false;
 
-    // TODO: Ambil jumlah followers/following jika diperlukan di view
-    // const followersCount = profileUser.followers?.length ?? 0;
-    // const followingCount = profileUser.following?.length ?? 0;
+      // Kembalikan objek baru yang berisi data post + status like
+      return {
+        ...post,
+        isLikedByCurrentUser: isLikedByCurrentUser, // <-- DIBUTUHKAN OLEH _post-item.hbs
+      };
+    });
+
+    // 3. Ambil data follower/following untuk stats
+    const followersCount = profileUser.followers?.length ?? 0;
+    const followingCount = profileUser.following?.length ?? 0;
+    const isFollowing = currentUser?.following?.some(u => u.id === profileUser.id) ?? false;
+
 
     this.viewService.render(res, 'pages/profile', {
       pageTitle: `Profil ${profileUser.firstName}`,
       user: currentUser, // Data user yang sedang login (bisa null)
       profileUser: profileUser, // Data user yang profilnya dilihat
-      posts: posts, // Postingan milik profileUser
-      // isFollowing: isFollowing, // (Jika sudah diimplementasi)
-      // followersCount: followersCount, // (Jika sudah diimplementasi)
-      // followingCount: followingCount, // (Jika sudah diimplementasi)
-    });
+      posts: posts, // Postingan milik profileUser yang sudah diproses
+      isFollowing: isFollowing,
+      followersCount: followersCount,
+      followingCount: followingCount,
+    })
   }
-
   /**
    * Handle link logout dari header
    * Cukup redirect ke login
