@@ -14,6 +14,7 @@ import { UserEntity } from '../users/infrastructure/persistence/relational/entit
 
 import { FilesS3Module } from 'src/files/infrastructure/uploader/s3/files.module';
 import { CommentsModule } from '../comments/comments.module';
+// ^-- Sesuaikan dengan FilesS3Service yang diinject di PostsService --^
 
 @Module({
   imports: [

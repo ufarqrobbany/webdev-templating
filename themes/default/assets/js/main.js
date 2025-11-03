@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Profile dropdown functionality
+    // Profile dropdown functionality
   const profileButton = document.getElementById('profileButton');
   const profileDropdown = document.getElementById('profileDropdown');
   
