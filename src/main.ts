@@ -23,6 +23,8 @@ import { ViewService } from './core/view/view.service'; // <-- Class service
 import cookieParser from 'cookie-parser';
 // 👇 1. UNCOMMENT IMPORT INI 👇
 import { registerHbsHelpers } from './core/view/helpers/hbs.helpers';
+import * as fs from 'fs';
+
 // --- AKHIR TAMBAHAN IMPORT ---
 
 async function bootstrap() {
@@ -84,9 +86,27 @@ async function bootstrap() {
 
   // 👇 2. GANTI BLOK TRY...CATCH DENGAN YANG INI 👇
   // Daftarkan Partials dari folder default
-  hbs.registerPartials(
-    path.join(process.cwd(), 'themes/default/views/partials'),
-  );
+  const partialsDir = path.join(process.cwd(), 'themes/default/views/partials');
+  
+  // Daftarkan Partials secara SYNCHRONOUS menggunakan fs
+  try {
+      const filenames = fs.readdirSync(partialsDir);
+      filenames.forEach(filename => {
+          // Hanya ambil file .hbs
+          const matches = /^([^.]+)\.hbs$/.exec(filename);
+          if (!matches) return;
+          
+          const name = matches[1]; // Ambil nama partial (misal: _post-item)
+          const template = fs.readFileSync(path.join(partialsDir, filename), 'utf8');
+          hbs.registerPartial(name, template);
+      });
+      console.log('✅ HBS Partials registered manually (synchronously).');
+  } catch (e) {
+      // Fallback jika ada masalah I/O
+      console.error('❌ Manual partial registration failed. Falling back to hbs.registerPartials(dir).', e.message);
+      hbs.registerPartials(partialsDir);
+  }
+    
   // 👇 3. UNCOMMENT PEMANGGILAN INI 👇
   // Panggil fungsi pendaftaran helper dari hbs.helpers.ts
   registerHbsHelpers();
