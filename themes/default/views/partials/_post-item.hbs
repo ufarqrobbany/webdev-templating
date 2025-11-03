@@ -34,11 +34,11 @@
       </div>
       {{#if (contains this.photo.mimeType 'video')}}
         <video controls>
-          <source src="{{this.photo.url}}" type="{{this.photo.mimeType}}">
+          <source src="{{this.photo.path}}" type="{{this.photo.mimeType}}">
           Browser Anda tidak mendukung video tag.
         </video>
       {{else}}
-        <img src="{{this.photo.url}}">
+        <img src="{{this.photo.path}}">
       {{/if}}
     </div>
   {{/if}}

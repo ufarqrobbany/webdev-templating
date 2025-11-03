@@ -73,11 +73,11 @@
           {{!-- Asumsi helper 'contains' sudah tersedia di backend Handlebars Anda --}}
           {{#if (contains this.photo.mimeType 'video')}}
             <video controls>
-              <source src="{{this.photo.url}}" type="{{this.photo.mimeType}}">
+              <source src="{{this.photo.path}}" type="{{this.photo.mimeType}}">
               Browser Anda tidak mendukung video tag.
             </video>
           {{else}}
-            <img src="{{this.photo.url}}"> {{!-- Pastikan ALT DIHAPUS dan tanpa inline style --}}
+            <img src="{{this.photo.path}}"> {{!-- Pastikan ALT DIHAPUS dan tanpa inline style --}}
           {{/if}}
           </div>
         {{/if}}

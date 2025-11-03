@@ -1,5 +1,5 @@
 <div class="card">
-  <h2 class="text-center">Register</h2>
+  <h2 class="text-center">Daftar</h2>
 
   {{!-- Tampilkan pesan error jika ada --}}
   {{#if errorMessage}}
@@ -10,11 +10,11 @@
 
   <form action="/api/v1/auth/email/register" method="POST">
     <div class="form-group">
-      <label for="firstName">First Name</label>
+      <label for="firstName">Nama Depan</label>
       <input type="text" id="firstName" name="firstName" class="form-control" required>
     </div>
     <div class="form-group">
-      <label for="lastName">Last Name</label>
+      <label for="lastName">Nama Belakang</label>
       <input type="text" id="lastName" name="lastName" class="form-control" required>
     </div>
     <div class="form-group">
@@ -25,10 +25,10 @@
       <label for="password">Password</label>
       <input type="password" id="password" name="password" class="form-control" required>
     </div>
-    <button type="submit" class="btn btn-primary btn-full">Register</button>
+    <button type="submit" class="btn btn-primary btn-full">Buat Akun</button>
   </form>
   
   <p class="text-center" style="margin-top: 20px;">
-    Sudah punya akun? <a href="/login" class="form-link">Login di sini</a>
+    Sudah punya akun? <a href="/login" class="form-link">Masuk di sini</a>
   </p>
 </div>
