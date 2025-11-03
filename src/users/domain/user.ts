@@ -78,9 +78,9 @@ export class User {
   @ApiProperty()
   deletedAt: Date;
 
-  @ApiProperty({ type: () => [User] }) // Tipe relasi rekursif
-  following?: User[]; // Tambahkan '?' karena mungkin tidak selalu di-load
+  @ApiProperty({ type: () => [User] })
+  following?: User[]; 
 
   @ApiProperty({ type: () => [User] })
-  followers?: User[]; // Tambahkan '?'
+  followers?: User[]; 
 }
