@@ -16,6 +16,22 @@
                 <span style="background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Anda</span>
               {{/if}}
             </div>
+
+            {{!-- Tombol Follow (MVP v1.4) --}}
+            {{#if @root.user}} {{!-- Cek apakah user-nya login --}}
+              {{#if this.author}}
+                {{!-- Tampilkan tombol follow hanya jika post bukan milik user yg login --}}
+                {{!-- Helper 'eq' perlu didaftarkan di backend --}}
+                {{#unless (eq this.author.id @root.user.id)}}
+                  {{!-- Tampilkan Follow hanya jika TIDAK mengikuti penulis (isNotFollowing) --}}
+                  {{#unless isFollowing}}
+                    <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 0px; display: inline-block; flex-grow: 1; text-align: right; height: 32px;">
+                      <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+                    </form>
+                  {{/unless}}
+                {{/unless}}
+              {{/if}}
+            {{/if}}
           {{else}}
             <span class="post-author-name">User Anonim</span>
           {{/if}}
@@ -46,21 +62,7 @@
         {{/if}}
         {{!-- AKHIR AREA MEDIA --}}
 
-        {{!-- Tombol Follow (MVP v1.4) --}}
-        {{#if @root.user}} {{!-- Cek apakah user-nya login --}}
-          {{#if this.author}}
-            {{!-- Tampilkan tombol follow hanya jika post bukan milik user yg login --}}
-            {{!-- Helper 'eq' perlu didaftarkan di backend --}}
-            {{#unless (eq this.author.id @root.user.id)}}
-              {{!-- Tampilkan Follow hanya jika TIDAK mengikuti penulis (isNotFollowing) --}}
-              {{#unless isFollowing}}
-                <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
-                  <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
-                </form>
-              {{/unless}}
-            {{/unless}}
-          {{/if}}
-        {{/if}}
+        
 
         {{!-- AREA LIKE (MVP v2.1) --}}
         {{#if @root.user}}
