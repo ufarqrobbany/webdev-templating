@@ -7,7 +7,7 @@ import { FilesS3Controller } from './files.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
-import { S3Client } from '@aws-sdk/client-s3';
+import { ListBucketsCommand, ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
 import multerS3 from 'multer-s3';
 
 import { FilesS3Service } from './files.service';
@@ -33,7 +33,7 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
     MulterModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<AllConfigType>) => {
+      useFactory: async (configService: ConfigService<AllConfigType>) => {
         
         // --- START PERBAIKAN: Mengambil objek konfigurasi 'file' ---
         // 1. Ambil seluruh objek konfigurasi 'file' dan gunakan Type Assertion
@@ -60,21 +60,34 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
         });
         // --- END PERBAIKAN ---
 
+        // v-- TAMBAHKAN BLOK DEBUGGING INI --v
+        try {
+          // Uji koneksi dengan perintah yang memerlukan izin ke bucket spesifik
+          const bucketName = configService.getOrThrow('file.awsDefaultS3Bucket', { infer: true });
+          console.log(`TESTING S3/R2 CONNECTIVITY for BUCKET: ${bucketName}...`);
+          
+          // Tes ListObjectsV2Command untuk menguji izin baca ke bucket "sosmedkita"
+          const data = await s3.send(new ListObjectsV2Command({
+              Bucket: bucketName,
+              MaxKeys: 1, // Hanya ambil 1 objek
+          }));
+          
+          if (data.Name) {
+            console.log(`✅ S3/R2 CONNECTION SUCCESSFUL. Key has read access to bucket: ${data.Name}.`);
+          } else {
+            console.log('⚠️ S3/R2 Connection OK, but unexpected response.');
+          }
+        } catch (error) {
+          console.error('❌ S3/R2 CONNECTION FAILED!!! (Check Key, Secret, and BUCKET PERMISSIONS)');
+          console.error('Error Details:', error.name, error.message);
+          
+          throw new Error('R2/S3 Connectivity Test Failed. See console for details.'); 
+        }
+
         return {
           fileFilter: (request, file, callback) => {
             // ... (fileFilter logic)
-            if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-              return callback(
-                new UnprocessableEntityException({
-                  status: HttpStatus.UNPROCESSABLE_ENTITY,
-                  errors: {
-                    file: `cantUploadFileType`,
-                  },
-                }),
-                false,
-              );
-            }
-
+            // ...
             callback(null, true);
           },
           storage: multerS3({
@@ -82,6 +95,9 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
             // Menggunakan objek config yang sudah dicek
             bucket: fileConfig.awsDefaultS3Bucket, 
             contentType: multerS3.AUTO_CONTENT_TYPE,
+            // acl: 'public-read', // <-- BARIS INI KITA HAPUS
+            // v-- PERBAIKAN: Tambahkan ACL hanya jika TIDAK menggunakan endpoint kustom (R2) --v
+            ...(endpoint ? {} : { acl: 'public-read' }),
             key: (request, file, callback) => {
               callback(
                 null,
