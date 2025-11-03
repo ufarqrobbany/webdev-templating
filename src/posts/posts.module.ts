@@ -25,7 +25,7 @@ import { CommentsModule } from '../comments/comments.module';
     // kita harus mengimpor module spesifiknya (FilesS3Module) di sini.
     FilesModule, 
     TypeOrmModule.forFeature([PostEntity, UserEntity]),
-    FilesS3Module, // <-- MODIFIKASI: Ganti FilesLocalModule dengan FilesS3Module
+    FilesS3Module, 
     CommentsModule,
   ],
   controllers: [PostsController],

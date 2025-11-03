@@ -73,7 +73,7 @@ export class PostsService {
   findAll({
     filterOptions,
     paginationOptions,
-    currentUser,
+    currentUser, 
     authorId,
   }: {
     filterOptions?: FindAllPostsDto | null;
@@ -81,30 +81,12 @@ export class PostsService {
     currentUser?: User | null;
     authorId?: number | string; 
   }) {
-    let followingUserIds: (number | string)[] | undefined = undefined;
-
-    // Logika followingUserIds hanya relevan jika authorId TIDAK ADA (timeline)
-    if (!authorId && currentUser) {
-      // Cek apakah user mem-follow seseorang
-      if (currentUser.following && currentUser.following.length > 0) {
-        // KASUS 1: User SUDAH follow orang.
-        // Tampilkan postingan dari orang yang di-follow + diri sendiri.
-        followingUserIds = [];
-        followingUserIds.push(
-          ...currentUser.following.map((user) => user.id),
-        );
-        followingUserIds.push(currentUser.id);
-      } else {
-        // KASUS 2: User BELUM follow siapa pun.
-        // Biarkan followingUserIds = undefined agar repository mengambil SEMUA postingan.
-        followingUserIds = undefined;
-      }
-    }
+    let followingUserIds: (number | string)[] | undefined = undefined; 
 
     return this.postRepository.findAll({
       filterOptions,
       paginationOptions,
-      followingUserIds, // Akan undefined jika authorId ada
+      followingUserIds,
       authorId,
     });
   }
