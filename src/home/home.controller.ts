@@ -76,6 +76,8 @@ export class HomeController {
         ...post,
         isLikedByCurrentUser: isLikedByCurrentUser,
         isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
+        // alias yang lebih singkat/umum untuk penggunaan di view
+        isFollowing: isAuthorFollowedByCurrentUser,
       };
     });
 
@@ -164,6 +166,8 @@ export class HomeController {
           ...post,
           isLikedByCurrentUser: isLikedByCurrentUser,
           isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
+          // alias yang lebih singkat/umum untuk penggunaan di view
+          isFollowing: isAuthorFollowedByCurrentUser,
         };
       });
     }
@@ -244,10 +248,19 @@ export class HomeController {
         ? (post.likedBy || []).some(user => user.id === currentUser.id)
         : false;
 
-      // Kembalikan objek baru yang berisi data post + status like
+      // Periksa apakah penulis post di-follow oleh currentUser
+      const isAuthorFollowedByCurrentUser = currentUser && post.author
+        ? (currentUser.following || []).some(
+            (followedUser) => String(followedUser.id) === String(post.author.id)
+          )
+        : false;
+
+      // Kembalikan objek baru yang berisi data post + status like & follow
       return {
         ...post,
         isLikedByCurrentUser: isLikedByCurrentUser, // <-- DIBUTUHKAN OLEH _post-item.hbs
+        isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
+        isFollowing: isAuthorFollowedByCurrentUser,
       };
     });
 

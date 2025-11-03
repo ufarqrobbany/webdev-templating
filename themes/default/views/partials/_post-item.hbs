@@ -12,7 +12,7 @@
               <a href="/users/{{this.author.id}}/profile" style="color: inherit; text-decoration: none; font-weight: bold;"> 
                 <span class="post-author-name">{{this.author.firstName}} {{this.author.lastName}}</span>
               </a>
-              {{#if (eq this.author.id ../user.id)}}
+              {{#if (eq this.author.id @root.user.id)}}
                 <span style="background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Anda</span>
               {{/if}}
             </div>
@@ -51,11 +51,13 @@
           {{#if this.author}}
             {{!-- Tampilkan tombol follow hanya jika post bukan milik user yg login --}}
             {{!-- Helper 'eq' perlu didaftarkan di backend --}}
-            {{#unless (eq this.author.id ../user.id)}}
-              <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
-                {{!-- Nanti bisa ganti teks tombol jadi "Unfollow" jika sudah follow --}}
-                <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
-              </form>
+            {{#unless (eq this.author.id @root.user.id)}}
+              {{!-- Tampilkan Follow hanya jika TIDAK mengikuti penulis (isNotFollowing) --}}
+              {{#unless isFollowing}}
+                <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
+                  <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+                </form>
+              {{/unless}}
             {{/unless}}
           {{/if}}
         {{/if}}
