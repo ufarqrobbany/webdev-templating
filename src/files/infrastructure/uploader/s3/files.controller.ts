@@ -47,6 +47,7 @@ export class FilesS3Controller {
   async uploadFile(
     @UploadedFile() file: Express.MulterS3.File,
   ): Promise<FileResponseDto> {
+    console.error('Multer File Object after S3 attempt:', file);
     return this.filesService.create(file);
   }
 }

@@ -52,7 +52,7 @@ export class PostsController {
   @UseInterceptors(FileInterceptor('file')) // <-- TAMBAHAN: Untuk mem-parsing multipart/form-data
   async create(
     @Body() createPostDto: CreatePostDto,
-    @UploadedFile() file: Express.Multer.File, // <-- TAMBAHAN: Untuk menangkap file
+    @UploadedFile() file: Express.MulterS3.File, // <-- TAMBAHAN: Untuk menangkap file
     @Request() req,
     @Res() res: Response,
   ): Promise<void> {
