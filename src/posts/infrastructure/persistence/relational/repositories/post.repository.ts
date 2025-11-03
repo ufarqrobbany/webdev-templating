@@ -53,20 +53,8 @@ export class PostRelationalRepository implements PostRepository {
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: where,
-      order: {
-        createdAt: 'DESC', // Postingan terbaru di atas
-        comments: {
-          createdAt: 'ASC', // Komentar terlama di atas
-          replies: {
-            createdAt: 'ASC', // Balasan terlama di atas
-          },
-        },
-      },
-      relations: ['author', 'likedBy', 'comments',
-        'comments.author',
-        'comments.parent',
-        'comments.replies',
-        'comments.replies.author',],
+      order: { createdAt: 'DESC' },
+      relations: ['author', 'likedBy'],
     });
 
     return entities.map((post) => PostMapper.toDomain(post));
