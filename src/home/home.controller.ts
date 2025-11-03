@@ -45,7 +45,7 @@ export class HomeController {
       pesanSelamatDatang = `Halo, ${currentUser?.firstName}! Ini timeline Anda:`;
     } else {
       // Jika anonim
-      pesanSelamatDatang = 'Selamat datang! Ini postingan publik terbaru:';
+      pesanSelamatDatang = 'Selamat datang! Ini postingan publik terbaru';
     }
 
     // Ambil postingan (ini adalah array Post[])
