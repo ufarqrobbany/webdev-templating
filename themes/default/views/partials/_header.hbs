@@ -2,6 +2,11 @@
   <nav class="main-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem;">
     <a href="/" class="logo" style="text-decoration: none; color: inherit; font-weight: bold;">SosmedKita</a>
 
+    {{!-- Search Form (New) --}}
+    <form action="/search" method="GET" style="flex-grow: 1; max-width: 400px; margin: 0 1rem;">
+      <input type="search" name="q" placeholder="Cari Postingan atau Pengguna..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px;">
+    </form>
+
      <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
       {{#if user}}
       {{!-- Profile Menu --}}

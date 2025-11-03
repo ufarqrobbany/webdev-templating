@@ -1,0 +1,54 @@
+{{! themes/default/views/pages/search-results.hbs }}
+<div class="container" style="max-width: 800px; margin: 0 auto; padding-top: 2rem;">
+    <h1 class="page-title">{{pageTitle}}</h1>
+
+    {{#if searchQuery}}
+        <p>Menampilkan hasil untuk: <strong>{{searchQuery}}</strong></p>
+        
+        <div style="margin-top: 3rem;">
+            <h2>Pengguna Ditemukan <small style="font-weight: normal; color: #6c757d;">(Max 10)</small></h2>
+            <hr style="border: 0; border-top: 1px solid var(--border-color);">
+
+            {{#if users.length}}
+                <ul class="user-list" style="list-style: none; padding: 0;">
+                    {{#each users}}
+                        <li style="border: 1px solid var(--border-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <a href="/users/{{id}}/profile" style="text-decoration: none; font-weight: bold; color: var(--text-color);">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="flex-shrink: 0; line-height: -1; width: 40px; height: 40px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
+                                        {{slice firstName 0 1}}{{slice lastName 0 1}}
+                                    </div>
+                                    <div>
+                                        {{firstName}} {{lastName}} <span style="color: #6c757d;">({{email}})</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    {{/each}}
+                </ul>
+            {{else}}
+                <p>Tidak ada pengguna yang cocok dengan: <strong>{{searchQuery}}</strong>.</p>
+            {{/if}}
+        </div>
+
+
+        <div style="margin-top: 3rem;">
+            <h2>Postingan Ditemukan</h2>
+            <hr style="border: 0; border-top: 1px solid var(--border-color);">
+
+            {{#if posts.length}}
+                <div class="post-list">
+                    {{#each posts}}
+                        {{! 👇 PERBAIKAN: Hapus 'partials/' }}
+                        {{> _post-item this}}
+                    {{/each}}
+                </div>
+            {{else}}
+                <p>Tidak ada postingan yang cocok dengan: <strong>{{searchQuery}}</strong>.</p>
+            {{/if}}
+        </div>
+
+    {{else}}
+        <p>Silakan masukkan kata kunci pencarian di kolom pencarian di header untuk memulai.</p>
+    {{/if}}
+</div>

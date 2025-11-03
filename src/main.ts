@@ -35,12 +35,21 @@ async function bootstrap() {
   const configService = app.get(ConfigService<AllConfigType>);
 
   app.enableShutdownHooks();
-  app.setGlobalPrefix(
-    configService.getOrThrow('app.apiPrefix', { infer: true }),
-    {
-      exclude: ['/', '/about', 'login', 'register', 'create-post', 'logout', { path: '/users/:id/profile', method: RequestMethod.GET }],
-    },
-  );
+app.setGlobalPrefix(
+  configService.getOrThrow('app.apiPrefix', { infer: true }),
+  {
+    exclude: [
+      '/',
+      '/about',
+      'login',
+      'register',
+      'create-post',
+      'logout',
+      { path: '/users/:id/profile', method: RequestMethod.GET },
+      'search',
+    ],
+  },
+);
   app.enableVersioning({
     type: VersioningType.URI,
   });

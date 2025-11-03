@@ -8,7 +8,8 @@ import {
   Redirect,
   Param, 
   ParseIntPipe, 
-  NotFoundException, 
+  NotFoundException,
+  Query, 
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { ApiTags } from '@nestjs/swagger';
@@ -20,6 +21,8 @@ import { PostsService } from 'src/posts/posts.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/domain/user';
+import { FilterUserDto } from '../users/dto/query-user.dto';
+import { Post } from '../posts/domain/post';
 
 @ApiTags('Home')
 @Controller() 
@@ -92,6 +95,87 @@ export class HomeController {
   }
 
   // --- 👇 INI DIA ENDPOINT BARU YANG KITA BIKIN 👇 ---
+
+  @Get('/search') // <-- Endpoint baru untuk halaman pencarian
+  @UseGuards(AuthGuard(['jwt', 'anonymous']))
+  public async search(
+    @Query('q') q: string, // Ambil query string 'q' dari URL
+    @Query('page', new ParseIntPipe({ optional: true })) page: number, // Opsional untuk pagination
+    @Res() res: Response,
+    @Request() req,
+  ) {
+    const searchQuery = q ? String(q).trim() : '';
+
+    let currentUser: User | null = null;
+    if (req.user) {
+      // Ambil data user yang sedang login (termasuk relasi 'following')
+      currentUser = await this.usersService.findById(req.user.id);
+    }
+
+    // Hanya tampilkan hasil jika ada query pencarian
+    // 👇 PERBAIKAN: Berikan tipe eksplisit untuk menghindari inferensi 'never[]'
+    let users: User[] = [];
+    let posts: Post[] = [];
+    // 👆 PERBAIKAN
+
+    if (searchQuery) {
+      // 1. Cari Pengguna (Users)
+      const userFilterOptions: FilterUserDto = {
+        search: searchQuery, // Menggunakan properti 'search' yang baru kita tambahkan
+        roles: undefined, 
+      };
+
+      users = await this.usersService.findManyWithPagination({
+        filterOptions: userFilterOptions,
+        paginationOptions: { page: 1, limit: 10 }, // Batasi 10 hasil pengguna teratas
+        sortOptions: [{ orderBy: 'firstName', order: 'ASC' }],
+      });
+
+      // 2. Cari Postingan (Posts)
+      const postFilterOptions = {
+        search: searchQuery, // Menggunakan properti 'search' yang baru kita tambahkan
+        page: page || 1, 
+        limit: 10,
+      };
+
+      // Ambil postingan mentah
+      const rawPosts = await this.postsService.findAll({
+        filterOptions: postFilterOptions,
+        paginationOptions: { page: postFilterOptions.page, limit: postFilterOptions.limit },
+        currentUser: currentUser,
+      });
+
+      // Proses data post untuk HBS (tambahkan isLikedByCurrentUser & isAuthorFollowedByCurrentUser)
+      posts = rawPosts.map(post => {
+        // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
+        const isLikedByCurrentUser = currentUser
+          ? (post.likedBy || []).some(user => user.id === currentUser.id)
+          : false;
+        
+        // Periksa apakah ID penulis post ada dalam daftar following currentUser
+        const isAuthorFollowedByCurrentUser = currentUser && post.author
+          ? (currentUser.following || []).some(
+              (followedUser) => String(followedUser.id) === String(post.author.id)
+            )
+          : false;
+
+        // Kembalikan objek baru yang berisi data post + status like & follow
+        return {
+          ...post,
+          isLikedByCurrentUser: isLikedByCurrentUser,
+          isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
+        };
+      });
+    }
+
+    this.viewService.render(res, 'pages/search-results', {
+      pageTitle: searchQuery ? `Hasil Pencarian: "${searchQuery}"` : 'Pencarian',
+      user: currentUser,
+      searchQuery: searchQuery,
+      users: users,
+      posts: posts,
+    });
+  }
 
   /**
    * Menampilkan halaman login
