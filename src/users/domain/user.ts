@@ -5,6 +5,7 @@ import { Status } from '../../statuses/domain/status';
 import { ApiProperty } from '@nestjs/swagger';
 import databaseConfig from '../../database/config/database.config';
 import { DatabaseConfig } from '../../database/config/database-config.type';
+import { Post } from '../../posts/domain/post'; // <-- 1. TAMBAHKAN IMPORT INI
 
 // <database-block>
 const idType = (databaseConfig() as DatabaseConfig).isDocumentDatabase
@@ -78,9 +79,15 @@ export class User {
   @ApiProperty()
   deletedAt: Date;
 
-  @ApiProperty({ type: () => [User] })
-  following?: User[]; 
+  @ApiProperty({ type: () => [User] }) // Tipe relasi rekursif
+  following?: User[]; // Properti ini sudah ada
 
   @ApiProperty({ type: () => [User] })
-  followers?: User[]; 
+  followers?: User[]; // Properti ini sudah ada
+
+  // 👇 ==================================================
+  // 👇 INI YANG HILANG DAN MENYEBABKAN ERROR
+  // 👇 ==================================================
+  @ApiProperty({ type: () => [Post] }) 
+  posts?: Post[]; // Tambahkan '?' karena mungkin tidak selalu di-load
 }

@@ -5,14 +5,15 @@ import {
   HttpCode,
   HttpStatus,
   Request,
+  Render,
   Post,
   UseGuards,
   Patch,
   Delete,
   SerializeOptions,
-  Res, // <-- 1. TAMBAH @Res
+  Res,
 } from '@nestjs/common';
-import { Response } from 'express'; // <-- 2. TAMBAH Response
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
@@ -26,6 +27,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from '../users/domain/user';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { UsersService } from '../users/users.service'; // <-- Import sudah benar
 
 @ApiTags('Auth')
 @Controller({
@@ -33,7 +35,10 @@ import { RefreshResponseDto } from './dto/refresh-response.dto';
   version: '1',
 })
 export class AuthController {
-  constructor(private readonly service: AuthService) {} // Tetap pakai 'service'
+  constructor(
+    private readonly service: AuthService,
+    private readonly usersService: UsersService, // <-- Inject sudah benar
+  ) {}
 
   @SerializeOptions({
     groups: ['me'],
@@ -43,14 +48,12 @@ export class AuthController {
     type: LoginResponseDto,
   })
   @HttpCode(HttpStatus.OK)
-  // 3. Modifikasi: Tambah @Res, return jadi Promise<void>
   public async login(
     @Body() loginDto: AuthEmailLoginDto,
     @Res() res: Response,
   ): Promise<void> {
     const loginResponse = await this.service.validateLogin(loginDto);
 
-    // 4. Tambah Set Cookie
     res.cookie('accessToken', loginResponse.token, {
       httpOnly: true,
       secure: false, // Ganti true jika HTTPS
@@ -61,30 +64,24 @@ export class AuthController {
       httpOnly: true,
       secure: false, // Ganti true jika HTTPS
       path: '/',
-      // Biasanya refresh token lebih lama, tapi boilerplate ini tidak mengembalikan expiry-nya
     });
 
-    // 5. Tambah Redirect
     return res.redirect('/');
   }
 
   @Post('email/register')
-  @HttpCode(HttpStatus.CREATED) // Ganti ke CREATED biar lebih pas
-  // 6. Modifikasi: Tambah @Res
+  @HttpCode(HttpStatus.CREATED)
   async register(
     @Body() createUserDto: AuthRegisterLoginDto,
     @Res() res: Response,
   ): Promise<void> {
-    // Panggil register (hanya buat user, return void)
     await this.service.register(createUserDto);
 
-    // 7. Tambah: Langsung login setelah register
     const loginResponse = await this.service.validateLogin({
       email: createUserDto.email,
       password: createUserDto.password,
     });
 
-    // 8. Tambah Set Cookie (sama kayak login)
     res.cookie('accessToken', loginResponse.token, {
       httpOnly: true,
       secure: false,
@@ -97,7 +94,6 @@ export class AuthController {
       path: '/',
     });
 
-    // 9. Tambah Redirect
     return res.redirect('/');
   }
 
@@ -109,11 +105,10 @@ export class AuthController {
     return this.service.confirmEmail(confirmEmailDto.hash);
   }
 
-  // Endpoint ini ada di kode asli lo, jadi biarin aja
   @Post('email/confirm/new')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmNewEmail(
-    @Body() confirmEmailDto: AuthConfirmEmailDto, // DTO nya mungkin salah, tapi ikutin asli
+    @Body() confirmEmailDto: AuthConfirmEmailDto,
   ): Promise<void> {
     return this.service.confirmNewEmail(confirmEmailDto.hash);
   }
@@ -142,11 +137,10 @@ export class AuthController {
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   @ApiOkResponse({
-    type: User, // Di kode asli type: User
+    type: User,
   })
   @HttpCode(HttpStatus.OK)
   public me(@Request() request): Promise<NullableType<User>> {
-    // Parameter di kode asli 'request.user', bukan 'request.user.id'
     return this.service.me(request.user);
   }
 
@@ -160,17 +154,15 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
   @HttpCode(HttpStatus.OK)
-  // 10. Modifikasi: Tambah @Res({ passthrough: true }) biar bisa set cookie & return data
   public async refresh(
     @Request() request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<RefreshResponseDto> {
     const refreshResponse = await this.service.refreshToken({
       sessionId: request.user.sessionId,
-      hash: request.user.hash, // Di kode asli pake hash
+      hash: request.user.hash,
     });
 
-    // 11. Tambah Set Cookie accessToken baru
     res.cookie('accessToken', refreshResponse.token, {
       httpOnly: true,
       secure: false,
@@ -178,24 +170,21 @@ export class AuthController {
       expires: new Date(refreshResponse.tokenExpires),
     });
 
-    return refreshResponse; // Tetap return data refresh token
+    return refreshResponse;
   }
 
   @ApiBearerAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.OK) // Ganti ke OK
-  // 12. Modifikasi: Tambah @Res
+  @HttpCode(HttpStatus.OK)
   public async logout(@Request() request, @Res() res: Response): Promise<void> {
     await this.service.logout({
       sessionId: request.user.sessionId,
     });
 
-    // 13. Tambah Clear Cookie
     res.clearCookie('accessToken', { path: '/' });
     res.clearCookie('refreshToken', { path: '/' });
 
-    // 14. Tambah Redirect ke login
     return res.redirect('/login');
   }
 
@@ -207,13 +196,12 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
-    type: User, // Di kode asli type: User
+    type: User,
   })
   public update(
     @Request() request,
     @Body() userDto: AuthUpdateDto,
   ): Promise<NullableType<User>> {
-    // Parameter di kode asli 'request.user', bukan 'request.user.id'
     return this.service.update(request.user, userDto);
   }
 
@@ -222,7 +210,72 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(@Request() request): Promise<void> {
-    // Parameter di kode asli 'request.user', bukan 'request.user.id'
     return this.service.softDelete(request.user);
+  }
+
+  // ==========================================================
+  // 👇 METHOD BARU UNTUK UI/VIEW 👇
+  // ==========================================================
+
+  @Get('profile/edit')
+  @UseGuards(AuthGuard('jwt'))
+  @Render('default/views/pages/profile-edit')
+  async getProfileEditPage(@Request() req) {
+    return {
+      user: req.user,
+      title: 'Edit Profil',
+    };
+  }
+
+  @Post('profile')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  async updateProfileForm(
+    @Request() req,
+    @Body() dto: AuthUpdateDto,
+    @Res() res: Response,
+  ) {
+    await this.service.update(req.user, dto);
+    return res.redirect('/profile');
+  }
+
+  /**
+   * Menampilkan halaman profil utama
+   */
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
+  @Render('pages/profile')
+  async getProfile(@Request() req) {
+    
+    // ==========================================================
+    // 👇 INI PERBAIKANNYA 👇
+    // ==========================================================
+    // Gunakan 'findById' (sesuai users.service.ts) bukan 'findOne'
+    const profileUser = await this.usersService.findById(req.user.id);
+
+    if (!profileUser) {
+      // Data fallback jika user tidak ditemukan (meskipun seharusnya tidak terjadi)
+      return {
+        user: req.user,
+        profileUser: req.user, 
+        posts: [],
+        followersCount: 0,
+        followingCount: 0,
+        isFollowing: false,
+      };
+    }
+    
+    // TODO: Implementasikan logika follower jika Anda sudah punya service-nya
+    const followersCount = profileUser.followers?.length || 0; //
+    const followingCount = profileUser.following?.length || 0; //
+
+    return {
+      user: req.user, // User yang sedang login
+      profileUser: profileUser, // Data lengkap user
+      posts: profileUser.posts || [], // 'posts' sekarang aman diakses
+      followersCount,
+      followingCount,
+      isFollowing: false, 
+    };
   }
 }
