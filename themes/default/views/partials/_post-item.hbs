@@ -46,11 +46,11 @@
   {{!-- Follow Button --}}
   {{#if ../user}}
     {{#if this.author}}
-      {{#unless (eq this.author.id ../user.id)}}
-        <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
-          <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
-        </form>
-      {{/unless}}
+      {{#unless this.isAuthorFollowedByCurrentUser}} 
+          <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
+            <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+          </form>
+        {{/unless}}
     {{/if}}
   {{/if}}
 

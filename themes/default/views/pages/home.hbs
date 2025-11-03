@@ -89,10 +89,11 @@
             {{!-- Tampilkan tombol follow hanya jika post bukan milik user yg login --}}
             {{!-- Helper 'eq' perlu didaftarkan di backend --}}
             {{#unless (eq this.author.id ../user.id)}}
-              <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
-                {{!-- Nanti bisa ganti teks tombol jadi "Unfollow" jika sudah follow --}}
-                <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
-              </form>
+              {{#unless this.isAuthorFollowedByCurrentUser}}
+                <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 10px; display: inline-block;">
+                  <button type="submit" class="btn btn-secondary btn-sm">Follow</button>
+                </form>
+              {{/unless}}
             {{/unless}}
           {{/if}}
         {{/if}}

@@ -24,7 +24,7 @@
         {{!-- Form Follow/Unfollow --}}
         {{#if isFollowing}}
           {{!-- KASUS: SUDAH FOLLOW -> Tampilkan tombol UNFOLLOW --}}
-          <form action="/api/v1/users/{{profileUser.id}}/follow" method="DELETE" style="display: inline;">
+          <form action="/api/v1/users/{{profileUser.id}}/unfollow" method="POST" style="display: inline;">
             <button type="submit" class="btn btn-secondary">Unfollow</button> 
           </form>
         {{else}}
