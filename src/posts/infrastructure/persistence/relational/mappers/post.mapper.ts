@@ -4,6 +4,8 @@ import { UserMapper } from '../../../../../users/infrastructure/persistence/rela
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { FileMapper } from '../../../../../files/infrastructure/persistence/relational/mappers/file.mapper'; // <-- 1. IMPORT
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity'; // <-- 2. IMPORT
+import { CommentMapper } from '../../../../../comments/infrastructure/persistence/relational/mappers/comment.mapper';
+
 
 export class PostMapper {
   static toDomain(raw: PostEntity): Post {
@@ -28,6 +30,12 @@ export class PostMapper {
     // ^-- AKHIR TAMBAHAN --^
 
     domainEntity.likesCount = raw.likesCount;
+
+    if (raw.comments) {
+      domainEntity.comments = raw.comments
+        .filter((comment) => comment.parent === null)
+        .map(CommentMapper.toDomain);
+    }
 
     return domainEntity;
   }

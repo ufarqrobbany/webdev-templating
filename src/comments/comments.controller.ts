@@ -10,7 +10,11 @@ import {
   Query,
   DefaultValuePipe, // <-- ADD
   ParseIntPipe, // <-- ADD
-  Request, // <-- ADD
+  Request,
+  Res,
+  HttpCode,
+  Req,
+  HttpStatus, // <-- ADD
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -31,6 +35,7 @@ import {
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllCommentsDto } from './dto/find-all-comments.dto';
 import { User } from '../users/domain/user'; // <-- ADD
+import { Response } from 'express';
 
 @ApiTags('Comments')
 @ApiBearerAuth()
@@ -46,11 +51,34 @@ export class CommentsController {
   @ApiCreatedResponse({
     type: Comment,
   })
-  create(
+  async create(
     @Request() req: { user: User }, // <-- MODIFIED: Get user from request
     @Body() createCommentDto: CreateCommentDto,
+    @Res() res: Response,
   ) {
-    return this.commentsService.create(req.user, createCommentDto); // <-- MODIFIED: Pass user
+    await this.commentsService.create(req.user, createCommentDto);
+    return res.redirect('/');
+  }
+
+  // v-- MODIFIED METHOD --v
+  @Post(':commentId/replies')
+  @HttpCode(HttpStatus.FOUND) // <-- 1. Tambah HttpCode
+  async createReply( // <-- 2. Tambah async
+    @Param('commentId') parentId: number,
+    @Body() createCommentDto: CreateCommentDto,
+    @Req() req: any,
+    @Res() res: Response, // <-- 3. Inject @Res
+  ): Promise<void> { // <-- 4. Ubah return type ke Promise<void>
+    
+    // 5. Tambah await
+    await this.commentsService.createReply(
+      req.user,
+      parentId,
+      createCommentDto.content,
+    );
+
+    // 6. Lakukan redirect
+    return res.redirect('/');
   }
 
   @Get()

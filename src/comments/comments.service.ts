@@ -1,6 +1,7 @@
 import {
   // common
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -77,5 +78,30 @@ export class CommentsService {
 
   remove(id: Comment['id']) {
     return this.commentRepository.softDelete(id); // <-- MODIFIED: Call 'softDelete'
+  }
+
+  async createReply(
+    user: User, // <-- Pass full user object
+    parentId: number,
+    content: string,
+  ): Promise<Comment> {
+    // 1. Find the parent comment
+    const parentComment = await this.commentRepository.findOne(parentId);
+    if (!parentComment) {
+      throw new NotFoundException('Parent comment not found');
+    }
+
+    // 2. Get the postId from the parent
+    const postId = parentComment.post.id;
+
+    // 3. Create the DTO for the 'create' method
+    const createCommentDto: CreateCommentDto = {
+      content,
+      postId,
+      parentId,
+    };
+
+    // 4. Call the existing 'create' method
+    return this.create(user, createCommentDto);
   }
 }
