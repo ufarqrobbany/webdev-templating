@@ -22,7 +22,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/domain/user';
 
 @ApiTags('Home')
-@Controller() // <-- Ini controller di root '/'
+@Controller() 
 @SkipThrottle()
 export class HomeController {
   constructor(
@@ -54,7 +54,6 @@ export class HomeController {
       currentUser: currentUser, 
     });
 
-    // v-- TAMBAHKAN BLOK LOGIKA INI --v
     // Proses data post untuk HBS
     const posts = rawPosts.map(post => {
       // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
@@ -62,17 +61,25 @@ export class HomeController {
         ? (post.likedBy || []).some(user => user.id === currentUser.id)
         : false;
 
+      const isAuthorFollowedByCurrentUser = currentUser && post.author
+        // Periksa apakah ID penulis post ada dalam daftar following currentUser
+        ? (currentUser.following || []).some(
+            (followedUser) => String(followedUser.id) === String(post.author.id)
+          )
+        : false;
+
       // Kembalikan objek baru yang berisi data post + status like
       return {
         ...post,
         isLikedByCurrentUser: isLikedByCurrentUser,
+        isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
       };
     });
 
     this.viewService.render(res, 'pages/home', {
       pageTitle: 'Timeline',
       pesan: pesanSelamatDatang,
-      user: currentUser, // Kirim data user ke view (untuk header, dll)
+      user: currentUser,
       posts: posts,
     });
   }

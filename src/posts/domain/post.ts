@@ -16,8 +16,8 @@ export class Post {
   author: User;
 
   @Allow() // <-- 2. TAMBAHKAN
-  @ApiProperty({ type: () => FileType, nullable: true }) // <-- 3. TAMBAHKAN
-  photo?: FileType | null; // <-- 4. TAMBAHKAN
+  @ApiProperty({ type: () => FileType, nullable: true })
+  photo?: FileType | null;
 
   @Allow()
   @ApiProperty({ type: () => [User] })
