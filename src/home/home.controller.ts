@@ -23,6 +23,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/domain/user';
 import { FilterUserDto } from '../users/dto/query-user.dto';
 import { Post } from '../posts/domain/post';
+import { instanceToPlain } from 'class-transformer';
 
 @ApiTags('Home')
 @Controller()
@@ -58,10 +59,18 @@ export class HomeController {
 
     // Proses data post untuk HBS
     const posts = rawPosts.map((post) => {
+      // Transform post menggunakan instanceToPlain untuk menjalankan @Transform decorators
+      const plainPost = instanceToPlain(post) as any;
+
       // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
-      const isLikedByCurrentUser = currentUser
-        ? (post.likedBy || []).some((user) => user.id === currentUser.id)
-        : false;
+      let isLikedByCurrentUser = false;
+
+      if (currentUser) {
+        const currentUserId = currentUser.id;
+        isLikedByCurrentUser = (post.likedBy || []).some(
+          (user) => user.id === currentUserId
+        );
+      }
 
       const isAuthorFollowedByCurrentUser =
         currentUser && post.author
@@ -74,7 +83,7 @@ export class HomeController {
 
       // Kembalikan objek baru yang berisi data post + status like
       return {
-        ...post,
+        ...plainPost,
         isLikedByCurrentUser: isLikedByCurrentUser,
         isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
         // alias yang lebih singkat/umum untuk penggunaan di view
@@ -162,10 +171,18 @@ export class HomeController {
 
       // Proses data post untuk HBS (tambahkan isLikedByCurrentUser & isAuthorFollowedByCurrentUser)
       posts = rawPosts.map((post) => {
+        // Transform post menggunakan instanceToPlain untuk menjalankan @Transform decorators
+        const plainPost = instanceToPlain(post) as any;
+
         // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
-        const isLikedByCurrentUser = currentUser
-          ? (post.likedBy || []).some((user) => user.id === currentUser.id)
-          : false;
+        let isLikedByCurrentUser = false;
+
+        if (currentUser) {
+          const currentUserId = currentUser.id;
+          isLikedByCurrentUser = (post.likedBy || []).some(
+            (user) => user.id === currentUserId
+          );
+        }
 
         // Periksa apakah ID penulis post ada dalam daftar following currentUser
         const isAuthorFollowedByCurrentUser =
@@ -178,7 +195,7 @@ export class HomeController {
 
         // Kembalikan objek baru yang berisi data post + status like & follow
         return {
-          ...post,
+          ...plainPost,
           isLikedByCurrentUser: isLikedByCurrentUser,
           isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
           // alias yang lebih singkat/umum untuk penggunaan di view
@@ -269,10 +286,18 @@ export class HomeController {
 
     // 2. Proses data post untuk menambahkan status like oleh currentUser
     const posts = rawPosts.map((post) => {
+      // Transform post menggunakan instanceToPlain untuk menjalankan @Transform decorators
+      const plainPost = instanceToPlain(post) as any;
+
       // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
-      const isLikedByCurrentUser = currentUser
-        ? (post.likedBy || []).some((user) => user.id === currentUser.id)
-        : false;
+      let isLikedByCurrentUser = false;
+
+      if (currentUser) {
+        const currentUserId = currentUser.id;
+        isLikedByCurrentUser = (post.likedBy || []).some(
+          (user) => user.id === currentUserId
+        );
+      }
 
       // Periksa apakah penulis post di-follow oleh currentUser
       const isAuthorFollowedByCurrentUser =
@@ -285,7 +310,7 @@ export class HomeController {
 
       // Kembalikan objek baru yang berisi data post + status like & follow
       return {
-        ...post,
+        ...plainPost,
         isLikedByCurrentUser: isLikedByCurrentUser, // <-- DIBUTUHKAN OLEH _post-item.hbs
         isAuthorFollowedByCurrentUser: isAuthorFollowedByCurrentUser,
         isFollowing: isAuthorFollowedByCurrentUser,

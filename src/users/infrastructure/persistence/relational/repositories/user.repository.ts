@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FindOptionsWhere, Repository, In } from 'typeorm';
+import { FindOptionsWhere, Repository, In, ILike} from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { FilterUserDto, SortUserDto } from '../../../../dto/query-user.dto';
@@ -36,12 +36,34 @@ export class UsersRelationalRepository implements UserRepository {
   }): Promise<User[]> {
     const where: FindOptionsWhere<UserEntity> = {};
     if (filterOptions?.roles?.length) {
-      where.role = filterOptions.roles.map((role) => ({
-        id: Number(role.id),
-      }));
+      where.role = { id: In(filterOptions.roles.map((role) => Number(role.id))) };
     }
 
+    if (filterOptions?.search) {
+      const search = `%${filterOptions.search}%`;
+
+      const searchWhere: FindOptionsWhere<UserEntity>[] = [
+        { ...where, firstName: ILike(search) },
+        { ...where, lastName: ILike(search) },
+        { ...where, email: ILike(search) },
+      ];
+
     const entities = await this.usersRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: searchWhere,
+      order: sortOptions?.reduce(
+        (accumulator, sort) => ({
+          ...accumulator,
+          [sort.orderBy]: sort.order,
+        }),
+        {},
+      ),
+    });
+
+    return entities.map((user) => UserMapper.toDomain(user));
+  }
+  const entities = await this.usersRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: where,
@@ -56,6 +78,7 @@ export class UsersRelationalRepository implements UserRepository {
 
     return entities.map((user) => UserMapper.toDomain(user));
   }
+  
 
   async findById(id: User['id']): Promise<NullableType<User>> {
     const entity = await this.usersRepository.findOne({
