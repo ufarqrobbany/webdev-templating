@@ -12,7 +12,7 @@ export class CreateCommentDto {
   // 1. Jika nilai adalah string kosong, ubah menjadi undefined.
   @Transform(({ value }) => (value === '' ? undefined : value))
   // 2. Konversi nilai yang tersisa menjadi Number.
-  @Type(() => Number) 
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty() // <-- TAMBAHKAN eksplisit agar kegagalan 'should not be empty' lebih pasti saat transform menghasilkan undefined
   postId: number; // Tetap wajib (mandatory)

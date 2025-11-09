@@ -22,28 +22,26 @@ export class FileType {
     example: 'https://example.com/path/to/file.jpg',
   })
   @Transform(
-({ value }) => {
+    ({ value }) => {
       // value here is the path saved in the database, which is the S3/R2 Key (e.g., 'unique-id.jpg')
       const fileConfigData = fileConfig() as FileConfig;
       const appConfigData = appConfig() as AppConfig;
-      
+
       if (fileConfigData.driver === FileDriver.LOCAL) {
         return appConfigData.backendDomain + value;
       } else if (
-        [FileDriver.S3_PRESIGNED, FileDriver.S3].includes(
-          fileConfigData.driver,
-        )
+        [FileDriver.S3_PRESIGNED, FileDriver.S3].includes(fileConfigData.driver)
       ) {
         // V -- PERBAIKAN: Gunakan Public URL R2 jika tersedia -- V
         if (fileConfigData.awsS3PublicUrl) {
-            const publicUrl = fileConfigData.awsS3PublicUrl.endsWith('/') 
-                ? fileConfigData.awsS3PublicUrl.slice(0, -1) 
-                : fileConfigData.awsS3PublicUrl;
-            
-            return `${publicUrl}/${value}`; // value adalah key objek (e.g., 'unique-id.jpg')
+          const publicUrl = fileConfigData.awsS3PublicUrl.endsWith('/')
+            ? fileConfigData.awsS3PublicUrl.slice(0, -1)
+            : fileConfigData.awsS3PublicUrl;
+
+          return `${publicUrl}/${value}`; // value adalah key objek (e.g., 'unique-id.jpg')
         }
         // ^ -- AKHIR PERBAIKAN -- ^
-        
+
         // JIKA BUKAN R2 (atau R2 tidak punya public URL), maka generate pre-signed URL (DEFAULT S3)
         const s3 = new S3Client({
           region: fileConfigData.awsS3Region ?? '',
@@ -52,7 +50,9 @@ export class FileType {
             secretAccessKey: fileConfigData.secretAccessKey ?? '',
           },
           // PENTING UNTUK R2: Tambahkan endpoint R2 jika ada
-          ...(fileConfigData.awsS3Endpoint && { endpoint: fileConfigData.awsS3Endpoint }),
+          ...(fileConfigData.awsS3Endpoint && {
+            endpoint: fileConfigData.awsS3Endpoint,
+          }),
         });
 
         const command = new GetObjectCommand({

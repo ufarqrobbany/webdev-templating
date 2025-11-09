@@ -246,7 +246,6 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Render('pages/profile')
   async getProfile(@Request() req) {
-    
     // ==========================================================
     // 👇 INI PERBAIKANNYA 👇
     // ==========================================================
@@ -257,14 +256,14 @@ export class AuthController {
       // Data fallback jika user tidak ditemukan (meskipun seharusnya tidak terjadi)
       return {
         user: req.user,
-        profileUser: req.user, 
+        profileUser: req.user,
         posts: [],
         followersCount: 0,
         followingCount: 0,
         isFollowing: false,
       };
     }
-    
+
     // TODO: Implementasikan logika follower jika Anda sudah punya service-nya
     const followersCount = profileUser.followers?.length || 0; //
     const followingCount = profileUser.following?.length || 0; //
@@ -275,7 +274,7 @@ export class AuthController {
       posts: profileUser.posts || [], // 'posts' sekarang aman diakses
       followersCount,
       followingCount,
-      isFollowing: false, 
+      isFollowing: false,
     };
   }
 }

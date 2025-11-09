@@ -33,14 +33,14 @@ class EnvironmentVariablesValidator {
   )
   @IsString()
   AWS_S3_REGION: string;
-  
+
   // --- BARU: Validasi Endpoint R2 ---
   @ValidateIf((envValues) =>
     [FileDriver.S3, FileDriver.S3_PRESIGNED].includes(envValues.FILE_DRIVER),
   )
   @IsString()
   AWS_S3_ENDPOINT: string;
-  
+
   @ValidateIf((envValues) =>
     [FileDriver.S3, FileDriver.S3_PRESIGNED].includes(envValues.FILE_DRIVER),
   )

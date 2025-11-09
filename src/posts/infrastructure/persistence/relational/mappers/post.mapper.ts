@@ -6,7 +6,6 @@ import { FileMapper } from '../../../../../files/infrastructure/persistence/rela
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity'; // <-- 2. IMPORT
 import { CommentMapper } from '../../../../../comments/infrastructure/persistence/relational/mappers/comment.mapper';
 
-
 export class PostMapper {
   static toDomain(raw: PostEntity): Post {
     const domainEntity = new Post();
@@ -20,7 +19,9 @@ export class PostMapper {
     }
 
     if (raw.likedBy) {
-      domainEntity.likedBy = raw.likedBy.map(user => UserMapper.toDomain(user));
+      domainEntity.likedBy = raw.likedBy.map((user) =>
+        UserMapper.toDomain(user),
+      );
     }
 
     // v-- 3. TAMBAHKAN BLOK INI --v
@@ -50,7 +51,7 @@ export class PostMapper {
     // Pastikan kita menyimpan null jika content undefined atau null
     persistenceEntity.content = domainEntity.content ?? null;
     // ^-- AKHIR PERBAIKAN --^
-    
+
     persistenceEntity.createdAt = domainEntity.createdAt;
     persistenceEntity.updatedAt = domainEntity.updatedAt;
 
@@ -65,7 +66,8 @@ export class PostMapper {
       photo = new FileEntity();
       photo.id = domainEntity.photo.id;
       photo.path = domainEntity.photo.path;
-    } else { // <-- Pastikan photo di-set ke null jika tidak ada
+    } else {
+      // <-- Pastikan photo di-set ke null jika tidak ada
       photo = null;
     }
     persistenceEntity.photo = photo;
