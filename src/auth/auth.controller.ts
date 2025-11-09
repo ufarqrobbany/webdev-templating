@@ -296,7 +296,7 @@ export class AuthController {
     @Res() res: Response,
   ) {
     await this.service.update(req.user, dto);
-    return res.redirect('/profile');
+    return res.redirect(`/users/${req.user.id}/profile`);
   }
 
   /**

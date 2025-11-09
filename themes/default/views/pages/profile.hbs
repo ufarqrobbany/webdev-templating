@@ -76,7 +76,8 @@
             </form>
           {{/if}}
         {{else}}
-          <a href="/api/v1/auth/profile/edit" class="btn btn-secondary">Edit Profil</a>
+          <button id="openEditProfile" class="btn btn-primary">Edit Profil</button>
+          {{> _profile-edit-modal }}
         {{/unless}}
       </div>
     {{/if}}
