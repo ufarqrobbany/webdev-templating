@@ -1,58 +1,208 @@
 {{!-- File: themes/default/views/pages/profile-edit.hbs --}}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profil</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f6f8fb;
+      margin: 0;
+      padding: 0;
+    }
 
-{{!-- Kita bungkus dengan class khusus agar mudah di-style --}}
-<div class="card profile-edit-card">
-    
-    {{!-- Ganti h2 dengan class agar rapi --}}
-    <h2 class="card-title">Edit Profil</h2>
+    .profile-edit-header {
+      background: linear-gradient(135deg, #00b4db, #0083b0);
+      padding: 2.5rem 1rem 5rem 1rem;
+      text-align: center;
+      color: white;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+    }
 
-    {{!-- 
-        Form ini akan mengirim (POST) ke endpoint /api/v1/auth/profile
-        yang ditangani oleh method 'updateProfileForm' di AuthController
-    --}}
+    .profile-edit-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .profile-edit-card {
+      max-width: 800px;
+      background-color: #fff;
+      margin: -4rem auto 2rem auto;
+      padding: 2rem 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar-circle {
+      width: 110px;
+      height: 110px;
+      background-color: #f5a623;
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-avatar a {
+      color: #0083b0;
+      font-size: 0.95rem;
+      margin-top: 0.6rem;
+      text-decoration: none;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #e0e6ed;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      color: #333;
+      background-color: #f9fafc;
+      transition: border 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #00b4db;
+      background-color: #fff;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 0.25rem;
+      color: #777;
+      font-size: 0.85rem;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      display: inline-block;
+      border: none;
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      flex: 1;
+      color: white;
+      background: linear-gradient(135deg, #00b4db, #0083b0);
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background-color: #f1f3f6;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e6e9ee;
+    }
+
+    @media (max-width: 600px) {
+      .profile-edit-card {
+        padding: 1.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="profile-edit-header">
+    <h2>Edit Profil</h2>
+  </header>
+
+  <div class="profile-edit-card">
+
+    <div class="profile-avatar">
+      <div class="profile-avatar-circle">
+        {{#if user.avatar}}
+          <img src="{{user.avatar}}" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+        {{else}}
+          {{user.initials}}
+        {{/if}}
+      </div>
+      <a href="/api/v1/auth/profile/photo">Ganti Foto Profil</a>
+    </div>
+
     <form action="/api/v1/auth/profile" method="POST">
-        
-        <div class="form-group">
+      <div class="form-group">
         <label for="firstName">Nama Depan</label>
-        <input 
-            type="text" 
-            id="firstName" 
-            name="firstName" 
-            class="input-surface rounded-xl px-3 py-2 w-full" 
-            value="{{user.firstName}}" 
-            required
-        >
-        </div>
+        <input type="text" id="firstName" name="firstName" value="{{user.firstName}}" required>
+      </div>
 
-        <div class="form-group">
+      <div class="form-group">
         <label for="lastName">Nama Belakang</label>
-        <input 
-            type="text" 
-            id="lastName" 
-            name="lastName" 
-            class="input-surface rounded-xl px-3 py-2 w-full" 
-            value="{{user.lastName}}" 
-            required
-        >
-        </div>
+        <input type="text" id="lastName" name="lastName" value="{{user.lastName}}" required>
+      </div>
 
-        <div class="form-group">
-        <label for="email">Email</label>
-        <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            class="input-surface rounded-xl px-3 py-2 w-full" 
-            value="{{user.email}}"
-        >
-        {{!-- Pindahkan 'small' ke sini agar bisa di-style juga --}}
-        <small>Mengganti email mungkin memerlukan verifikasi ulang.</small>
-        </div>
-        
-        {{!-- Ganti div dengan class 'form-actions' --}}
-        <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio" maxlength="150" rows="3">{{user.bio}}</textarea>
+        <small>Maksimal 150 karakter</small>
+      </div>
+
+      <div class="form-actions">
         <a href="/api/v1/auth/profile" class="btn btn-secondary">Batal</a>
-        </div>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      </div>
     </form>
-</div>
+
+  </div>
+
+</body>
+</html>
