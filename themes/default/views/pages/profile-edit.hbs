@@ -1,58 +1,74 @@
+{{!< main }}
+
 {{!-- File: themes/default/views/pages/profile-edit.hbs --}}
+<div class="profile-edit-page">
 
-{{!-- Kita bungkus dengan class khusus agar mudah di-style --}}
-<div class="card profile-edit-card">
-    
-    {{!-- Ganti h2 dengan class agar rapi --}}
-    <h2 class="card-title">Edit Profil</h2>
+  {{!-- HEADER BIRU --}}
+  <div class="profile-edit-header">
+    <a href="/api/v1/auth/profile" class="back-button">
+      <span class="material-icons">arrow_back</span>
+    </a>
+    <h2>Edit Profil</h2>
+  </div>
 
-    {{!-- 
-        Form ini akan mengirim (POST) ke endpoint /api/v1/auth/profile
-        yang ditangani oleh method 'updateProfileForm' di AuthController
-    --}}
+  {{!-- AVATAR DI TENGAH --}}
+  <div class="avatar-section">
+    <div class="avatar-wrapper">
+      {{#if user.photoPath}}
+        <img src="{{user.photoPath}}" alt="Foto Profil" class="avatar-img" />
+      {{else}}
+        <div class="avatar-placeholder">{{user.initials}}</div>
+      {{/if}}
+    </div>
+    <button id="btn-upload-pic" class="change-photo-btn">Ganti Foto Profil</button>
+    <input type="file" id="file-upload-input" accept="image/*" hidden>
+  </div>
+
+  {{!-- FORM EDIT --}}
+  <div class="card profile-edit-card">
     <form action="/api/v1/auth/profile" method="POST">
-        
-        <div class="form-group">
+
+      <div class="form-group">
         <label for="firstName">Nama Depan</label>
         <input 
-            type="text" 
-            id="firstName" 
-            name="firstName" 
-            class="input-surface rounded-xl px-3 py-2 w-full" 
-            value="{{user.firstName}}" 
-            required
+          type="text" 
+          id="firstName" 
+          name="firstName" 
+          class="input-surface rounded-xl px-3 py-2 w-full" 
+          value="{{user.firstName}}" 
+          required
         >
-        </div>
+      </div>
 
-        <div class="form-group">
+      <div class="form-group">
         <label for="lastName">Nama Belakang</label>
         <input 
-            type="text" 
-            id="lastName" 
-            name="lastName" 
-            class="input-surface rounded-xl px-3 py-2 w-full" 
-            value="{{user.lastName}}" 
-            required
+          type="text" 
+          id="lastName" 
+          name="lastName" 
+          class="input-surface rounded-xl px-3 py-2 w-full" 
+          value="{{user.lastName}}" 
+          required
         >
-        </div>
+      </div>
 
-        <div class="form-group">
-        <label for="email">Email</label>
-        <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            class="input-surface rounded-xl px-3 py-2 w-full" 
-            value="{{user.email}}"
-        >
-        {{!-- Pindahkan 'small' ke sini agar bisa di-style juga --}}
-        <small>Mengganti email mungkin memerlukan verifikasi ulang.</small>
-        </div>
-        
-        {{!-- Ganti div dengan class 'form-actions' --}}
-        <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea 
+          id="bio" 
+          name="bio" 
+          rows="3" 
+          maxlength="150"
+          class="input-surface rounded-xl px-3 py-2 w-full"
+        >{{user.bio}}</textarea>
+        <small>Maksimal 150 karakter</small>
+      </div>
+
+      <div class="form-actions">
         <a href="/api/v1/auth/profile" class="btn btn-secondary">Batal</a>
-        </div>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      </div>
+
     </form>
+  </div>
 </div>
