@@ -14,18 +14,19 @@
   {{!-- Card Profil Utama --}}
   <div class="profile-card card">
 
-    {{!-- Foto Profil --}}
-    <div class="profile-avatar-container">
-      <img 
-        src="{{#if profileUser.photo}}{{profileUser.photo.path}}{{else}}https://ui-avatars.com/api/?name={{profileUser.firstName}}+{{profileUser.lastName}}&background=ffc01e&color=ffffff{{/if}}" 
-        alt="Foto Profil" 
-        class="profile-avatar"
-      >
-
-      {{!-- Tombol Ganti Foto Profil (hanya muncul kalau user pemilik profil) --}}
+    {{!-- Foto Profil (Unified avatar style) --}}
+    <div class="profile-avatar-container" style="display:flex; align-items:center; justify-content:center;">
+      <div class="avatar avatar-lg {{userGradient profileUser.id}}" style="width:120px; height:120px; font-size:40px; position:relative; overflow:hidden;">
+        {{#if profileUser.photo}}
+          <img src="{{profileUser.photo.path}}" alt="{{profileUser.firstName}} {{profileUser.lastName}}" class="avatar-img" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />
+        {{else}}
+          {{userInitials profileUser.firstName profileUser.lastName}}
+        {{/if}}
+      </div>
+      {{!-- Tombol Ganti Foto Profil (hanya untuk pemilik) --}}
       {{#if user}}
         {{#if (eq profileUser.id user.id)}}
-          <button class="btn-upload-pic" id="btn-upload-pic" aria-label="Ganti foto profil">
+          <button class="btn-upload-pic" id="btn-upload-pic" aria-label="Ganti foto profil" style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.55); color:#fff; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; transition:background .2s;">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
               <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
               <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 
@@ -62,21 +63,21 @@
       </div>
     </div>
 
-    {{!-- Tombol Follow / Edit Profil --}}
+    {{!-- Tombol Follow / Edit Profil (Modern) --}}
     {{#if user}}
-      <div class="profile-actions modern">
+      <div class="profile-actions modern" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:22px;">
         {{#unless (eq profileUser.id user.id)}}
           {{#if isFollowing}}
-            <form action="/api/v1/users/{{profileUser.id}}/unfollow" method="POST">
-              <button type="submit" class="btn btn-secondary">Unfollow</button>
+            <form action="/api/v1/users/{{profileUser.id}}/unfollow" method="POST" style="margin:0;">
+              <button type="submit" class="btn-unfollow-modern" aria-label="Unfollow {{profileUser.firstName}}"><i class="fas fa-user-minus"></i><span>Unfollow</span></button>
             </form>
           {{else}}
-            <form action="/api/v1/users/{{profileUser.id}}/follow" method="POST">
-              <button type="submit" class="btn btn-primary">Follow</button>
+            <form action="/api/v1/users/{{profileUser.id}}/follow" method="POST" style="margin:0;">
+              <button type="submit" class="btn-follow-modern" aria-label="Follow {{profileUser.firstName}}">+ Follow</button>
             </form>
           {{/if}}
         {{else}}
-          <a href="/api/v1/auth/profile/edit" class="btn btn-secondary">Edit Profil</a>
+          <a href="/api/v1/auth/profile/edit" class="btn-edit-profile-modern" aria-label="Edit Profil"><i class="fas fa-user-pen mr-2"></i><span>Edit Profil</span></a>
         {{/unless}}
       </div>
     {{/if}}

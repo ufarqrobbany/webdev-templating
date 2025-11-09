@@ -121,6 +121,32 @@ function hbsFormatDateHelper(date: Date | string): string {
 }
 
 /**
+ * Generate a deterministic gradient class suffix from a user id or string.
+ * We hash the string into an index 0..(gradients.length-1).
+ * Usage in HBS: {{userGradient user.id}} -> returns something like 'avatar-gradient-3'
+ */
+function hbsUserGradientHelper(value: any): string {
+  // Provide more uniqueness: simple modulo across expanded gradient set.
+  if (value === null || value === undefined) return 'avatar-gradient-0';
+  const str = String(value);
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0; // unsigned 32-bit
+  }
+  const bucketCount = 24; // we define 24 gradient variants in CSS (0..23)
+  const idx = hash % bucketCount;
+  return `avatar-gradient-${idx}`;
+}
+
+function hbsUserInitialsHelper(first?: string, last?: string): string {
+  const f = (first || '').trim();
+  const l = (last || '').trim();
+  const fi = f ? f[0].toUpperCase() : '';
+  const li = l ? l[0].toUpperCase() : '';
+  const combined = `${fi}${li}`.trim();
+  return combined || '?';
+}
+/**
  * Fungsi ini akan dipanggil di main.ts untuk mendaftarkan SEMUA helper.
  */
 export function registerHbsHelpers(): void {
@@ -132,9 +158,11 @@ export function registerHbsHelpers(): void {
     hbs.registerHelper('contains', hbsContainsHelper);
     hbs.registerHelper('slice', hbsSliceHelper);
     hbs.registerHelper('formatDate', hbsFormatDateHelper);
+  hbs.registerHelper('userGradient', hbsUserGradientHelper);
+  hbs.registerHelper('userInitials', hbsUserInitialsHelper);
 
     console.log(
-      'HBS helpers (block, contentFor, eq, contains, slice, formatDate) registered successfully.',
+  'HBS helpers (block, contentFor, eq, and, contains, slice, formatDate, userGradient, userInitials) registered successfully.',
     );
   } catch (error) {
     console.error('Failed to register HBS helpers:', error);

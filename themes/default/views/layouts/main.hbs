@@ -56,6 +56,39 @@
   .avatar-sm { width: 32px; height: 32px; font-size: 14px; }
   .avatar-md { width: 40px; height: 40px; font-size: 16px; }
   .avatar-lg { width: 48px; height: 48px; font-size: 18px; }
+  /* Avatar gradient variants (indexed by userGradient helper) */
+  /* Existing gradients (0..7) */
+  .avatar-gradient-0 { background-image: linear-gradient(135deg,#3b82f6 0%,#6366f1 100%); }
+  .avatar-gradient-1 { background-image: linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%); }
+  .avatar-gradient-2 { background-image: linear-gradient(135deg,#ec4899 0%,#f43f5e 100%); }
+  .avatar-gradient-3 { background-image: linear-gradient(135deg,#f59e0b 0%,#f97316 100%); }
+  .avatar-gradient-4 { background-image: linear-gradient(135deg,#10b981 0%,#0d9488 100%); }
+  .avatar-gradient-5 { background-image: linear-gradient(135deg,#14b8a6 0%,#06b6d4 100%); }
+  .avatar-gradient-6 { background-image: linear-gradient(135deg,#84cc16 0%,#65a30d 100%); }
+  .avatar-gradient-7 { background-image: linear-gradient(135deg,#a855f7 0%,#7e22ce 100%); }
+  /* New deeper blue variants (8..11) to increase blue presence */
+  .avatar-gradient-8 { background-image: linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%); }
+  .avatar-gradient-9 { background-image: linear-gradient(135deg,#0a66c2 0%,#004182 100%); }
+  .avatar-gradient-10 { background-image: linear-gradient(135deg,#0b5ed7 0%,#0a3e8c 100%); }
+  .avatar-gradient-11 { background-image: linear-gradient(135deg,#1d4ed8 0%,#1e3a8a 100%); }
+  /* Extended set (12..23) for more unique per-user colors, still blue-heavy */
+  .avatar-gradient-12 { background-image: linear-gradient(135deg,#1e3a8a 0%,#312e81 100%); }
+  .avatar-gradient-13 { background-image: linear-gradient(135deg,#1e40af 0%,#4338ca 100%); }
+  .avatar-gradient-14 { background-image: linear-gradient(135deg,#0f766e 0%,#0d5d5a 100%); }
+  .avatar-gradient-15 { background-image: linear-gradient(135deg,#0e7490 0%,#155e75 100%); }
+  .avatar-gradient-16 { background-image: linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%); }
+  .avatar-gradient-17 { background-image: linear-gradient(135deg,#1d4ed8 0%,#3730a3 100%); }
+  .avatar-gradient-18 { background-image: linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%); }
+  .avatar-gradient-19 { background-image: linear-gradient(135deg,#172554 0%,#1e3a8a 100%); }
+  .avatar-gradient-20 { background-image: linear-gradient(135deg,#0a4c94 0%,#062b59 100%); }
+  .avatar-gradient-21 { background-image: linear-gradient(135deg,#0a3e8c 0%,#082659 100%); }
+  .avatar-gradient-22 { background-image: linear-gradient(135deg,#004182 0%,#001e42 100%); }
+  .avatar-gradient-23 { background-image: linear-gradient(135deg,#08397d 0%,#04234d 100%); }
+  /* New deeper blue variants (8..11) to increase blue presence */
+  .avatar-gradient-8 { background-image: linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%); }
+  .avatar-gradient-9 { background-image: linear-gradient(135deg,#0a66c2 0%,#004182 100%); }
+  .avatar-gradient-10 { background-image: linear-gradient(135deg,#0b5ed7 0%,#0a3e8c 100%); }
+  .avatar-gradient-11 { background-image: linear-gradient(135deg,#1d4ed8 0%,#1e3a8a 100%); }
       /* Distinct Follow button (outlined accent) vs gradient-accent Anda badge */
       .btn-follow { 
         background: rgba(255,255,255,0.85); 
@@ -190,9 +223,12 @@
       .media-preview i { font-size: 12px; color: #334155; }
       .dark .media-preview { background: rgba(20,30,50,0.6); border-color: rgba(255,255,255,0.12); box-shadow: 0 4px 12px rgba(0,0,0,.34); }
       .dark .media-preview i { color: #cbd5e1; }
-        /* Logout link hover: red text and subtle red-tinted hover */
-        .logout-link:hover { color: #dc2626; background-color: rgba(220,38,38,0.06) !important; }
-        .dark .logout-link:hover { color: #f87171; background-color: rgba(248,113,113,0.10) !important; }
+    /* Logout link hover: ensure BOTH icon & text turn red; dark mode softer */
+    .logout-link { transition: color .2s ease, background-color .2s ease; }
+    .logout-link:hover { color: #dc2626 !important; background-color: rgba(220,38,38,0.06) !important; }
+    .logout-link:hover i { color: #dc2626 !important; }
+    .dark .logout-link:hover { color: #f87171 !important; background-color: rgba(248,113,113,0.10) !important; }
+    .dark .logout-link:hover i { color: #f87171 !important; }
       /* Clear media button */
       .media-clear-btn {
         background: rgba(0,0,0,0.04);
