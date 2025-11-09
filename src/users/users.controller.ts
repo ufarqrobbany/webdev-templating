@@ -145,7 +145,7 @@ export class UsersController {
   }
 
   @Post(':id/follow')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Roles(RoleEnum.admin, RoleEnum.user)
   @ApiParam({ name: 'id', type: String, required: true })
   async follow(
@@ -154,11 +154,11 @@ export class UsersController {
     @Res() res: Response,
   ): Promise<void> {
     await this.usersService.follow(req.user.id, id);
-    return res.redirect('/');
+    return res.redirect(`/users/${id}/profile`);
   }
 
   @Post(':id/unfollow')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Roles(RoleEnum.admin, RoleEnum.user) // <-- PERBOLEHKAN USER
   @ApiParam({ name: 'id', type: String, required: true })
   async unfollow(
@@ -167,6 +167,6 @@ export class UsersController {
     @Res() res: Response,
   ): Promise<void> {
     await this.usersService.unfollow(req.user.id, id);
-    return res.redirect('/');
+    return res.redirect(`/users/${id}/profile`);
   }
 }
