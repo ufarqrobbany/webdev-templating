@@ -520,6 +520,16 @@ textarea.form-control {
   border-bottom: 1px solid var(--border-color);
 }
 
+.section-title-modern {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 10px; /* Beri jarak dari card profil */
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  /* border-bottom: 1px solid var(--border-color); */
+}
+
+
 
 /* --- STYLE UNTUK HALAMAN EDIT PROFIL --- */
 .profile-edit-page {
