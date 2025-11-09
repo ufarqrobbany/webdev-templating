@@ -14,6 +14,9 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+// (Optional) Keep import available if we later decorate endpoints
+// import { UseFilters } from '@nestjs/common';
+// import { AuthUnprocessableFilter } from './filters/auth-unprocessable.filter';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
@@ -52,21 +55,55 @@ export class AuthController {
     @Body() loginDto: AuthEmailLoginDto,
     @Res() res: Response,
   ): Promise<void> {
-    const loginResponse = await this.service.validateLogin(loginDto);
+    try {
+      const loginResponse = await this.service.validateLogin(loginDto);
 
-    res.cookie('accessToken', loginResponse.token, {
-      httpOnly: true,
-      secure: false, // Ganti true jika HTTPS
-      path: '/',
-      expires: new Date(loginResponse.tokenExpires),
-    });
-    res.cookie('refreshToken', loginResponse.refreshToken, {
-      httpOnly: true,
-      secure: false, // Ganti true jika HTTPS
-      path: '/',
-    });
+      res.cookie('accessToken', loginResponse.token, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        expires: new Date(loginResponse.tokenExpires),
+      });
+      res.cookie('refreshToken', loginResponse.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+      });
 
-    return res.redirect('/');
+      return res.redirect('/');
+    } catch (err: any) {
+      // Tangani kegagalan login: tetap di halaman login
+      let userFriendly = 'Login gagal. Periksa email & password.';
+      const resp = err?.response;
+      const errors = resp?.errors;
+      if (errors) {
+        if (errors.email === 'notFound') {
+          userFriendly = 'Email tidak terdaftar.';
+        } else if (
+          typeof errors.email === 'string' &&
+          errors.email.startsWith('needLoginViaProvider:')
+        ) {
+          const provider = errors.email.split(':')[1];
+          userFriendly = `Silakan login via penyedia: ${provider}.`;
+        } else if (errors.password === 'incorrectPassword') {
+          userFriendly = 'Password salah.';
+        } else if (
+          typeof errors.password === 'string' &&
+          /longer than or equal to 6/i.test(errors.password)
+        ) {
+          userFriendly = 'Password harus minimal 6 karakter.';
+        }
+      }
+      return res.status(HttpStatus.UNAUTHORIZED).render(
+        'default/views/pages/login',
+        {
+          pageTitle: 'Login',
+          errorMessage: userFriendly,
+          email: loginDto.email,
+          layout: 'default/views/layouts/auth',
+        },
+      );
+    }
   }
 
   @Post('email/register')
@@ -75,26 +112,49 @@ export class AuthController {
     @Body() createUserDto: AuthRegisterLoginDto,
     @Res() res: Response,
   ): Promise<void> {
-    await this.service.register(createUserDto);
+    try {
+      await this.service.register(createUserDto);
+      const loginResponse = await this.service.validateLogin({
+        email: createUserDto.email,
+        password: createUserDto.password,
+      });
 
-    const loginResponse = await this.service.validateLogin({
-      email: createUserDto.email,
-      password: createUserDto.password,
-    });
+      res.cookie('accessToken', loginResponse.token, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        expires: new Date(loginResponse.tokenExpires),
+      });
+      res.cookie('refreshToken', loginResponse.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+      });
 
-    res.cookie('accessToken', loginResponse.token, {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      expires: new Date(loginResponse.tokenExpires),
-    });
-    res.cookie('refreshToken', loginResponse.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-    });
-
-    return res.redirect('/');
+      return res.redirect('/');
+    } catch (err: any) {
+      // Map beberapa error umum jadi pesan lebih ramah
+      let userFriendly = 'Registrasi gagal. Periksa data yang dimasukkan.';
+      const resp = err?.response;
+      const errors = resp?.errors;
+      if (errors) {
+        // Contoh: validasi email sudah digunakan, dll. (sesuaikan bila ada kode error spesifik)
+        if (errors.email === 'emailTaken') {
+          userFriendly = 'Email sudah terdaftar.';
+        }
+      }
+      return res.status(HttpStatus.BAD_REQUEST).render(
+        'default/views/pages/register',
+        {
+          pageTitle: 'Register',
+          errorMessage: userFriendly,
+          firstName: createUserDto.firstName,
+          lastName: createUserDto.lastName,
+          email: createUserDto.email,
+          layout: 'default/views/layouts/auth',
+        },
+      );
+    }
   }
 
   @Post('email/confirm')

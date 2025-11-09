@@ -25,7 +25,7 @@
   <div>
     <label for="password" class="block text-sm font-medium text-gray-800 dark:text-gray-100">Password</label>
     <div class="relative mt-2 mb-4">
-      <input type="password" id="password" name="password" required
+      <input type="password" id="password" name="password" required minlength="6"
         class="block w-full rounded-2xl border-0 input-surface bg-input focus:bg-input-focus text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-4 pr-12 py-3 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:ring-accent/50 transition-all" />
       <button type="button" aria-label="Tampilkan/sembunyikan password" data-toggle-password="#password"
         class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition">
@@ -39,19 +39,53 @@
 <script>
   (function() {
     var btn = document.querySelector('[data-toggle-password]');
-    if (!btn) return;
-    var selector = btn.getAttribute('data-toggle-password');
-    var input = document.querySelector(selector);
-    if (!input) return;
-    btn.addEventListener('click', function() {
-      var isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      var icon = btn.querySelector('i');
-      if (icon) {
-        icon.classList.toggle('fa-eye');
-        icon.classList.toggle('fa-eye-slash');
+    var form = document.querySelector('form[action="/api/v1/auth/email/register"]');
+    var passwordInput = document.getElementById('password');
+    var errorContainer = document.querySelector('[data-client-error]');
+
+    // Inject error container if not present
+    if (!errorContainer) {
+      errorContainer = document.createElement('div');
+      errorContainer.setAttribute('data-client-error','');
+      errorContainer.className = 'mb-4 hidden rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-red-700 dark:text-red-200 text-sm';
+      form.parentNode.insertBefore(errorContainer, form);
+    }
+
+    function showError(msg) {
+      errorContainer.textContent = msg;
+      errorContainer.classList.remove('hidden');
+    }
+    function clearError() {
+      errorContainer.classList.add('hidden');
+      errorContainer.textContent = '';
+    }
+
+    if (btn) {
+      var selector = btn.getAttribute('data-toggle-password');
+      var input = document.querySelector(selector);
+      if (input) {
+        btn.addEventListener('click', function() {
+          var isHidden = input.type === 'password';
+          input.type = isHidden ? 'text' : 'password';
+          var icon = btn.querySelector('i');
+          if (icon) {
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+          }
+        });
       }
-    });
+    }
+
+    if (form && passwordInput) {
+      form.addEventListener('submit', function(e) {
+        clearError();
+        if (passwordInput.value.trim().length < 6) {
+          e.preventDefault();
+          showError('Password harus minimal 6 karakter.');
+          passwordInput.focus();
+        }
+      });
+    }
   })();
 </script>
 
