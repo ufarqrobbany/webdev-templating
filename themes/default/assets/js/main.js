@@ -230,4 +230,90 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
   }
+
+  // ------------------------------------------------------------
+  // Mobile search dropdown (appears under navbar)
+  // ------------------------------------------------------------
+  const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+  const mobileSearchPanel = document.getElementById('mobileSearchPanel');
+  const mobileSearchClose = document.getElementById('mobileSearchClose');
+  let mobileSearchOpen = false;
+
+  function openMobileSearch() {
+    if (!mobileSearchPanel) return;
+    mobileSearchPanel.style.opacity = '1';
+    mobileSearchPanel.style.transform = 'scaleY(1)';
+    mobileSearchPanel.style.pointerEvents = 'auto';
+    mobileSearchOpen = true;
+    setTimeout(() => {
+      const input = mobileSearchPanel.querySelector('input[type="search"]');
+      if (input) input.focus();
+    }, 75);
+    document.addEventListener('click', handleOutsideClickMobileSearch);
+  }
+
+  function closeMobileSearch() {
+    if (!mobileSearchPanel) return;
+    mobileSearchPanel.style.opacity = '0';
+    mobileSearchPanel.style.transform = 'scaleY(0)';
+    mobileSearchPanel.style.pointerEvents = 'none';
+    mobileSearchOpen = false;
+    document.removeEventListener('click', handleOutsideClickMobileSearch);
+  }
+
+  function handleOutsideClickMobileSearch(e) {
+    if (!mobileSearchPanel || !mobileSearchBtn) return;
+    // Allow clicks on the button or any of its child elements (icon SVG/i)
+    if (mobileSearchBtn.contains(e.target)) return;
+    if (!mobileSearchPanel.contains(e.target)) {
+      closeMobileSearch();
+    }
+  }
+
+  if (mobileSearchBtn && mobileSearchPanel) {
+    mobileSearchBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (mobileSearchOpen) {
+        closeMobileSearch();
+      } else {
+        openMobileSearch();
+      }
+      // Sync icon colors in case Tailwind dark class toggled after initial render
+      applySearchIconThemeColors();
+    });
+  }
+  if (mobileSearchClose) {
+    mobileSearchClose.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileSearch();
+      // Refocus button to allow immediate re-open on next click
+      if (mobileSearchBtn) mobileSearchBtn.focus();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileSearchOpen) {
+      closeMobileSearch();
+    }
+  });
+
+  // ------------------------------------------------------------
+  // Ensure search icons adapt to theme (fallback if Tailwind purge)
+  // ------------------------------------------------------------
+  function applySearchIconThemeColors() {
+    const isDark = document.body.classList.contains('dark');
+    const searchIcons = document.querySelectorAll('#mobileSearchBtn i.fas.fa-search, #mobileSearchPanel i.fas.fa-search, header .main-nav form i.fas.fa-search');
+    searchIcons.forEach(ic => {
+      ic.style.color = isDark ? '#ffffff' : '#1e293b';
+    });
+    const closeIcon = document.querySelector('#mobileSearchClose i.fas.fa-times');
+    if (closeIcon) closeIcon.style.color = isDark ? '#ffffff' : '#1e293b';
+  }
+  // Initial invocation
+  applySearchIconThemeColors();
+  // Also tie into theme toggle
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      setTimeout(applySearchIconThemeColors, 60);
+    });
+  }
 });

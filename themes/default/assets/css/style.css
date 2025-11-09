@@ -57,14 +57,23 @@ main.container {
 /* 3. PARTIALS (HEADER & FOOTER)
 /* =================================================================== */
 .main-header {
-  background-color: var(--header-bg);
+  /* background-color: var(--header-bg); */
   padding: 10px 0;
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+  /* border-bottom: 1px solid var(--border-color); */
+  /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
+  /* margin-bottom: 20px; */
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.dark .search-icon {
+  color: white;
+}
+
+.search-icon {
+  color: black;
+  opacity: 0.6;
 }
 
 .main-nav {
@@ -207,9 +216,9 @@ textarea.form-control {
   margin: 0;
 }
 .post-item .post-meta {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-secondary-color);
-  margin-top: 2px;
+  margin-top: 4px;
   margin-bottom: 10px;
 }
 .post-item .post-content {

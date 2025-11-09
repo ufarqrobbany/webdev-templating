@@ -8,13 +8,151 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     {{!-- Panggil CSS kita --}}
     <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: 'class' };
+    </script>
+    <style>
+      :root {
+        --gradient-hero-light: linear-gradient(135deg, hsl(220 35% 40%) 0%, hsl(220 30% 34%) 50%, hsl(230 28% 30%) 100%);
+        --gradient-hero-dark: linear-gradient(135deg, hsl(220 70% 12%) 0%, hsl(220 65% 15%) 50%, hsl(230 60% 18%) 100%);
+        --gradient-glass: linear-gradient(135deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.05) 100%);
+        --gradient-accent: linear-gradient(135deg, hsl(45 95% 50%) 0%, hsl(45 95% 60%) 100%);
+      }
+      .glass-surface { background: var(--gradient-glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+      .btn-accent { background-image: var(--gradient-accent); color:#fff; box-shadow:0 6px 16px rgba(0,0,0,.08); transition:.25s; }
+      .btn-accent:hover { filter:brightness(1.02); box-shadow:0 6px 18px rgba(0,0,0,.12); }
+      {{!-- .home-wrapper { background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(11, 66, 245, 0.05) 100%), #ffffff; }
+      .dark .home-wrapper { background: var(--gradient-hero-dark); } --}}
+
+      body { background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(11, 66, 245, 0.05) 100%), #ffffff; }
+      body.dark { background: var(--gradient-hero-dark); }
+  /* Input styling (synced rules) */
+  /* Dark mode: default slightly darker, focus deeper blue */
+  .dark .input-surface { background-color: rgba(15, 30, 55, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease; color: #e5e7eb; }
+  .dark input.input-surface:focus,
+  .dark textarea.input-surface:focus,
+  .dark select.input-surface:focus { background-color: rgba(12, 24, 44, 0.95); box-shadow: 0 0 0 2px hsla(45,95%,55%,0.55); outline: none; }
+  /* Light mode: default a bit brighter, focus same color */
+  .input-surface { background-color: #f4f5f7; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease; color: #0f172a; }
+  input.input-surface:focus,
+  textarea.input-surface:focus,
+  select.input-surface:focus { background-color: #f4f5f7; box-shadow: 0 0 0 2px hsla(45,95%,55%,0.65); outline: none; }
+  /* Legacy bg-input aliases */
+  .dark .bg-input { background-color: rgba(15, 30, 55, 0.85); }
+  .dark .bg-input-focus { background-color: rgba(12, 24, 44, 0.95); }
+  .bg-input { background-color: #f4f5f7; }
+  .bg-input-focus { background-color: #f4f5f7; }
+  /* Shadow tokens (reuse from auth) */
+  .shadow-glass { box-shadow: 0 8px 32px rgba(31,79,135,0.082); }
+  .shadow-card { box-shadow: 0 20px 40px hsla(220,70%,30%,0.062); }
+  .shadow-glow { box-shadow: 0 0 30px hsla(0,0%,0%,0.034); }
+  .shadow-combo { box-shadow: 0 8px 32px rgba(31,79,135,0.082), 0 20px 40px hsla(220,70%,30%,0.062), 0 0 30px hsla(0,0%,0%,0.034); }
+  /* Card styling: light = solid white; dark = glass; no border */
+  .card { background: #ffffff; border-radius: 1rem; padding: 1rem; border: none; box-shadow: 0 8px 32px rgba(31,79,135,0.04), 0 6px 18px rgba(0,0,0,.05); }
+  .dark .card { background: var(--gradient-glass); border: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(31,79,135,0.082), 0 20px 40px hsla(221,61%,12%,0.075), 0 0 30px hsla(0,0%,0%,0.062); }
+  /* Avatar utilities (reusable) */
+  .avatar { display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; border-radius:9999px; background-image: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); box-shadow: 0 4px 12px rgba(0,0,0,.10); user-select:none; }
+  .avatar-sm { width: 32px; height: 32px; font-size: 14px; }
+  .avatar-md { width: 40px; height: 40px; font-size: 16px; }
+  .avatar-lg { width: 48px; height: 48px; font-size: 18px; }
+      /* Distinct Follow button (outlined accent) vs gradient-accent Anda badge */
+      .btn-follow { 
+        background: rgba(255,255,255,0.85); 
+        color: hsl(45, 87%, 40%); 
+        border: 1px solid hsl(45 95% 55%); 
+        padding: 6px 14px; 
+        font-size: 12px; 
+        font-weight: 600; 
+        line-height: 1; 
+        border-radius: 9999px; 
+        cursor: pointer; 
+        box-shadow: 0 2px 6px rgba(0,0,0,.06); 
+        transition: background-color .25s, box-shadow .25s, color .25s; 
+      }
+      .btn-follow:hover { 
+        background: var(--gradient-accent); 
+        color: #1f2937; 
+        box-shadow: 0 6px 18px rgba(0,0,0,.12); 
+      }
+      .dark .btn-follow { 
+        background: rgba(255,255,255,0.10); 
+        color: hsl(45 95% 70%); 
+        border-color: hsl(45 95% 50%); 
+        box-shadow: 0 2px 8px rgba(0,0,0,.30); 
+      }
+      .dark .btn-follow:hover { 
+        background: var(--gradient-accent); 
+        color: #1f2937; 
+        box-shadow: 0 8px 22px rgba(0,0,0,.40); 
+      }
+      /* Like button / heart styling */
+      .btn-like, .btn-unlike { 
+        background: none; 
+        border: none; 
+        padding: 4px 10px; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 6px; 
+        cursor: pointer; 
+        font-size: 13px; 
+        font-weight: 600; 
+        color: #374151; 
+        border-radius: 9999px; 
+        transition: background-color .25s, box-shadow .25s; 
+      }
+      .dark .btn-like, .dark .btn-unlike { color: #e5e7eb; }
+      .btn-like:hover, .btn-unlike:hover { background-color: rgba(0,0,0,0.05); }
+      .dark .btn-like:hover, .dark .btn-unlike:hover { background-color: rgba(255,255,255,0.08); }
+      .heart-icon { 
+        width: 20px; 
+        height: 20px; 
+        display: inline-flex; 
+        align-items: center; 
+        justify-content: center; 
+        position: relative; 
+      }
+      .heart-icon svg { 
+        width: 20px; 
+        height: 20px; 
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); 
+      }
+      .heart-gradient-fill { 
+        fill: url(#heartGradient); 
+        stroke: none; 
+      }
+      .heart-outline { 
+        stroke: url(#heartGradient); 
+        stroke-width: 2; 
+        fill: none; 
+      }
+      .like-count { 
+        font-weight: 600; 
+        background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); 
+        -webkit-background-clip: text; 
+        color: transparent; 
+      }
+      .btn-like:hover .like-count, .btn-unlike:hover .like-count { filter: brightness(1.1); }
+      /* Profile dropdown enhanced blur & theme gradients */
+      .profile-dropdown { 
+        background: linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.65) 100%);
+        backdrop-filter: blur(18px) saturate(160%);
+        -webkit-backdrop-filter: blur(18px) saturate(160%);
+      }
+      .dark .profile-dropdown { 
+        background: linear-gradient(135deg, rgba(40,55,85,0.62) 0%, rgba(30,45,70,0.58) 100%);
+        backdrop-filter: blur(20px) saturate(170%);
+        -webkit-backdrop-filter: blur(20px) saturate(170%);
+        box-shadow: 0 12px 42px rgba(9, 14, 28, 0.055), 0 6px 22px rgba(0, 0, 0, 0.178);
+      }
+    </style>
   </head>
   <body>
     {{!-- Panggil Header --}}
     {{> _header}}
 
     {{!-- Konten Halaman (dibungkus container) --}}
-    <main class="container">
+    <main class="home-wrapper min-h-screen py-8">
       {{{body}}}
     </main>
 

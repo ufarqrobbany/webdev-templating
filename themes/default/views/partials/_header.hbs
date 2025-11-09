@@ -1,26 +1,34 @@
-<header class="main-header">
-  <nav class="main-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem;">
-    <a href="/" class="logo" style="text-decoration: none; color: inherit; font-weight: bold;">SosmedKita</a>
+<header class="main-header p-0 md:p-2">
+  <nav class="main-nav glass-surface backdrop-blur-xl rounded-none md:rounded-2xl p-0 px-5 py-2.5 mb-0 shadow-combo flex justify-between items-center relative">
+    <a href="/" class="logo flex items-center" style="text-decoration: none;">
+      <img src="/static/images/logo-light.png" alt="SosmedKita" class="h-8 w-auto" data-logo data-logo-dark="/static/images/logo.png" data-logo-light="/static/images/logo-light.png" />
+    </a>
 
     {{!-- Search Form (New) --}}
-    <form action="/search" method="GET" style="flex-grow: 1; max-width: 400px; margin: 0 1rem;">
-      <input type="search" name="q" placeholder="Cari Postingan atau Pengguna..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px;">
+    {{!-- Desktop search (hidden on mobile) --}}
+    <form action="/search" method="GET" class="hidden md:flex items-center flex-grow max-w-[420px] mx-3 md:mx-5 gap-2">
+      <i class="fas fa-search text-gray-800 dark:text-white mr-2"></i>
+      <input type="search" name="q" placeholder="Cari Postingan atau Pengguna..." class="input-surface w-full rounded-xl px-3 py-2">
     </form>
 
      <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+      {{!-- Mobile search icon (md:hidden) --}}
+      <button id="mobileSearchBtn" class="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-full input-surface">
+        <i class="fas fa-search text-gray-800 dark:text-white"></i>
+      </button>
       {{#if user}}
       {{!-- Profile Menu --}}
-        <div class="profile-menu-container" style="position: relative;">
+  <div class="profile-menu-container">
           <button id="profileButton" class="profile-button" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <div style="line-height: -1; width: 40px; height: 40px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
+            <div class="avatar avatar-md" style="transition: box-shadow .25s, transform .25s;">
               {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
             </div>
           </button>
           {{!-- Dropdown Menu --}}
-          <div id="profileDropdown" class="profile-dropdown" style="display: none; position: absolute; right: 0; top: 120%; background: white; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 200px; z-index: 1000;">
+          <div id="profileDropdown" class="profile-dropdown shadow-combo" style="display: none; position: absolute; right: 10px; top: calc(100% + 10px); border-radius: 16px; min-width: 240px; z-index: 1000; overflow: hidden;">
             {{!-- User Info --}}
-            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
-              <div style="flex-shrink: 0; width: 40px; height: 40px; overflow: hidden; background-color: #007bff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
+            <div style="padding: 14px 18px; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; align-items: center; gap: 12px;" class="dark:border-b-[rgba(255,255,255,0.08)]">
+              <div class="avatar avatar-md" style="flex-shrink:0; box-shadow: 0 4px 14px rgba(0,0,0,.12);">
                 {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
               </div>
               <div>
@@ -28,10 +36,10 @@
               </div>
             </div>
             {{!-- Menu Items --}}
-            <a href="/users/{{user.id}}/profile" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: inherit; text-decoration: none; transition: background-color 0.2s;">
+            <a href="/users/{{user.id}}/profile" style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; color: inherit; text-decoration: none; transition: background-color 0.2s;" class="hover:bg-black/5 dark:hover:bg-white/5">
               <i class="fas fa-user" style="width: 20px;"></i> Profil
             </a>
-            <a href="/logout" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: inherit; text-decoration: none; border-top: 1px solid var(--border-color); transition: background-color 0.2s;">
+            <a href="/logout" style="display: flex; align-items: center; gap: 10px; padding: 12px 18px; color: inherit; text-decoration: none; border-top: 1px solid rgba(0,0,0,.06); transition: background-color 0.2s;" class="dark:border-t-[rgba(255,255,255,0.08)] hover:bg-black/5 dark:hover:bg-white/5">
               <i class="fas fa-sign-out-alt" style="width: 20px;"></i> Logout
             </a>
           </div>
@@ -47,4 +55,16 @@
       </button>
     </div>
   </nav>
+  {{!-- Mobile search panel (dropdown under navbar) --}}
+  <div id="mobileSearchPanel" class="absolute left-0 right-0 top-full mt-2 mx-3 md:hidden origin-top scale-y-0 opacity-0 pointer-events-none transition-all duration-200 z-40">
+    <div class="glass-surface backdrop-blur-xl rounded-2xl p-3 shadow-combo">
+      <form action="/search" method="GET" class="flex items-center gap-2">
+        <i class="fas fa-search text-gray-800 dark:text-white mr-2 ml-1"></i>
+        <input type="search" name="q" placeholder="Cari Postingan atau Pengguna..." class="input-surface flex-1 rounded-xl px-3 py-2" />
+        <button type="button" id="mobileSearchClose" class="h-10 w-10 rounded-xl input-surface inline-flex items-center justify-center">
+          <i class="fas fa-times text-gray-800 dark:text-white"></i>
+        </button>
+      </form>
+    </div>
+  </div>
 </header>

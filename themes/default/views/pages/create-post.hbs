@@ -15,14 +15,14 @@
         <div class="form-group">
         <label for="content">Apa yang kamu pikirkan?</label>
         {{!-- 2. Hapus 'required' --}}
-        <textarea id="content" name="content" class="form-control" rows="5" placeholder="Tulis sesuatu... (opsional jika ada gambar/video)"></textarea> 
+    <textarea id="content" name="content" class="input-surface rounded-xl p-3 w-full" rows="5" placeholder="Tulis sesuatu... (opsional jika ada gambar/video)"></textarea> 
         </div>
 
         {{!-- 3. Tambah Input File --}}
         <div class="form-group">
         <label for="postMedia">Tambah Foto/Video (Opsional)</label>
         {{!-- Pastikan 'name="file"' sesuai nama field di backend (@UploadedFile()) --}}
-        <input type="file" id="postMedia" name="file" class="form-control" accept="image/*,video/*"> 
+    <input type="file" id="postMedia" name="file" class="input-surface rounded-xl p-2 w-full" accept="image/*,video/*"> 
         </div>
         
         <button type="submit" class="btn btn-primary">Post</button>

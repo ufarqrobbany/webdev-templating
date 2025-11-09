@@ -3,7 +3,7 @@
         <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
           {{#if this.author}}
             {{!-- Profile Picture with Initials --}}
-            <div style="width: 32px; height: 32px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; flex-shrink: 0;">
+            <div class="avatar avatar-sm flex-shrink-0">
               {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
             </div>
             {{!-- Author Name and "Anda" Label --}}
@@ -13,7 +13,7 @@
                 <span class="post-author-name">{{this.author.firstName}} {{this.author.lastName}}</span>
               </a>
               {{#if (eq this.author.id @root.user.id)}}
-                <span style="background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Anda</span>
+                <span style="background-image: var(--gradient-accent); color: #1f2937; padding: 2px 8px; border-radius: 9999px; font-size: 12px; font-weight: 600; margin-left: 2px;">Anda</span>
               {{/if}}
             </div>
 
@@ -25,8 +25,8 @@
                 {{#unless (eq this.author.id @root.user.id)}}
                   {{!-- Tampilkan Follow hanya jika TIDAK mengikuti penulis (isNotFollowing) --}}
                   {{#unless isFollowing}}
-                    <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 0px; margin-left: 12px; display: inline-block; height: 24px;">
-                      <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 14px; font-weight: bold; padding: 8px 16px;">+ Follow</button>
+                    <form action="/api/v1/users/{{this.author.id}}/follow" method="POST" style="margin-top: 0px; margin-left: 4px; display: inline-block;">
+                      <button type="submit" class="btn-follow">+ Follow</button>
                     </form>
                   {{/unless}}
                 {{/unless}}
@@ -68,18 +68,30 @@
         {{#if @root.user}}
         <div class="post-actions" style="margin-top: 16px; display: flex; align-items: center; gap: 10px;">
             {{!-- Logika Kondisional untuk Tombol --}}
+            <svg width="0" height="0" style="position:absolute;visibility:hidden;">
+              <defs>
+                <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#dc2626" />
+                  <stop offset="100%" stop-color="#f87171" />
+                </linearGradient>
+              </defs>
+            </svg>
             {{#if this.isLikedByCurrentUser}}
-              {{!-- JIKA SUDAH LIKE: Tampilkan form UNLIKE --}}
-              <form action="/api/v1/posts/{{this.id}}/unlike" method="POST" style="display: inline; margin: 0;">
-                <button type="submit" class="btn btn-sm btn-primary" style="padding: 0px; background-color: transparent; color: black; display: flex; align-items: center; gap: 4px;">
-                  <i class="fas fa-heart" style="font-size: 20px; color: red; margin-right: 2px;"></i> {{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}}
+              <form action="/api/v1/posts/{{this.id}}/unlike" method="POST" style="display:inline;margin:0;">
+                <button type="submit" class="btn-unlike" aria-label="Batalkan Suka">
+                  <span class="heart-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path class="heart-gradient-fill" d="M12 21s-1-.55-2.35-1.68C6.4 16.6 4 14.28 4 11.25 4 9 5.79 7 8.05 7c1.54 0 2.78.99 3.45 2.03h.99C13.16 7.99 14.4 7 15.95 7 18.21 7 20 9 20 11.25c0 3.03-2.4 5.35-5.65 8.07C13 20.45 12 21 12 21z"/></svg>
+                  </span>
+                  <span class="like-count">{{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}}</span>
                 </button>
               </form>
             {{else}}
-              {{!-- JIKA BELUM LIKE: Tampilkan form LIKE --}}
-              <form action="/api/v1/posts/{{this.id}}/like" method="POST" style="display: inline; margin: 0;">
-                <button type="submit" class="btn btn-sm btn-secondary" style="padding: 0px; background-color: transparent; color: black; display: flex; align-items: center; gap: 4px; font-weight: normal;">
-                  <i class="far fa-heart" style="font-size: 20px; color: black; margin-right: 2px;"></i> {{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}}
+              <form action="/api/v1/posts/{{this.id}}/like" method="POST" style="display:inline;margin:0;">
+                <button type="submit" class="btn-like" aria-label="Suka">
+                  <span class="heart-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path class="heart-outline" d="M12 21s-1-.55-2.35-1.68C6.4 16.6 4 14.28 4 11.25 4 9 5.79 7 8.05 7c1.54 0 2.78.99 3.45 2.03h.99C13.16 7.99 14.4 7 15.95 7 18.21 7 20 9 20 11.25c0 3.03-2.4 5.35-5.65 8.07C13 20.45 12 21 12 21z"/></svg>
+                  </span>
+                  <span class="like-count">{{#if this.likesCount}}{{this.likesCount}}{{else}}0{{/if}}</span>
                 </button>
               </form>
             {{/if}}
@@ -104,7 +116,7 @@
             <form action="/api/v1/posts/{{this.id}}/comments" method="POST" class="comment-form" style="margin-bottom: 15px; display: flex; flex-direction: row; gap: 8px;">
               <input type="hidden" name="postId" value="{{this.id}}">
               <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                <input name="content" class="form-control" rows="1" placeholder="Tulis komentar..." required style="font-size: 0.9em;"></input>
+                <input name="content" rows="1" placeholder="Tulis komentar..." required class="input-surface w-full rounded-xl px-3 py-2" style="font-size: 0.9em;" />
               </div>
               <button type="submit" class="btn btn-secondary btn-sm">Kirim</button>
             </form>
@@ -118,7 +130,7 @@
               {{#each this.comments}}
                 <div class="comment-item" style="margin-bottom: 10px; font-size: 0.9em;">
                   <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 32px; height: 32px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; flex-shrink: 0;">
+                    <div class="avatar avatar-sm flex-shrink-0">
                       {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
                     </div>
                     <strong class="comment-author">
@@ -144,7 +156,7 @@
                       <form action="/api/v1/comments/{{this.id}}/replies" method="POST" class="reply-form" id="reply-form-{{this.id}}" style="display: none; margin-left: 44px; margin-bottom: 15px; flex-direction: row; gap: 8px;">
                         <input type="hidden" name="postId" value="{{../id}}">
                         <div class="form-group" style="flex-grow: 1; margin-bottom: 0;">
-                          <input name="content" class="form-control" rows="1" placeholder="Tulis balasan..." required style="font-size: 0.95em;"></input>
+                          <input name="content" rows="1" placeholder="Tulis balasan..." required class="input-surface w-full rounded-xl px-3 py-2" style="font-size: 0.95em;" />
                         </div>
                         <button type="submit" class="btn btn-secondary btn-sm">Kirim Balasan</button>
                       </form>
@@ -158,7 +170,7 @@
                       {{#each this.replies}}
                         <div class="comment-item reply-item" style="margin-bottom: 8px; font-size: 0.95em;">
                           <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 32px; height: 32px; background-color: #007bff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; flex-shrink: 0;">
+                            <div class="avatar avatar-sm flex-shrink-0">
                               {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
                             </div>
                             <strong class="comment-author">
