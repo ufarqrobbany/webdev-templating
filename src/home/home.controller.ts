@@ -69,7 +69,7 @@ export class HomeController {
       if (currentUser) {
         const currentUserId = currentUser.id;
         isLikedByCurrentUser = (post.likedBy || []).some(
-          (user) => user.id === currentUserId
+          (user) => user.id === currentUserId,
         );
       }
 
@@ -172,7 +172,7 @@ export class HomeController {
         if (currentUser) {
           const currentUserId = currentUser.id;
           isLikedByCurrentUser = (post.likedBy || []).some(
-            (user) => user.id === currentUserId
+            (user) => user.id === currentUserId,
           );
         }
 
@@ -278,7 +278,7 @@ export class HomeController {
       if (currentUser) {
         const currentUserId = currentUser.id;
         isLikedByCurrentUser = (post.likedBy || []).some(
-          (user) => user.id === currentUserId
+          (user) => user.id === currentUserId,
         );
       }
 

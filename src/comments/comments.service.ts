@@ -89,7 +89,9 @@ export class CommentsService {
 
     if (!isAuthor && !isAdmin) {
       // Jika bukan penulis DAN bukan admin, lempar error
-      throw new UnauthorizedException('You are not authorized to delete this comment');
+      throw new UnauthorizedException(
+        'You are not authorized to delete this comment',
+      );
     }
 
     return this.commentRepository.softDelete(id);
