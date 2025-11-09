@@ -23,9 +23,9 @@ import { CommentsModule } from '../comments/comments.module';
     // Jika Anda ingin mengandalkan konfigurasi dinamis (FILE_DRIVER), Anda dapat menghapus FilesS3Module
     // dan hanya mengimpor FilesModule, tetapi karena PostsService Anda menginject implementasi SPESIFIK (FilesS3Service),
     // kita harus mengimpor module spesifiknya (FilesS3Module) di sini.
-    FilesModule, 
+    FilesModule,
     TypeOrmModule.forFeature([PostEntity, UserEntity]),
-    FilesS3Module, 
+    FilesS3Module,
     CommentsModule,
   ],
   controllers: [PostsController],

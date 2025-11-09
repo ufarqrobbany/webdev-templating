@@ -61,7 +61,7 @@ export class UsersRelationalRepository implements UserRepository {
     const entity = await this.usersRepository.findOne({
       where: { id: Number(id) },
       // 👇 TAMBAHKAN RELASI followers dan following di sini
-      relations: ['followers', 'following'], 
+      relations: ['followers', 'following'],
     });
 
     return entity ? UserMapper.toDomain(entity) : null;

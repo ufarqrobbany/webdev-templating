@@ -6,10 +6,10 @@ import {
   UseGuards,
   Request,
   Redirect,
-  Param, 
-  ParseIntPipe, 
+  Param,
+  ParseIntPipe,
   NotFoundException,
-  Query, 
+  Query,
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { ApiTags } from '@nestjs/swagger';
@@ -25,7 +25,7 @@ import { FilterUserDto } from '../users/dto/query-user.dto';
 import { Post } from '../posts/domain/post';
 
 @ApiTags('Home')
-@Controller() 
+@Controller()
 @SkipThrottle()
 export class HomeController {
   constructor(
@@ -53,22 +53,24 @@ export class HomeController {
     // Ambil postingan (ini adalah array Post[])
     const rawPosts = await this.postsService.findAll({
       paginationOptions: { page: 1, limit: 20 },
-      currentUser: currentUser, 
+      currentUser: currentUser,
     });
 
     // Proses data post untuk HBS
-    const posts = rawPosts.map(post => {
+    const posts = rawPosts.map((post) => {
       // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
       const isLikedByCurrentUser = currentUser
-        ? (post.likedBy || []).some(user => user.id === currentUser.id)
+        ? (post.likedBy || []).some((user) => user.id === currentUser.id)
         : false;
 
-      const isAuthorFollowedByCurrentUser = currentUser && post.author
-        // Periksa apakah ID penulis post ada dalam daftar following currentUser
-        ? (currentUser.following || []).some(
-            (followedUser) => String(followedUser.id) === String(post.author.id)
-          )
-        : false;
+      const isAuthorFollowedByCurrentUser =
+        currentUser && post.author
+          ? // Periksa apakah ID penulis post ada dalam daftar following currentUser
+            (currentUser.following || []).some(
+              (followedUser) =>
+                String(followedUser.id) === String(post.author.id),
+            )
+          : false;
 
       // Kembalikan objek baru yang berisi data post + status like
       return {
@@ -132,7 +134,7 @@ export class HomeController {
       // 1. Cari Pengguna (Users)
       const userFilterOptions: FilterUserDto = {
         search: searchQuery, // Menggunakan properti 'search' yang baru kita tambahkan
-        roles: undefined, 
+        roles: undefined,
       };
 
       users = await this.usersService.findManyWithPagination({
@@ -144,30 +146,35 @@ export class HomeController {
       // 2. Cari Postingan (Posts)
       const postFilterOptions = {
         search: searchQuery, // Menggunakan properti 'search' yang baru kita tambahkan
-        page: page || 1, 
+        page: page || 1,
         limit: 10,
       };
 
       // Ambil postingan mentah
       const rawPosts = await this.postsService.findAll({
         filterOptions: postFilterOptions,
-        paginationOptions: { page: postFilterOptions.page, limit: postFilterOptions.limit },
+        paginationOptions: {
+          page: postFilterOptions.page,
+          limit: postFilterOptions.limit,
+        },
         currentUser: currentUser,
       });
 
       // Proses data post untuk HBS (tambahkan isLikedByCurrentUser & isAuthorFollowedByCurrentUser)
-      posts = rawPosts.map(post => {
+      posts = rawPosts.map((post) => {
         // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
         const isLikedByCurrentUser = currentUser
-          ? (post.likedBy || []).some(user => user.id === currentUser.id)
+          ? (post.likedBy || []).some((user) => user.id === currentUser.id)
           : false;
-        
+
         // Periksa apakah ID penulis post ada dalam daftar following currentUser
-        const isAuthorFollowedByCurrentUser = currentUser && post.author
-          ? (currentUser.following || []).some(
-              (followedUser) => String(followedUser.id) === String(post.author.id)
-            )
-          : false;
+        const isAuthorFollowedByCurrentUser =
+          currentUser && post.author
+            ? (currentUser.following || []).some(
+                (followedUser) =>
+                  String(followedUser.id) === String(post.author.id),
+              )
+            : false;
 
         // Kembalikan objek baru yang berisi data post + status like & follow
         return {
@@ -181,7 +188,9 @@ export class HomeController {
     }
 
     this.viewService.render(res, 'pages/search-results', {
-      pageTitle: searchQuery ? `Hasil Pencarian: "${searchQuery}"` : 'Pencarian',
+      pageTitle: searchQuery
+        ? `Hasil Pencarian: "${searchQuery}"`
+        : 'Pencarian',
       user: currentUser,
       searchQuery: searchQuery,
       users: users,
@@ -253,24 +262,26 @@ export class HomeController {
 
     // 1. Ambil postingan mentah dari user profil ini
     const rawPosts = await this.postsService.findAll({
-      paginationOptions: { page: 1, limit: 20 },  
+      paginationOptions: { page: 1, limit: 20 },
       authorId: id, // Filter berdasarkan ID user profil
       currentUser: currentUser, // Penting untuk memuat relasi likedBy
     });
 
     // 2. Proses data post untuk menambahkan status like oleh currentUser
-    const posts = rawPosts.map(post => {
+    const posts = rawPosts.map((post) => {
       // Cek apakah 'currentUser' (jika ada) ada di dalam array post.likedBy
       const isLikedByCurrentUser = currentUser
-        ? (post.likedBy || []).some(user => user.id === currentUser.id)
+        ? (post.likedBy || []).some((user) => user.id === currentUser.id)
         : false;
 
       // Periksa apakah penulis post di-follow oleh currentUser
-      const isAuthorFollowedByCurrentUser = currentUser && post.author
-        ? (currentUser.following || []).some(
-            (followedUser) => String(followedUser.id) === String(post.author.id)
-          )
-        : false;
+      const isAuthorFollowedByCurrentUser =
+        currentUser && post.author
+          ? (currentUser.following || []).some(
+              (followedUser) =>
+                String(followedUser.id) === String(post.author.id),
+            )
+          : false;
 
       // Kembalikan objek baru yang berisi data post + status like & follow
       return {
@@ -284,8 +295,8 @@ export class HomeController {
     // 3. Ambil data follower/following untuk stats
     const followersCount = profileUser.followers?.length ?? 0;
     const followingCount = profileUser.following?.length ?? 0;
-    const isFollowing = currentUser?.following?.some(u => u.id === profileUser.id) ?? false;
-
+    const isFollowing =
+      currentUser?.following?.some((u) => u.id === profileUser.id) ?? false;
 
     this.viewService.render(res, 'pages/profile', {
       pageTitle: `Profil ${profileUser.firstName}`,
@@ -295,7 +306,7 @@ export class HomeController {
       isFollowing: isFollowing,
       followersCount: followersCount,
       followingCount: followingCount,
-    })
+    });
   }
   /**
    * Handle link logout dari header

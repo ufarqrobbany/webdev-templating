@@ -20,7 +20,7 @@ export class IsContentOrPhotoRequiredConstraint
 
     // Cek apakah content "berisi" (bukan cuma string kosong)
     const hasContent = dto.content && dto.content.trim().length > 0;
-    
+
     // Cek apakah photo "berisi" (punya ID)
     const hasPhoto = dto.photo && dto.photo.id;
 
@@ -38,7 +38,6 @@ export class IsContentOrPhotoRequiredConstraint
 }
 
 export class CreatePostDto {
-  
   @ApiPropertyOptional({ example: 'Ini adalah postingan pertama saya!' })
   @IsString()
   @IsOptional()

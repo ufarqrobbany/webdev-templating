@@ -3,7 +3,7 @@ import {
   ClassSerializerInterceptor,
   ValidationPipe,
   VersioningType,
-  RequestMethod
+  RequestMethod,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
@@ -35,21 +35,21 @@ async function bootstrap() {
   const configService = app.get(ConfigService<AllConfigType>);
 
   app.enableShutdownHooks();
-app.setGlobalPrefix(
-  configService.getOrThrow('app.apiPrefix', { infer: true }),
-  {
-    exclude: [
-      '/',
-      '/about',
-      'login',
-      'register',
-      'create-post',
-      'logout',
-      { path: '/users/:id/profile', method: RequestMethod.GET },
-      'search',
-    ],
-  },
-);
+  app.setGlobalPrefix(
+    configService.getOrThrow('app.apiPrefix', { infer: true }),
+    {
+      exclude: [
+        '/',
+        '/about',
+        'login',
+        'register',
+        'create-post',
+        'logout',
+        { path: '/users/:id/profile', method: RequestMethod.GET },
+        'search',
+      ],
+    },
+  );
   app.enableVersioning({
     type: VersioningType.URI,
   });
@@ -96,26 +96,32 @@ app.setGlobalPrefix(
   // 👇 2. GANTI BLOK TRY...CATCH DENGAN YANG INI 👇
   // Daftarkan Partials dari folder default
   const partialsDir = path.join(process.cwd(), 'themes/default/views/partials');
-  
+
   // Daftarkan Partials secara SYNCHRONOUS menggunakan fs
   try {
-      const filenames = fs.readdirSync(partialsDir);
-      filenames.forEach(filename => {
-          // Hanya ambil file .hbs
-          const matches = /^([^.]+)\.hbs$/.exec(filename);
-          if (!matches) return;
-          
-          const name = matches[1]; // Ambil nama partial (misal: _post-item)
-          const template = fs.readFileSync(path.join(partialsDir, filename), 'utf8');
-          hbs.registerPartial(name, template);
-      });
-      console.log('✅ HBS Partials registered manually (synchronously).');
+    const filenames = fs.readdirSync(partialsDir);
+    filenames.forEach((filename) => {
+      // Hanya ambil file .hbs
+      const matches = /^([^.]+)\.hbs$/.exec(filename);
+      if (!matches) return;
+
+      const name = matches[1]; // Ambil nama partial (misal: _post-item)
+      const template = fs.readFileSync(
+        path.join(partialsDir, filename),
+        'utf8',
+      );
+      hbs.registerPartial(name, template);
+    });
+    console.log('✅ HBS Partials registered manually (synchronously).');
   } catch (e) {
-      // Fallback jika ada masalah I/O
-      console.error('❌ Manual partial registration failed. Falling back to hbs.registerPartials(dir).', e.message);
-      hbs.registerPartials(partialsDir);
+    // Fallback jika ada masalah I/O
+    console.error(
+      '❌ Manual partial registration failed. Falling back to hbs.registerPartials(dir).',
+      e.message,
+    );
+    hbs.registerPartials(partialsDir);
   }
-    
+
   // 👇 3. UNCOMMENT PEMANGGILAN INI 👇
   // Panggil fungsi pendaftaran helper dari hbs.helpers.ts
   registerHbsHelpers();
