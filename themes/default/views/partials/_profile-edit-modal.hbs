@@ -1,0 +1,217 @@
+<div id="profileEditModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="profile-edit-card">
+      <h2 class="modal-title">Edit Profil</h2>
+
+      <div class="profile-avatar">
+        <div class="profile-avatar-circle">
+          {{#if user.avatar}}
+            <img src="{{user.avatar}}" alt="Avatar">
+          {{else}}
+            <span>{{user.initials}}</span>
+          {{/if}}
+        </div>
+        <a href="/api/v1/auth/profile/photo" class="change-photo-link">Ganti Foto Profil</a>
+      </div>
+
+      <form action="/api/v1/auth/profile" method="POST" id="editProfileForm">
+        <div class="form-group">
+          <label for="firstName">Nama Depan</label>
+          <input type="text" id="firstName" name="firstName" value="{{user.firstName}}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Nama Belakang</label>
+          <input type="text" id="lastName" name="lastName" value="{{user.lastName}}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" maxlength="150" rows="3">{{user.bio}}</textarea>
+          <small>Maksimal 150 karakter</small>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="closeModalBtn">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+/* 🌙 Overlay (background blur + fade-in) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 30, 0.45);
+  backdrop-filter: blur(6px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+/* 🎴 Card styling */
+.modal-content {
+  width: 90%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scaleUp 0.25s ease-out forwards;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+@keyframes scaleUp {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 🧍 Avatar section */
+.profile-avatar {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 0.5rem;
+  border: 3px solid #e3e8ef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+.profile-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.change-photo-link {
+  font-size: 0.9rem;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.change-photo-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* 📋 Form fields */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #f9fafb;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-group small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* 🎯 Buttons */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+/* 🧩 Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('profileEditModal');
+  const editBtn = document.getElementById('openEditProfile');
+  const closeBtn = document.getElementById('closeModalBtn');
+
+  editBtn?.addEventListener('click', () => modal.classList.add('active'));
+  closeBtn?.addEventListener('click', () => modal.classList.remove('active'));
+  modal?.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('active');
+  });
+});
+</script>
