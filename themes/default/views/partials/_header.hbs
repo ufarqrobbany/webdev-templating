@@ -20,7 +20,7 @@
       {{!-- Profile Menu --}}
   <div class="profile-menu-container">
           <button id="profileButton" class="profile-button" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <div class="avatar avatar-md" style="transition: box-shadow .25s, transform .25s;">
+            <div class="avatar avatar-md {{userGradient user.id}}" style="transition: box-shadow .25s, transform .25s;">
               {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
             </div>
           </button>
@@ -28,7 +28,7 @@
           <div id="profileDropdown" class="profile-dropdown shadow-combo" style="display: none; position: absolute; right: 10px; top: calc(100% + 10px); border-radius: 16px; min-width: 240px; z-index: 1000; overflow: hidden;">
             {{!-- User Info --}}
             <div style="padding: 14px 18px; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; align-items: center; gap: 12px;" class="dark:border-b-[rgba(255,255,255,0.08)]">
-              <div class="avatar avatar-md" style="flex-shrink:0; box-shadow: 0 4px 14px rgba(0,0,0,.12);">
+              <div class="avatar avatar-md {{userGradient user.id}}" style="flex-shrink:0; box-shadow: 0 4px 14px rgba(0,0,0,.12);">
                 {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
               </div>
               <div>

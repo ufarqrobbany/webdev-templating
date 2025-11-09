@@ -14,7 +14,7 @@
         <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
           {{#if this.author}}
             {{!-- Profile Picture with Initials --}}
-            <div class="avatar avatar-sm flex-shrink-0">
+            <div class="avatar avatar-sm flex-shrink-0 {{userGradient this.author.id}}">
               {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
             </div>
             {{!-- Author Name and "Anda" Label --}}
@@ -151,7 +151,7 @@
                     </div>
                   {{/if}}
                   <div class="comment-body" style="display:flex; gap:10px; align-items:flex-start;">
-                    <div class="avatar avatar-sm flex-shrink-0">
+                    <div class="avatar avatar-sm flex-shrink-0 {{userGradient this.author.id}}">
                       {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
                     </div>
                     <div class="comment-main" style="flex:1; display:flex; flex-direction:column; gap:4px;">
@@ -196,7 +196,7 @@
                                 </div>
                               {{/if}}
                               <div class="comment-body" style="display:flex; gap:8px; align-items:flex-start;">
-                                <div class="avatar avatar-sm flex-shrink-0">{{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}</div>
+                                <div class="avatar avatar-sm flex-shrink-0 {{userGradient this.author.id}}">{{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}</div>
                                 <div class="comment-main" style="flex:1; display:flex; flex-direction:column; gap:4px;">
                                   <div class="comment-name" style="font-weight:600;">
                                     {{#if this.author}}

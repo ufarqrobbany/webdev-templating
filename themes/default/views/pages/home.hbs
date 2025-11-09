@@ -5,7 +5,7 @@
       <form action="/api/v1/posts" method="POST" enctype="multipart/form-data" class="create-post-form p-2 md:p-1">
         <div class="flex gap-3 md:gap-4 items-start">
           {{!-- User Avatar --}}
-          <div class="avatar avatar-md flex-shrink-0">
+          <div class="avatar avatar-md flex-shrink-0 {{userGradient @root.user.id}}">
             {{slice user.firstName 0 1}}{{slice user.lastName 0 1}}
           </div>
           {{!-- Text Area --}}
