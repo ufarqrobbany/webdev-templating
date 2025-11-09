@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{{pageTitle}} - SosmedKita</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#2563eb',
+              // Ganti accent jadi kuning (amber)
+              accent: '#f9c31f',
+              border: '#e5e7eb',
+              foreground: '#0f172a',
+              background: '#ffffff',
+              ring: '#3b82f6',
+              /* Override Tailwind input color so bg-input utility (if used) isn't stark white */
+              input: '#e7e8ea',
+              'accent-foreground': '#111827',
+              'muted-foreground': '#6b7280',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+  :root {
+    /* Light mode: hampir mendekati dark, kurang biru (saturasi turun), lebih gelap */
+    --gradient-hero-light: linear-gradient(135deg, hsl(220 35% 40%) 0%, hsl(220 30% 34%) 50%, hsl(230 28% 30%) 100%);
+        /* Nilai dark mode dari permintaan sebelumnya */
+        --gradient-hero-dark: linear-gradient(135deg, hsl(220 70% 12%) 0%, hsl(220 65% 15%) 50%, hsl(230 60% 18%) 100%);
+        --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, .1) 0%, rgba(255, 255, 255, .05) 100%);
+        /* Right panel dark gradient to better match hero dark */
+        --gradient-right-dark: linear-gradient(135deg, hsl(220 55% 14%) 0%, hsl(220 50% 17%) 50%, hsl(230 45% 20%) 100%);
+  /* Accent & primary hex variables for CSS usage */
+        --accent-500: hsl(45 95% 55%); /* amber-500 */
+        --primary-500: #2563eb; /* blue-600 */
+  /* Accent gradient for buttons (golden) */
+  --gradient-accent: linear-gradient(135deg, hsl(45 95% 50%) 0%, hsl(45 95% 60%) 100%);
+        /* Light mode shadow tokens — softer, wider, blends with bg */
+        --shadow-glow: 0 0 30px hsla(0, 0%, 0%, 0.034);
+        --shadow-card: 0 20px 40px hsla(220, 70%, 30%, 0.062);
+        --shadow-glass: 0 8px 32px rgba(31, 79, 135, 0.082);
+  /* Input colors (light mode) — make default the same visible gray as focus */
+  /* Unified: rgb(231 232 234) so it doesn't look white */
+  --input-bg: rgb(231 232 234);
+  --input-bg-focus: rgb(231 232 234);
+      }
+      /* Dark mode shadow tokens */
+  .dark {
+        /* Dark mode shadows — less solid, tuned to dark gradient */
+        --shadow-glow: 0 0 30px hsla(0, 0%, 0%, 0.062);
+        --shadow-card: 0 20px 40px hsla(221, 61%, 12%, 0.075);
+        --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.171);
+
+        /* Dark mode input colors */
+        /* Base: rgb(20 34 62 / 85%) */
+        --input-bg: rgba(20, 34, 62, 0.85);
+        /* Focus: slightly higher opacity for clarity */
+        --input-bg-focus: rgba(20, 34, 62, 0.92);
+      }
+      .auth-topbar { position: fixed; top: 16px; right: 16px; z-index: 10; }
+      /* Custom gradient utility for hero background */
+      .bg-gradient-hero { background: var(--gradient-hero-light); }
+      .dark .bg-gradient-hero { background: var(--gradient-hero-dark); }
+      /* Subtle gradient for right panel (white base, no circles) */
+    .bg-right-panel { background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(245, 158, 11, 0.05) 100%), #ffffff; }
+    .dark .bg-right-panel { background: var(--gradient-right-dark); }
+      /* Optional glass utility using the provided gradient */
+      .bg-glass { background: var(--gradient-glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .bg-gradient-glass { background: var(--gradient-glass); }
+    /* Shadows driven by CSS variables (light/dark aware) */
+    .shadow-glass { box-shadow: var(--shadow-glass); }
+    .shadow-card { box-shadow: var(--shadow-card); }
+    .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-combo { box-shadow: var(--shadow-glass), var(--shadow-card), var(--shadow-glow); }
+  /* Support hover:shadow-glass utility */
+  .hover\:shadow-glass:hover { box-shadow: var(--shadow-glass); }
+  /* Borderless input surface that is darker than the glass card */
+    .dark .input-surface { background-color: rgba(20, 34, 62, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease; }
+    .dark input.input-surface:focus, textarea.input-surface:focus, select.input-surface:focus { background-color: rgba(20, 34, 62, 0.92); }
+
+  .input-surface { background-color: rgb(231 232 234); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease; }
+  input.input-surface:focus, textarea.input-surface:focus, select.input-surface:focus { background-color: rgb(231 232 234); }
+
+    .dark .bg-input { background-color: rgba(20, 34, 62, 0.85); }
+    .dark .bg-input-focus { background-color: rgba(20, 34, 62, 0.92); }
+  .bg-input { background-color: rgb(231 232 234); }
+  .bg-input-focus { background-color: rgb(231 232 234); }
+      .bg-gradient-accent { background-image: var(--gradient-accent); }
+      /* Accent button with hover glow using variable */
+      .btn-accent {
+        background-image: var(--gradient-accent);
+        color: #fff;
+        --shadow-glow: 0 0 0 rgba(0,0,0,0);
+        box-shadow: var(--shadow-glow), 0 6px 16px rgba(0,0,0,0.08);
+        transition: box-shadow 200ms ease, transform 200ms ease, filter 200ms ease;
+      }
+      .btn-accent:hover {
+        --shadow-glow: 0 0 40px hsl(45 95% 55% / 0.4);
+        box-shadow: var(--shadow-glow), 0 6px 18px rgba(0,0,0,0.12);
+        filter: brightness(1.02);
+        transform: translateY(-1px);
+      }
+      /* Simple fade-up animation utility */
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-in { animation: fadeInUp 0.7s ease both; }
+    </style>
+  </head>
+  <body>
+    <div class="auth-topbar flex gap-2">
+      <button id="theme-toggle" aria-label="Toggle theme"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 w-10 rounded-full bg-card/30 backdrop-blur-md border border-border/50 hover:bg-card/50 transition-all duration-300 hover:shadow-glass">
+        <span id="theme-icon" class="h-5 w-5 text-foreground transition-transform duration-300"></span>
+      </button>
+    </div>
+
+    <div class="min-h-screen grid lg:grid-cols-2 bg-white dark:bg-gray-900">
+  <aside class="hidden lg:flex items-center justify-center p-12 bg-gradient-hero relative overflow-hidden">
+        <!-- Decorative circles -->
+        <div class="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+
+        <div class="w-full max-w-lg space-y-8 animate-in relative z-10 text-white">
+          <img src="/static/images/logo-light.png" alt="SosmedKita" class="h-32" data-logo data-logo-dark="/static/images/logo.png" data-logo-light="/static/images/logo-light.png" />
+          <h1 class="text-4xl font-bold tracking-tight text-white">Berbagi Cerita & Terhubung</h1>
+          <p class="text-white/80 text-lg leading-relaxed">Bangun koneksi, berbagi momen, dan temukan hal baru setiap hari.</p>
+          <ul class="space-y-3 text-white/80">
+            <li class="flex items-center gap-3"><i class="fas fa-users text-accent"></i> Komunitas ramah & aktif</li>
+            <li class="flex items-center gap-3"><i class="fas fa-bolt text-accent"></i> Cepat, ringan, modern</li>
+            <li class="flex items-center gap-3"><i class="fas fa-shield-alt text-accent"></i> Privasi & keamanan terjaga</li>
+          </ul>
+        </div>
+      </aside>
+  <main class="flex flex-col items-center justify-center p-8 lg:p-12 bg-right-panel">
+        <!-- Header di luar card -->
+        <div class="w-full max-w-md mx-auto text-center mb-7">
+          <img src="/static/images/logo-light.png" alt="SosmedKita" class="h-12 mx-auto mb-2" data-logo data-logo-dark="/static/images/logo.png" data-logo-light="/static/images/logo-light.png" />
+          {{#if (eq pageTitle "Login")}}
+            <h2 class="text-2xl font-medium tracking-tight bg-[image:var(--gradient-accent)] bg-clip-text text-transparent">Selamat Datang Kembali</h2>
+            <p class="mt-1 text-md text-gray-600 dark:text-gray-400">Masuk untuk melanjutkan percakapan</p>
+          {{/if}}
+          {{#if (eq pageTitle "Register")}}
+            <h2 class="text-2xl font-medium tracking-tight bg-[image:var(--gradient-accent)] bg-clip-text text-transparent">Bergabunglah Sekarang!</h2>
+            <p class="mt-1 text-md text-gray-600 dark:text-gray-400">Daftar untuk mulai berbagi cerita</p>
+          {{/if}}
+        </div>
+
+        <div class="w-full max-w-md bg-gradient-glass backdrop-blur-2xl p-8 rounded-3xl shadow-combo transition duration-300 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50 dark:from-white/8 dark:opacity-25"></div>
+          <div class="relative z-10">
+            {{{body}}}
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="/static/js/main.js"></script>
+  </body>
+</html>

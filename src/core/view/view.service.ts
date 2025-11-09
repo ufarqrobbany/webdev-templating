@@ -29,7 +29,9 @@ export class ViewService {
     data: Record<string, any> = {},
   ): void {
     const resolvedViewPath = this.resolveViewPath(viewPath);
-    const layoutPath = this.resolveViewPath('layouts/main', false);
+    // Izinkan override layout lewat 'data.layout'. Jika tidak ada, pakai 'layouts/main'.
+    const defaultLayoutPath = this.resolveViewPath('layouts/main', false);
+    const layoutPath = data.layout ? data.layout : defaultLayoutPath;
 
     const fullData = {
       ...data,

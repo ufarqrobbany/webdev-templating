@@ -265,25 +265,36 @@ textarea.form-control {
   border: none !important;
 }
 
-#theme-toggle {
-  background: var(--border-color);
+.dark #theme-toggle {
+  background: #14223F;
   color: var(--text-color);
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   cursor: pointer;
   font-size: 1.2rem;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #dddfe218;
 }
-body.dark #theme-toggle::before {
-  content: '☀️'; /* Sun icon */
-}
-body:not(.dark) #theme-toggle::before {
-  content: '🌙'; /* Moon icon */
+
+#theme-toggle {
+  background: #F8F9FA;
+  color: var(--text-color);
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dddfe26c;
 }
 
 /* =================================================================== */

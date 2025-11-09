@@ -38,18 +38,17 @@ export class HomeController {
   @Get() // <-- Ini buat halaman '/' (udah ada)
   @UseGuards(AuthGuard(['jwt', 'anonymous']))
   public async home(@Res() res: Response, @Request() req) {
+    // Paksa login: jika tidak ada user, redirect ke /login
+    if (!req.user) {
+      return res.redirect('/login');
+    }
+
     let currentUser: User | null = null;
     let pesanSelamatDatang: string;
 
-    // Cek apakah user login
-    if (req.user) {
-      // Jika login, ambil data user lengkap (termasuk relasi 'following')
-      currentUser = await this.usersService.findById(req.user.id);
-      pesanSelamatDatang = `Halo, ${currentUser?.firstName}! Ini timeline Anda:`;
-    } else {
-      // Jika anonim
-      pesanSelamatDatang = 'Selamat datang! Ini postingan publik terbaru';
-    }
+    // Sudah dipastikan login, ambil data user lengkap (termasuk relasi 'following')
+    currentUser = await this.usersService.findById(req.user.id);
+    pesanSelamatDatang = `Halo, ${currentUser?.firstName}! Ini timeline Anda:`;
 
     // Ambil postingan (ini adalah array Post[])
     const rawPosts = await this.postsService.findAll({
@@ -90,7 +89,12 @@ export class HomeController {
   }
 
   @Get('/about') // <-- Ini buat halaman '/about' (udah ada)
-  public about(@Res() res: Response) {
+  @UseGuards(AuthGuard(['jwt', 'anonymous']))
+  public about(@Res() res: Response, @Request() req) {
+    // Paksa login untuk halaman about
+    if (!req.user) {
+      return res.redirect('/login');
+    }
     this.viewService.render(res, 'pages/about', {
       pageTitle: 'Tentang Kami',
     });
@@ -106,6 +110,10 @@ export class HomeController {
     @Res() res: Response,
     @Request() req,
   ) {
+    // Paksa login untuk halaman pencarian
+    if (!req.user) {
+      return res.redirect('/login');
+    }
     const searchQuery = q ? String(q).trim() : '';
 
     let currentUser: User | null = null;
@@ -188,6 +196,7 @@ export class HomeController {
   public loginPage(@Res() res: Response) {
     this.viewService.render(res, 'pages/login', {
       pageTitle: 'Login',
+      layout: this.viewService.resolveViewPath('layouts/auth', false),
     });
   }
 
@@ -198,6 +207,7 @@ export class HomeController {
   public registerPage(@Res() res: Response) {
     this.viewService.render(res, 'pages/register', {
       pageTitle: 'Register',
+      layout: this.viewService.resolveViewPath('layouts/auth', false),
     });
   }
 
@@ -206,8 +216,11 @@ export class HomeController {
    * Ini harus dilindungi, cuma user login yang boleh
    */
   @Get('/create-post')
-  @UseGuards(AuthGuard('jwt')) // <-- Wajib login buat akses ini
-  public createPostPage(@Res() res: Response) {
+  @UseGuards(AuthGuard(['jwt', 'anonymous'])) // <-- Paksa login dengan redirect manual
+  public createPostPage(@Res() res: Response, @Request() req) {
+    if (!req.user) {
+      return res.redirect('/login');
+    }
     this.viewService.render(res, 'pages/create-post', {
       pageTitle: 'Buat Postingan Baru',
       user: (res.req as any).user, // <-- Kirim data user ke view
@@ -221,6 +234,10 @@ export class HomeController {
     @Res() res: Response,
     @Request() req,
   ) {
+    // Paksa login untuk halaman profil
+    if (!req.user) {
+      return res.redirect('/login');
+    }
     let currentUser: User | null = null;
     if (req.user) {
       // Ambil data user yang sedang login (termasuk relasi 'following')

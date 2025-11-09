@@ -1,34 +1,61 @@
-<div class="card">
-  <h2 class="text-center">Daftar</h2>
 
-  {{!-- Tampilkan pesan error jika ada --}}
-  {{#if errorMessage}}
-    <div class="error-message">
-      {{errorMessage}}
-    </div>
-  {{/if}}
+{{#if errorMessage}}
+  <div class="mb-4 rounded-md bg-red-50 dark:bg-red-900/30 p-3 text-red-700 dark:text-red-200 text-sm">
+    {{errorMessage}}
+  </div>
+{{/if}}
 
-  <form action="/api/v1/auth/email/register" method="POST">
-    <div class="form-group">
-      <label for="firstName">Nama Depan</label>
-      <input type="text" id="firstName" name="firstName" class="form-control" required>
+<form action="/api/v1/auth/email/register" method="POST" class="space-y-4">
+  <div>
+    <label for="firstName" class="block text-sm font-medium text-gray-800 dark:text-gray-100">Nama Depan</label>
+    <input type="text" id="firstName" name="firstName" required
+      class="mt-2 block w-full rounded-2xl border-0 input-surface bg-input focus:bg-input-focus text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-4 py-3 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:ring-accent/50 transition-all" />
+  </div>
+  <div>
+    <label for="lastName" class="block text-sm font-medium text-gray-800 dark:text-gray-100">Nama Belakang</label>
+    <input type="text" id="lastName" name="lastName" required
+      class="mt-2 block w-full rounded-2xl border-0 input-surface bg-input focus:bg-input-focus text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-4 py-3 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:ring-accent/50 transition-all" />
+  </div>
+  <div>
+    <label for="email" class="block text-sm font-medium text-gray-800 dark:text-gray-100">Email</label>
+    <input type="email" id="email" name="email" required
+      class="mt-2 block w-full rounded-2xl border-0 input-surface bg-input focus:bg-input-focus text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-4 py-3 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:ring-accent/50 transition-all" />
+  </div>
+
+  <div>
+    <label for="password" class="block text-sm font-medium text-gray-800 dark:text-gray-100">Password</label>
+    <div class="relative mt-2 mb-4">
+      <input type="password" id="password" name="password" required
+        class="block w-full rounded-2xl border-0 input-surface bg-input focus:bg-input-focus text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-4 pr-12 py-3 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:ring-accent/50 transition-all" />
+      <button type="button" aria-label="Tampilkan/sembunyikan password" data-toggle-password="#password"
+        class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition">
+        <i class="fa-solid fa-eye"></i>
+      </button>
     </div>
-    <div class="form-group">
-      <label for="lastName">Nama Belakang</label>
-      <input type="text" id="lastName" name="lastName" class="form-control" required>
-    </div>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" class="form-control" required>
-    </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-primary btn-full">Buat Akun</button>
-  </form>
-  
-  <p class="text-center" style="margin-top: 20px;">
-    Sudah punya akun? <a href="/login" class="form-link">Masuk di sini</a>
-  </p>
-</div>
+  </div>
+  <button type="submit" class="w-full rounded-2xl bg-gradient-accent hover:opacity-95 text-gray-800 font-semibold py-3.5 shadow-md shadow-black/5 dark:shadow-black/30 transition focus:outline-none focus:ring-2 focus:ring-accent/60">Buat Akun</button>
+</form>
+
+<script>
+  (function() {
+    var btn = document.querySelector('[data-toggle-password]');
+    if (!btn) return;
+    var selector = btn.getAttribute('data-toggle-password');
+    var input = document.querySelector(selector);
+    if (!input) return;
+    btn.addEventListener('click', function() {
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      var icon = btn.querySelector('i');
+      if (icon) {
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+      }
+    });
+  })();
+</script>
+
+<p class="text-center mt-6 text-sm text-gray-600 dark:text-gray-300">
+  Sudah punya akun?
+  <a href="/login" class="text-accent hover:text-accent/80 transition-colors font-medium">Masuk di sini</a>
+</p>
