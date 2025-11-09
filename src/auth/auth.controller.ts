@@ -304,7 +304,7 @@ export class AuthController {
    */
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
-  @Render('pages/profile')
+  @Render('default/views/pages/profile')
   async getProfile(@Request() req) {
     // ==========================================================
     // 👇 INI PERBAIKANNYA 👇

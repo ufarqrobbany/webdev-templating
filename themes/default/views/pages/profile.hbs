@@ -18,7 +18,12 @@
     <div class="profile-avatar-container" style="display:flex; align-items:center; justify-content:center;">
       <div class="avatar avatar-lg {{userGradient profileUser.id}}" style="width:120px; height:120px; font-size:40px; position:relative; overflow:hidden;">
         {{#if profileUser.photo}}
-          <img src="{{profileUser.photo.path}}" alt="{{profileUser.firstName}} {{profileUser.lastName}}" class="avatar-img" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />
+          <img 
+            src="https://sosmedkita.616c5a3eea814635a8872adf7880a6d4.r2.cloudflarestorage.com/{{profileUser.photo.path}}" 
+            alt="{{profileUser.firstName}} {{profileUser.lastName}}" 
+            class="avatar-img" 
+            style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" 
+          />
         {{else}}
           {{userInitials profileUser.firstName profileUser.lastName}}
         {{/if}}
@@ -76,9 +81,8 @@
               <button type="submit" class="btn-follow-modern" aria-label="Follow {{profileUser.firstName}}">+ Follow</button>
             </form>
           {{/if}}
-        {{else}}
-          <button id="openEditProfile" class="btn btn-primary">Edit Profil</button>
-          {{> _profile-edit-modal }}
+          {{else}}
+            <a href="/api/v1/auth/profile/edit" class="btn btn-secondary">Edit Profil</a>
         {{/unless}}
       </div>
     {{/if}}
