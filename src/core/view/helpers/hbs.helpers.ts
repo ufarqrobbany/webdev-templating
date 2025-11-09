@@ -39,6 +39,14 @@ function hbsEqHelper(a: any, b: any): boolean {
 }
 
 /**
+ * Helper Handlebars untuk operasi logika AND dua ekspresi boolean.
+ * Usage: {{#if (and ekspresi1 ekspresi2)}} ... {{/if}}
+ */
+function hbsAndHelper(a: any, b: any): boolean {
+  return Boolean(a) && Boolean(b);
+}
+
+/**
  * Helper Handlebars untuk mengecek apakah string mengandung substring.
  * Usage: {{#if (contains text subtext)}} ... {{/if}}
  */
@@ -120,6 +128,7 @@ export function registerHbsHelpers(): void {
     hbs.registerHelper('block', hbsBlockHelper);
     hbs.registerHelper('contentFor', hbsContentForHelper);
     hbs.registerHelper('eq', hbsEqHelper);
+  hbs.registerHelper('and', hbsAndHelper);
     hbs.registerHelper('contains', hbsContainsHelper);
     hbs.registerHelper('slice', hbsSliceHelper);
     hbs.registerHelper('formatDate', hbsFormatDateHelper);

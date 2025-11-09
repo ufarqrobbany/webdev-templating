@@ -82,7 +82,7 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
             `TESTING S3/R2 CONNECTIVITY for BUCKET: ${bucketName}...`,
           );
 
-          // Tes ListObjectsV2Command untuk menguji izin baca ke bucket "sosmedkita"
+          // Tes ListObjectsV2Command untuk menguji izin baca ke bucket "c-talk"
           const data = await s3.send(
             new ListObjectsV2Command({
               Bucket: bucketName,

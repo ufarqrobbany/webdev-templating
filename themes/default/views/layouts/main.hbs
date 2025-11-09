@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{{pageTitle}} - SosmedKita</title>
+    <title>{{pageTitle}} | C-Talk</title>
     {{!-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     {{!-- Panggil CSS kita --}}
@@ -29,15 +29,15 @@
       body.dark { background: var(--gradient-hero-dark); }
   /* Input styling (synced rules) */
   /* Dark mode: default slightly darker, focus deeper blue */
-  .dark .input-surface { background-color: rgba(15, 30, 55, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease; color: #e5e7eb; }
+  .dark .input-surface { background-color: rgba(15, 30, 55, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease, border-color 150ms ease; color: #e5e7eb; border: 1px solid transparent; }
   .dark input.input-surface:focus,
   .dark textarea.input-surface:focus,
-  .dark select.input-surface:focus { background-color: rgba(12, 24, 44, 0.95); box-shadow: 0 0 0 2px hsla(45,95%,55%,0.55); outline: none; }
+  .dark select.input-surface:focus { background-color: rgba(12, 24, 44, 0.95); box-shadow: 0 0 0 2px hsla(45,95%,55%,0.55); outline: none; border-color: transparent; }
   /* Light mode: default a bit brighter, focus same color */
-  .input-surface { background-color: #f4f5f7; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease; color: #0f172a; }
+  .input-surface { background-color: #f4f5f7; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background-color 150ms ease, box-shadow 150ms ease, border-color 150ms ease; color: #0f172a; border: 1px solid #e5e7eb; }
   input.input-surface:focus,
   textarea.input-surface:focus,
-  select.input-surface:focus { background-color: #f4f5f7; box-shadow: 0 0 0 2px hsla(45,95%,55%,0.65); outline: none; }
+  select.input-surface:focus { background-color: #f4f5f7; box-shadow: 0 0 0 2px hsla(45,95%,55%,0.65); outline: none; border-color: hsla(45,95%,55%,0.85); }
   /* Legacy bg-input aliases */
   .dark .bg-input { background-color: rgba(15, 30, 55, 0.85); }
   .dark .bg-input-focus { background-color: rgba(12, 24, 44, 0.95); }
@@ -133,6 +133,213 @@
         color: transparent; 
       }
       .btn-like:hover .like-count, .btn-unlike:hover .like-count { filter: brightness(1.1); }
+      /* Comment button styling */
+      .btn-comment { 
+        background: none; 
+        border: none; 
+        padding: 4px 10px; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 6px; 
+        cursor: pointer; 
+        font-size: 13px; 
+        font-weight: 600; 
+        color: #374151; 
+        border-radius: 9999px; 
+        transition: background-color .25s, box-shadow .25s; 
+      }
+      .dark .btn-comment { color: #e5e7eb; }
+      .btn-comment:hover { background-color: rgba(0,0,0,0.05); }
+      .dark .btn-comment:hover { background-color: rgba(255,255,255,0.08); }
+      .comment-icon svg { width:20px; height:20px; }
+      .comment-count { font-weight:600; color:#475569; }
+      .dark .comment-count { color:#cbd5e1; }
+      /* Add media button styling */
+      .btn-media {
+        background-color: #f4f5f7;
+        color: #0f172a;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 12px;
+        padding: 8px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .05s ease;
+      }
+      .btn-media:hover { background-color: #eef0f3; border-color: rgba(15, 23, 42, 0.14); box-shadow: 0 4px 12px rgba(0,0,0,.06); }
+      .btn-media:active { transform: translateY(1px); }
+      .btn-media i { font-size: 16px; }
+      .dark .btn-media { background-color: rgba(15, 30, 55, 0.85); color: #e5e7eb; border-color: rgba(255,255,255,0.12); }
+      .dark .btn-media:hover { background-color: rgba(12, 24, 44, 0.95); border-color: rgba(255,255,255,0.18); box-shadow: 0 6px 18px rgba(0,0,0,.30); }
+      /* Tiny media preview next to button */
+      .media-preview {
+        width: 37px; height: 37px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center; justify-content: center;
+        margin-left: 6px;
+        vertical-align: middle;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 2px 6px rgba(0,0,0,.06);
+        overflow: hidden;
+      }
+      .media-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .media-preview i { font-size: 12px; color: #334155; }
+      .dark .media-preview { background: rgba(20,30,50,0.6); border-color: rgba(255,255,255,0.12); box-shadow: 0 4px 12px rgba(0,0,0,.34); }
+      .dark .media-preview i { color: #cbd5e1; }
+        /* Logout link hover: red text and subtle red-tinted hover */
+        .logout-link:hover { color: #dc2626; background-color: rgba(220,38,38,0.06) !important; }
+        .dark .logout-link:hover { color: #f87171; background-color: rgba(248,113,113,0.10) !important; }
+      /* Clear media button */
+      .media-clear-btn {
+        background: rgba(0,0,0,0.04);
+        border: 1px solid rgba(0,0,0,0.08);
+        color: #334155;
+        width: 28px; height: 28px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center; justify-content: center;
+        margin-left: 6px;
+        cursor: pointer;
+        transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+      }
+      .media-clear-btn:hover { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.12); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+      .media-clear-btn i { font-size: 12px; }
+      .dark .media-clear-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); color: #cbd5e1; }
+      .dark .media-clear-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,.34); }
+      /* Small accent pill button for submit actions */
+      .btn-accent-sm {
+        background-image: var(--gradient-accent);
+        color: #1f2937; /* gray-800 for readability */
+        padding: 6px 24px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(0,0,0,.08);
+        transition: filter .2s ease, box-shadow .2s ease;
+      }
+      .btn-accent-sm:hover { filter: brightness(1.03); box-shadow: 0 8px 20px rgba(0,0,0,.12); }
+      /* Reply button styling (subtle pill) */
+      .btn-reply {
+        background: rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.08);
+        color: #374151; /* slate-700 */
+        padding: 6px 12px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: background-color .2s ease, box-shadow .2s ease, border-color .2s ease;
+      }
+      .btn-reply:hover {
+        background: rgba(0,0,0,0.07);
+        box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      }
+      .dark .btn-reply {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.12);
+        color: #e5e7eb; /* slate-200 */
+      }
+      .dark .btn-reply:hover {
+        background: rgba(255,255,255,0.10);
+        box-shadow: 0 4px 14px rgba(0,0,0,.28);
+      }
+      .btn-reply i { font-size: 14px; line-height: 0; }
+      /* Post options (kebab) */
+      .post-item { position: relative; }
+      .post-menu-btn {
+        position: absolute; top: 10px; right: 10px;
+        background: rgba(0,0,0,0.04);
+        {{!-- border: 1px solid rgba(0,0,0,0.08); --}}
+        color: #334155;
+        width: 32px; height: 32px;
+        border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+        z-index: 2;
+      }
+      .post-menu-btn:hover { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.12); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+      .post-menu-btn i { font-size: 14px; }
+      .dark .post-menu-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); color: #cbd5e1; }
+      .dark .post-menu-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,.34); }
+      .post-menu {
+        position: absolute; top: 44px; right: 10px;
+        min-width: 180px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0.72) 100%);
+        backdrop-filter: blur(14px) saturate(160%);
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.10);
+        overflow: hidden;
+        z-index: 40;
+      }
+      .dark .post-menu {
+        background: linear-gradient(135deg, rgba(40,55,85,0.62) 0%, rgba(30,45,70,0.58) 100%);
+        border-color: rgba(255,255,255,0.10);
+        box-shadow: 0 12px 42px rgba(9,14,28,0.10), 0 6px 22px rgba(0,0,0,0.22);
+      }
+      .post-menu-item {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%;
+        padding: 10px 24px;
+        font-size: 14px;
+        color: #1f2937;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: background-color .18s ease, color .18s ease;
+      }
+      .post-menu-item:hover { background: rgba(0,0,0,0.06); }
+      .dark .post-menu-item { color: #e5e7eb; }
+      .dark .post-menu-item:hover { background: rgba(255,255,255,0.08); }
+      .post-menu-item i { font-size: 14px; }
+      .post-menu-item.danger:hover { background: rgba(239,68,68,0.12); color: #dc2626; }
+      /* Comment menu styles reuse post menu aesthetics */
+      .comment-menu-btn {
+        position: absolute; top: 4px; right: 4px;
+        background: rgba(0,0,0,0.04);
+        {{!-- border: 1px solid rgba(0,0,0,0.08); --}}
+        color: #334155;
+        width: 28px; height: 28px;
+        border-radius: 8px;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+        z-index: 2;
+      }
+      .comment-menu-btn:hover { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.12); box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+      .comment-menu-btn i { font-size: 13px; }
+      .dark .comment-menu-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); color: #cbd5e1; }
+      .dark .comment-menu-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,.34); }
+      .comment-menu {
+        position: absolute; top: 36px; right: 4px;
+        min-width: 160px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0.72) 100%);
+        backdrop-filter: blur(14px) saturate(160%);
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 10px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+        overflow: hidden;
+        z-index: 50;
+      }
+      .dark .comment-menu {
+        background: linear-gradient(135deg, rgba(40,55,85,0.62) 0%, rgba(30,45,70,0.58) 100%);
+        border-color: rgba(255,255,255,0.10);
+        box-shadow: 0 12px 42px rgba(9,14,28,0.10), 0 6px 22px rgba(0,0,0,0.22);
+      }
       /* Profile dropdown enhanced blur & theme gradients */
       .profile-dropdown { 
         background: linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.65) 100%);

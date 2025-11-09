@@ -143,44 +143,95 @@ document.addEventListener('DOMContentLoaded', () => {
   // 👆 AKHIR: Fungsionalitas Upload Foto Profil 👆
   // ===================================================================
 
-  // Show selected image name (untuk form create-post)
+  // Show tiny thumbnail preview for selected media (create-post)
   const mediaInput = document.getElementById('media');
   if (mediaInput) {
     mediaInput.addEventListener('change', function() {
-      const fileName = this.files[0]?.name;
-      const label = this.previousElementSibling; // Asumsi label tepat sebelum input
-      if (fileName && label) {
-        // Asumsi label punya ikon, kita ganti teksnya saja
-        label.textContent = ` File terpilih: ${fileName}`; 
+      const file = this.files && this.files[0] ? this.files[0] : null;
+      const preview = document.getElementById('mediaPreview');
+      const labelText = document.getElementById('mediaLabelText');
+      const clearBtn = document.getElementById('mediaClear');
+      if (!preview) return;
+
+      // Reset preview
+      preview.innerHTML = '';
+      preview.style.display = 'none';
+      if (clearBtn) clearBtn.style.display = 'none';
+      if (labelText) labelText.textContent = 'Tambah Media';
+
+      if (!file) return;
+
+      if (file.type && file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        const url = URL.createObjectURL(file);
+        img.src = url;
+        img.onload = () => URL.revokeObjectURL(url);
+        preview.appendChild(img);
+        preview.style.display = 'inline-flex';
+      } else if (file.type && file.type.startsWith('video/')) {
+        // For video, show a tiny video icon instead of heavy preview
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-video';
+        preview.appendChild(icon);
+        preview.style.display = 'inline-flex';
       }
+      // Update label to 'Ubah Media' & show clear button
+      if (labelText) labelText.textContent = 'Ubah Media';
+      if (clearBtn) clearBtn.style.display = 'inline-flex';
+    });
+  }
+  // Media clear button functionality
+  const clearBtnGlobal = document.getElementById('mediaClear');
+  if (clearBtnGlobal && mediaInput) {
+    clearBtnGlobal.addEventListener('click', () => {
+      mediaInput.value = '';
+      const preview = document.getElementById('mediaPreview');
+      const labelText = document.getElementById('mediaLabelText');
+      if (preview) {
+        preview.innerHTML = '';
+        preview.style.display = 'none';
+      }
+      if (labelText) labelText.textContent = 'Tambah Media';
+      clearBtnGlobal.style.display = 'none';
     });
   }
 
-  // Reply button functionality
+  // Reply button functionality (improved: hide button when active, restore others)
   const replyButtons = document.querySelectorAll('.js-reply-button');
-  let currentlyOpenForm = null;
+  let activeReplyForm = null;
+  let activeReplyButton = null;
 
   replyButtons.forEach(button => {
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const commentId = button.dataset.commentId;
       const replyForm = document.getElementById(`reply-form-${commentId}`);
-      
-      // If clicking the same button that's already open, just close it
-      if (currentlyOpenForm === replyForm) {
+      if (!replyForm) return;
+
+      // If clicking a different reply, close previous & show its button again
+      if (activeReplyForm && activeReplyForm !== replyForm) {
+        activeReplyForm.style.display = 'none';
+        if (activeReplyButton) activeReplyButton.style.display = 'inline-flex';
+      }
+
+      // Toggle current
+      const isOpening = replyForm.style.display === 'none' || replyForm.style.display === '';
+      if (isOpening) {
+        // Hide this button, show form
+        button.style.display = 'none';
+        replyForm.style.display = 'flex';
+        activeReplyForm = replyForm;
+        activeReplyButton = button;
+        // Focus input inside form
+        const input = replyForm.querySelector('input[name="content"]');
+        if (input) setTimeout(() => input.focus(), 40);
+      } else {
+        // Close current form & show button again
         replyForm.style.display = 'none';
-        currentlyOpenForm = null;
-        return;
+        button.style.display = 'inline-flex';
+        activeReplyForm = null;
+        activeReplyButton = null;
       }
-
-      // Close any currently open form
-      if (currentlyOpenForm) {
-        currentlyOpenForm.style.display = 'none';
-      }
-
-      // Show the clicked reply form
-      replyForm.style.display = 'flex';
-      currentlyOpenForm = replyForm;
     });
   });
 
@@ -297,6 +348,36 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ------------------------------------------------------------
+  // Comment toggle (show/hide comment area per post)
+  // ------------------------------------------------------------
+  const commentToggleButtons = document.querySelectorAll('.js-comment-toggle');
+  commentToggleButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const postId = btn.getAttribute('data-post-id');
+      if (!postId) return;
+      const wrapper = document.querySelector(`.js-comments-wrapper[data-post-id="${postId}"]`);
+      if (!wrapper) return;
+      const isHidden = wrapper.style.display === 'none' || wrapper.style.display === '';
+      wrapper.style.display = isHidden ? 'block' : 'none';
+      if (!isHidden) {
+        // If hiding the comments area, also reset any active reply UI inside it
+        try {
+          if (typeof activeReplyForm !== 'undefined' && activeReplyForm && wrapper.contains(activeReplyForm)) {
+            activeReplyForm.style.display = 'none';
+            if (typeof activeReplyButton !== 'undefined' && activeReplyButton) {
+              activeReplyButton.style.display = 'inline-flex';
+            }
+          }
+        } catch (_) {}
+        return;
+      }
+      // focus input when opening
+      const input = wrapper.querySelector('input[name="content"]');
+      if (input) setTimeout(() => input.focus(), 60);
+    });
+  });
+
+  // ------------------------------------------------------------
   // Ensure search icons adapt to theme (fallback if Tailwind purge)
   // ------------------------------------------------------------
   function applySearchIconThemeColors() {
@@ -316,4 +397,167 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(applySearchIconThemeColors, 60);
     });
   }
+  // ------------------------------------------------------------
+  // Post options menu (owner-only kebab)
+  // ------------------------------------------------------------
+  const menuButtons = document.querySelectorAll('.js-post-menu-btn');
+  let openMenu = null;
+  function closeOpenMenu() {
+    if (openMenu) {
+      openMenu.style.display = 'none';
+      const btn = document.querySelector(`.js-post-menu-btn[data-post-id="${openMenu.getAttribute('data-post-id')}"]`);
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      openMenu = null;
+      document.removeEventListener('click', handleOutsideClickMenu);
+    }
+  }
+  function handleOutsideClickMenu(e) {
+    if (!openMenu) return;
+    const btn = document.querySelector(`.js-post-menu-btn[data-post-id="${openMenu.getAttribute('data-post-id')}"]`);
+    if (btn && (btn.contains(e.target) || openMenu.contains(e.target))) return;
+    closeOpenMenu();
+  }
+  menuButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const postId = btn.getAttribute('data-post-id');
+      const menu = document.querySelector(`.js-post-menu[data-post-id="${postId}"]`);
+      if (!menu) return;
+      const isHidden = menu.style.display === 'none' || menu.style.display === '';
+      // Close others first
+      closeOpenMenu();
+      if (isHidden) {
+        menu.style.display = 'block';
+        btn.setAttribute('aria-expanded', 'true');
+        openMenu = menu;
+        setTimeout(() => document.addEventListener('click', handleOutsideClickMenu), 0);
+        document.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Escape') closeOpenMenu();
+        }, { once: true });
+      }
+    });
+  });
+  // Delete action
+  const deleteButtons = document.querySelectorAll('.js-post-delete');
+  deleteButtons.forEach(delBtn => {
+    delBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const postId = delBtn.getAttribute('data-post-id');
+      if (!postId) return;
+      const confirmed = window.confirm('Yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan.');
+      if (!confirmed) return;
+      try {
+        const base = window.location.origin;
+        const url = `${base}/api/v1/posts/${postId}/delete`;
+        const resp = await fetch(url, { method: 'DELETE', headers: { 'Accept': 'application/json' }, credentials: 'same-origin', redirect: 'manual' });
+        // Anggap redirect sebagai sukses (server memang redirect ke '/')
+        const isRedirect = resp.type === 'opaqueredirect' || (resp.status >= 300 && resp.status < 400);
+        const isSuccess = resp.ok || isRedirect;
+        if (!isSuccess) {
+          const text = await resp.text();
+          throw new Error(text || 'Gagal menghapus postingan');
+        }
+        // Optional: jika ingin hard reload setelah hapus, bisa aktifkan ini:
+        // if (isRedirect) { window.location.href = '/'; return; }
+        const card = document.querySelector(`.post-item[data-post-id="${postId}"]`);
+        if (card) {
+          card.style.transition = 'opacity .25s ease, transform .25s ease';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(.96)';
+          setTimeout(() => card.remove(), 260);
+        }
+        closeOpenMenu();
+      } catch (err) {
+        console.error(err);
+        alert('Gagal menghapus postingan.');
+      }
+    });
+  });
+
+  // ------------------------------------------------------------
+  // Comment/reply menu & delete actions
+  // ------------------------------------------------------------
+  const commentMenuButtons = document.querySelectorAll('.js-comment-menu-btn');
+  let openCommentMenu = null;
+  function closeOpenCommentMenu() {
+    if (openCommentMenu) {
+      openCommentMenu.style.display = 'none';
+      const btn = document.querySelector(`.js-comment-menu-btn[data-comment-id="${openCommentMenu.getAttribute('data-comment-id')}"]`);
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      openCommentMenu = null;
+      document.removeEventListener('click', handleOutsideClickCommentMenu);
+    }
+  }
+  function handleOutsideClickCommentMenu(e) {
+    if (!openCommentMenu) return;
+    const btn = document.querySelector(`.js-comment-menu-btn[data-comment-id="${openCommentMenu.getAttribute('data-comment-id')}"]`);
+    if (btn && (btn.contains(e.target) || openCommentMenu.contains(e.target))) return;
+    closeOpenCommentMenu();
+  }
+  commentMenuButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const commentId = btn.getAttribute('data-comment-id');
+      const menu = document.querySelector(`.js-comment-menu[data-comment-id="${commentId}"]`);
+      if (!menu) return;
+      const isHidden = menu.style.display === 'none' || menu.style.display === '';
+      closeOpenCommentMenu();
+      if (isHidden) {
+        menu.style.display = 'block';
+        btn.setAttribute('aria-expanded', 'true');
+        openCommentMenu = menu;
+        setTimeout(() => document.addEventListener('click', handleOutsideClickCommentMenu), 0);
+        document.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Escape') closeOpenCommentMenu();
+        }, { once: true });
+      }
+    });
+  });
+
+  const commentDeleteButtons = document.querySelectorAll('.js-comment-delete');
+  commentDeleteButtons.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const commentId = btn.getAttribute('data-comment-id');
+      if (!commentId) return;
+      const ok = window.confirm('Yakin ingin menghapus komentar ini?');
+      if (!ok) return;
+      try {
+        const base = window.location.origin;
+        const url = `${base}/api/v1/comments/${commentId}/delete`;
+        const resp = await fetch(url, { method: 'DELETE', headers: { 'Accept': 'application/json' }, credentials: 'same-origin', redirect: 'manual' });
+        const isRedirect = resp.type === 'opaqueredirect' || (resp.status >= 300 && resp.status < 400);
+        const isSuccess = resp.ok || isRedirect;
+        if (!isSuccess) {
+          const text = await resp.text();
+          throw new Error(text || 'Gagal menghapus komentar');
+        }
+        const item = document.querySelector(`.comment-item[data-comment-id="${commentId}"]`);
+        if (item) {
+          item.style.transition = 'opacity .25s ease, transform .25s ease';
+          item.style.opacity = '0';
+          item.style.transform = 'scale(.98)';
+          setTimeout(() => {
+            item.remove();
+            // Hitung ulang jumlah komentar utama berbasis DOM agar akurat
+            const postCard = btn.closest('.post-item');
+            if (postCard) {
+              const countSpan = postCard.querySelector('.comment-count');
+              const komentarHeading = postCard.querySelector('.js-comments-title');
+              const topLevelComments = postCard.querySelectorAll('.comment-list > .comment-item');
+              const newCount = topLevelComments ? topLevelComments.length : 0;
+              if (countSpan) countSpan.textContent = String(newCount);
+              if (komentarHeading) {
+                komentarHeading.style.display = newCount === 0 ? 'none' : '';
+              }
+            }
+          }, 260);
+        }
+        closeOpenCommentMenu();
+      } catch (err) {
+        console.error(err);
+        alert('Gagal menghapus komentar.');
+      }
+    });
+  });
 });

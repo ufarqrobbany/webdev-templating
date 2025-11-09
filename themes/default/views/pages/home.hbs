@@ -13,14 +13,16 @@
             <textarea name="content" rows="3" placeholder="Apa yang Anda pikirkan?" class="input-surface w-full rounded-xl p-3 md:p-4 mb-2 resize-y min-h-[96px]"></textarea>
             {{!-- Media Upload + Submit --}}
             <div class="flex items-center justify-between">
-              <div>
-                <label for="media" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl input-surface cursor-pointer hover:brightness-105 transition">
+              <div class="flex items-center justify-center">
+                <label for="media" class="btn-media" id="mediaTrigger">
                   <i class="fas fa-image"></i>
-                  <span class="hidden sm:inline">Tambah Media</span>
+                  <span class="hidden sm:inline" id="mediaLabelText" style="font-size: 14px;">Tambah Media</span>
                 </label>
-                <input type="file" id="media" name="file" accept="image/*,video/*" class="hidden">
+                <input type="file" id="media" name="file" accept="image/*,video/*" class="hidden" />
+                <span id="mediaPreview" class="media-preview" style="display:none;" aria-label="Preview media"></span>
+                <button type="button" id="mediaClear" class="media-clear-btn" title="Hapus media" style="display:none;" aria-label="Hapus media"><i class="fas fa-times"></i></button>
               </div>
-              <button type="submit" class="btn-accent px-5 py-2.5 rounded-xl font-semibold text-gray-800">Posting</button>
+              <button type="submit" class="btn-accent px-5 py-2.5 rounded-xl font-semibold text-gray-800 ml-2" style="font-size: 14px;">Posting</button>
             </div>
           </div>
         </div>
