@@ -11,13 +11,11 @@ import {
 import { FileDto } from '../../files/dto/file.dto';
 import { Type } from 'class-transformer';
 
-// 1. DEFINISI KENDALA (CONSTRAINT)
 @ValidatorConstraint({ name: 'isContentOrPhotoRequired', async: false })
 export class IsContentOrPhotoRequiredConstraint
   implements ValidatorConstraintInterface
 {
-  // 2. PERBAIKI FUNGSI 'validate'
-  validate(value: any, args: ValidationArguments): boolean { // <-- Tambah ': boolean'
+  validate(value: any, args: ValidationArguments): boolean {
     const dto = args.object as CreatePostDto;
 
     // Cek apakah content "berisi" (bukan cuma string kosong)
@@ -31,7 +29,7 @@ export class IsContentOrPhotoRequiredConstraint
       return true;
     }
 
-    return false; // <-- Ini memperbaiki error 'undefined is not assignable'
+    return false;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -39,16 +37,12 @@ export class IsContentOrPhotoRequiredConstraint
   }
 }
 
-// 3. PERBAIKI PENERAPAN DECORATOR
-// @Validate(...) TIDAK bisa diletakkan di atas class.
 export class CreatePostDto {
   
-  // 4. TERAPKAN @Validate KE SALAH SATU PROPERTI (misal: content)
-  // Validator ini akan tetap menerima seluruh DTO object (via args.object)
   @ApiPropertyOptional({ example: 'Ini adalah postingan pertama saya!' })
   @IsString()
   @IsOptional()
-  @Validate(IsContentOrPhotoRequiredConstraint) // <-- PINDAHKAN KE SINI
+  @Validate(IsContentOrPhotoRequiredConstraint)
   content?: string;
 
   @ApiPropertyOptional({ type: () => FileDto })

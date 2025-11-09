@@ -15,12 +15,12 @@ import {
   ParseIntPipe,
   Param,
   Res,
-  UseInterceptors, // <-- TAMBAHAN
-  UploadedFile, // <-- TAMBAHAN
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { FileInterceptor } from '@nestjs/platform-express'; // <-- TAMBAHAN
-import { Express } from 'express'; // <-- TAMBAHAN (PENTING)
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 import { PostsService } from './posts.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -33,8 +33,8 @@ import {
   InfinityPaginationResponseDto,
 } from 'src/utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
-import { NullableType } from 'src/utils/types/nullable.type'; // Import NullableType
-import { User } from 'src/users/domain/user'; // Import User
+import { NullableType } from 'src/utils/types/nullable.type'; 
+import { User } from 'src/users/domain/user';
 import { CommentsService } from '../comments/comments.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
@@ -52,24 +52,19 @@ export class PostsController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('file')) // <-- TAMBAHAN: Untuk mem-parsing multipart/form-data
+  @UseInterceptors(FileInterceptor('file')) 
   async create(
     @Body() createPostDto: CreatePostDto,
-    @UploadedFile() file: Express.MulterS3.File, // <-- TAMBAHAN: Untuk menangkap file
+    @UploadedFile() file: Express.MulterS3.File,
     @Request() req,
     @Res() res: Response,
   ): Promise<void> {
     const user = req.user as User;
 
-    // Panggil service create dengan tambahan 'file'
-    // Pastikan service Anda sudah diupdate untuk menerima 'file'
-    await this.postsService.create(user, createPostDto, file); // <-- MODIFIKASI: tambahkan 'file'
+    await this.postsService.create(user, createPostDto, file); 
 
-    // Redirect ke homepage
     return res.redirect('/');
   }
-
-  // --- BAGIAN BAWAH INI SAMA SEPERTI KODE ASLI ANDA ---
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -153,12 +148,12 @@ export class PostsController {
   async createComment(
     @Param('id', ParseIntPipe) postId: number,
     @Request() req,
-    @Body() createCommentDto: CreateCommentDto, // DTO ini hanya akan berisi 'content' dari form
+    @Body() createCommentDto: CreateCommentDto,
     @Res() res: Response,
   ): Promise<void> {
     await this.commentsService.create(req.user, {
       ...createCommentDto,
-      postId: postId, // Ambil postId dari URL
+      postId: postId,
     });
     return res.redirect('/');
   }

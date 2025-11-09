@@ -18,21 +18,18 @@ import { PostEntity } from './infrastructure/persistence/relational/entities/pos
 import { Repository } from 'typeorm';
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
 import { Express } from 'express';
-
-// v-- PERBAIKAN 1: Ganti nama import service --v
 import { FilesS3Service } from 'src/files/infrastructure/uploader/s3/files.service';
-// ^-- Nama class-nya 'FilesLocalService', bukan 'LocalFilesService' --^
 
 @Injectable()
 export class PostsService {
   constructor(
     @Inject(PostRepository)
     private readonly postRepository: PostRepository,
-    // v-- PERBAIKAN 2: Ganti nama class yang di-inject --v
     private readonly filesService: FilesS3Service,
-    // ^-- Sesuaikan dengan import di atas --^
+    
     @InjectRepository(PostEntity)
     private readonly postEntityRepository: Repository<PostEntity>,
+    
     @InjectRepository(UserEntity)
     private readonly userEntityRepository: Repository<UserEntity>,
   ) {}

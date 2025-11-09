@@ -59,11 +59,13 @@ export class UserEntity extends EntityRelationalHelper {
   @ManyToOne(() => RoleEntity, {
     eager: true,
   })
+  @JoinColumn()
   role?: RoleEntity | null;
 
   @ManyToOne(() => StatusEntity, {
     eager: true,
   })
+  @JoinColumn()
   status?: StatusEntity;
 
   @CreateDateColumn()
