@@ -43,7 +43,7 @@ export class PostRelationalRepository implements PostRepository {
     }
     // Jika authorId TIDAK diberikan, baru filter berdasarkan following (untuk timeline)
     else if (followingUserIds && followingUserIds.length > 0) {
-      where.author = { id: In(followingUserIds.map(id => Number(id))) };
+      where.author = { id: In(followingUserIds.map((id) => Number(id))) };
     } else if (followingUserIds && followingUserIds.length === 0) {
       return [];
     }
@@ -63,14 +63,15 @@ export class PostRelationalRepository implements PostRepository {
         },
       },
       relations: [
-        'author', 
+        'author',
         'likedBy',
         'comments',
         'photo',
         'comments.author',
         'comments.parent',
         'comments.replies',
-        'comments.replies.author',],
+        'comments.replies.author',
+      ],
     });
 
     return entities.map((post) => PostMapper.toDomain(post));
@@ -79,7 +80,7 @@ export class PostRelationalRepository implements PostRepository {
   async findOne(id: number): Promise<NullableType<Post>> {
     const entity = await this.postRepository.findOne({
       where: { id },
-      relations: ['author', 'photo']
+      relations: ['author', 'photo'],
     });
     return entity ? PostMapper.toDomain(entity) : null;
   }

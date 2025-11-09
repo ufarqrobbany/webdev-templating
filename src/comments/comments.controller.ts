@@ -63,13 +63,15 @@ export class CommentsController {
   // v-- MODIFIED METHOD --v
   @Post(':commentId/replies')
   @HttpCode(HttpStatus.FOUND) // <-- 1. Tambah HttpCode
-  async createReply( // <-- 2. Tambah async
+  async createReply(
+    // <-- 2. Tambah async
     @Param('commentId') parentId: number,
     @Body() createCommentDto: CreateCommentDto,
     @Req() req: any,
     @Res() res: Response, // <-- 3. Inject @Res
-  ): Promise<void> { // <-- 4. Ubah return type ke Promise<void>
-    
+  ): Promise<void> {
+    // <-- 4. Ubah return type ke Promise<void>
+
     // 5. Tambah await
     await this.commentsService.createReply(
       req.user,

@@ -88,6 +88,6 @@ export class User {
   // 👇 ==================================================
   // 👇 INI YANG HILANG DAN MENYEBABKAN ERROR
   // 👇 ==================================================
-  @ApiProperty({ type: () => [Post] }) 
+  @ApiProperty({ type: () => [Post] })
   posts?: Post[]; // Tambahkan '?' karena mungkin tidak selalu di-load
 }

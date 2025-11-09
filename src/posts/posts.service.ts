@@ -4,6 +4,7 @@ import {
   UnprocessableEntityException,
   HttpStatus,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -19,6 +20,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../users/infrastructure/persistence/relational/entities/user.entity';
 import { Express } from 'express';
 import { FilesS3Service } from 'src/files/infrastructure/uploader/s3/files.service';
+import { RoleEnum } from '../roles/roles.enum';
 
 @Injectable()
 export class PostsService {
@@ -26,10 +28,10 @@ export class PostsService {
     @Inject(PostRepository)
     private readonly postRepository: PostRepository,
     private readonly filesService: FilesS3Service,
-    
+
     @InjectRepository(PostEntity)
     private readonly postEntityRepository: Repository<PostEntity>,
-    
+
     @InjectRepository(UserEntity)
     private readonly userEntityRepository: Repository<UserEntity>,
   ) {}
@@ -43,7 +45,8 @@ export class PostsService {
       throw new UnprocessableEntityException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: {
-          content: 'Post cannot be empty. Please provide text or upload a file.',
+          content:
+            'Post cannot be empty. Please provide text or upload a file.',
         },
       });
     }
@@ -70,15 +73,15 @@ export class PostsService {
   findAll({
     filterOptions,
     paginationOptions,
-    currentUser, 
+    currentUser,
     authorId,
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
     currentUser?: User | null;
-    authorId?: number | string; 
+    authorId?: number | string;
   }) {
-    let followingUserIds: (number | string)[] | undefined = undefined; 
+    const followingUserIds: (number | string)[] | undefined = undefined;
 
     return this.postRepository.findAll({
       filterOptions,
@@ -96,7 +99,25 @@ export class PostsService {
     return this.postRepository.update(id, updatePostDto);
   }
 
-  remove(id: number) {
+  async remove(id: number, user: User): Promise<void> {
+    // 1. Ambil data postingan
+    const post = await this.postRepository.findOne(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    // 2. Cek Logika Keamanan
+    const isAdmin = user.role?.id === RoleEnum.admin;
+    const isAuthor = post.author.id === user.id;
+
+    if (!isAuthor && !isAdmin) {
+      // Jika bukan penulis DAN bukan admin, lempar error
+      throw new UnauthorizedException(
+        'You are not authorized to delete this post',
+      );
+    }
+
+    // 3. Jika lolos, baru hapus
     return this.postRepository.softDelete(id);
   }
 

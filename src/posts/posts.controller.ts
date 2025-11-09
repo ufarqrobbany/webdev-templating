@@ -33,7 +33,7 @@ import {
   InfinityPaginationResponseDto,
 } from 'src/utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
-import { NullableType } from 'src/utils/types/nullable.type'; 
+import { NullableType } from 'src/utils/types/nullable.type';
 import { User } from 'src/users/domain/user';
 import { CommentsService } from '../comments/comments.service';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
@@ -52,7 +52,7 @@ export class PostsController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('file')) 
+  @UseInterceptors(FileInterceptor('file'))
   async create(
     @Body() createPostDto: CreatePostDto,
     @UploadedFile() file: Express.MulterS3.File,
@@ -61,7 +61,7 @@ export class PostsController {
   ): Promise<void> {
     const user = req.user as User;
 
-    await this.postsService.create(user, createPostDto, file); 
+    await this.postsService.create(user, createPostDto, file);
 
     return res.redirect('/');
   }
@@ -109,10 +109,15 @@ export class PostsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.postsService.remove(id);
+  @Delete(':id/delete')
+  @HttpCode(HttpStatus.FOUND)
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.postsService.remove(id, req.user);
+    return res.redirect('/');
   }
 
   @ApiBearerAuth()
