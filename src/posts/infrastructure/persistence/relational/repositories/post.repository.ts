@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, ILike } from 'typeorm';
 import { PostEntity } from '../entities/post.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Post } from '../../../../domain/post';
@@ -8,6 +8,7 @@ import { PostRepository } from '../../post.repository';
 import { PostMapper } from '../mappers/post.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { FindAllPostsDto } from '../../../../dto/find-all-posts.dto';
+
 
 @Injectable()
 export class PostRelationalRepository implements PostRepository {
@@ -28,7 +29,7 @@ export class PostRelationalRepository implements PostRepository {
     filterOptions,
     paginationOptions,
     followingUserIds,
-    authorId, // <-- TAMBAHKAN INI
+    authorId,
   }: {
     filterOptions?: FindAllPostsDto | null;
     paginationOptions: IPaginationOptions;
@@ -37,17 +38,15 @@ export class PostRelationalRepository implements PostRepository {
   }): Promise<Post[]> {
     const where: any = {};
 
-    // Filter berdasarkan authorId JIKA diberikan (prioritas utama untuk profil)
-    if (authorId) {
+   if (filterOptions?.search) {
+      where.content = ILike(`%${filterOptions.search}%`);
+    } else if (authorId) {
       where.author = { id: Number(authorId) };
-    }
-    // Jika authorId TIDAK diberikan, baru filter berdasarkan following (untuk timeline)
-    else if (followingUserIds && followingUserIds.length > 0) {
+    } else if (followingUserIds && followingUserIds.length > 0) {
       where.author = { id: In(followingUserIds.map((id) => Number(id))) };
     } else if (followingUserIds && followingUserIds.length === 0) {
       return [];
     }
-    // Jika authorId dan followingUserIds tidak ada (anonim di timeline), ambil semua
 
     const entities = await this.postRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
