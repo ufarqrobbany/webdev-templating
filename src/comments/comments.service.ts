@@ -2,6 +2,7 @@ import {
   // common
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -11,6 +12,7 @@ import { Comment } from './domain/comment';
 import { User } from '../users/domain/user'; // <-- ADD
 import { Post } from '../posts/domain/post'; // <-- ADD
 import { FindAllCommentsDto } from './dto/find-all-comments.dto'; // <-- ADD
+import { RoleEnum } from '../roles/roles.enum';
 
 @Injectable()
 export class CommentsService {
@@ -76,8 +78,21 @@ export class CommentsService {
     });
   }
 
-  remove(id: Comment['id']) {
-    return this.commentRepository.softDelete(id); // <-- MODIFIED: Call 'softDelete'
+  async remove(id: number, user: User): Promise<void> {
+    const comment = await this.commentRepository.findOne(id);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    const isAdmin = user.role?.id === RoleEnum.admin;
+    const isAuthor = comment.author.id === user.id;
+
+    if (!isAuthor && !isAdmin) {
+      // Jika bukan penulis DAN bukan admin, lempar error
+      throw new UnauthorizedException('You are not authorized to delete this comment');
+    }
+
+    return this.commentRepository.softDelete(id);
   }
 
   async createReply(
