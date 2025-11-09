@@ -56,6 +56,13 @@ export class User {
   lastName: string | null;
 
   @ApiProperty({
+    type: String,
+    example: 'This is my bio',
+    nullable: true,
+  })
+  bio?: string | null;
+
+  @ApiProperty({
     type: () => FileType,
   })
   photo?: FileType | null;

@@ -8,13 +8,13 @@ import {
   Delete,
   UseGuards,
   Query,
-  DefaultValuePipe, 
-  ParseIntPipe, 
+  DefaultValuePipe,
+  ParseIntPipe,
   Request,
   Res,
   HttpCode,
   Req,
-  HttpStatus, 
+  HttpStatus,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -61,7 +61,7 @@ export class CommentsController {
   }
 
   @Post(':commentId/replies')
-  @HttpCode(HttpStatus.FOUND) 
+  @HttpCode(HttpStatus.FOUND)
   async createReply(
     @Param('commentId') parentId: number,
     @Body() createCommentDto: CreateCommentDto,
@@ -104,22 +104,20 @@ export class CommentsController {
   @Get(':id')
   @ApiParam({
     name: 'id',
-    type: Number, 
+    type: Number,
     required: true,
   })
   @ApiOkResponse({
     type: Comment,
   })
-  findById(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  findById(@Param('id', ParseIntPipe) id: number) {
     return this.commentsService.findById(id);
   }
 
   @Patch(':id')
   @ApiParam({
     name: 'id',
-    type: Number, 
+    type: Number,
     required: true,
   })
   @ApiOkResponse({
@@ -135,10 +133,10 @@ export class CommentsController {
   @Delete(':id/delete')
   @HttpCode(HttpStatus.FOUND)
   async remove(
-    @Param('id', ParseIntPipe) id: number, 
+    @Param('id', ParseIntPipe) id: number,
     @Request() req,
     @Res() res: Response,
-  ): Promise<void>{
+  ): Promise<void> {
     await this.commentsService.remove(id, req.user);
 
     return res.redirect('/');

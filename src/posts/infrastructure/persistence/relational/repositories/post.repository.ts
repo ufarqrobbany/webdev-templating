@@ -9,7 +9,6 @@ import { PostMapper } from '../mappers/post.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { FindAllPostsDto } from '../../../../dto/find-all-posts.dto';
 
-
 @Injectable()
 export class PostRelationalRepository implements PostRepository {
   constructor(
@@ -38,7 +37,7 @@ export class PostRelationalRepository implements PostRepository {
   }): Promise<Post[]> {
     const where: any = {};
 
-   if (filterOptions?.search) {
+    if (filterOptions?.search) {
       where.content = ILike(`%${filterOptions.search}%`);
     } else if (authorId) {
       where.author = { id: Number(authorId) };
