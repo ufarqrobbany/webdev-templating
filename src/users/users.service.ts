@@ -278,6 +278,7 @@ export class UsersService {
       // <updating-property-payload />
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
+      bio: updateUserDto.bio,
       email,
       password,
       photo,

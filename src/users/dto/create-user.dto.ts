@@ -9,6 +9,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
+  IsString,
   MinLength,
 } from 'class-validator';
 import { FileDto } from '../../files/dto/file.dto';
@@ -52,4 +53,9 @@ export class CreateUserDto {
   @IsOptional()
   @Type(() => StatusDto)
   status?: StatusDto;
+
+  @ApiPropertyOptional({ example: 'Penggemar NestJS' })
+  @IsOptional()
+  @IsString()
+  bio?: string | null;
 }
