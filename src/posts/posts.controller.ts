@@ -130,7 +130,7 @@ export class PostsController {
     @Res() res: Response,
   ): Promise<void> {
     await this.postsService.like(id, req.user.id);
-    return res.redirect('/');
+    return res.redirect(`/#post-${id}`)
   }
 
   @ApiBearerAuth()
@@ -143,7 +143,7 @@ export class PostsController {
     @Res() res: Response,
   ): Promise<void> {
     await this.postsService.unlike(id, req.user.id);
-    return res.redirect('/');
+    return res.redirect(`/#post-${id}`);
   }
 
   @ApiBearerAuth()
