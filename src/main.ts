@@ -33,6 +33,11 @@ async function bootstrap() {
   });
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
+  // Resolve runtime mode
+  const rawMode = (process.env.APP_MODE || '').toLowerCase();
+  const nodeEnv = (process.env.NODE_ENV || '').toLowerCase();
+  const isDevLike = ['dev', 'development', 'frontend-dev', 'local'].includes(rawMode) || (!rawMode && nodeEnv !== 'production');
+  const isFrontend = rawMode === 'frontend' || isDevLike;
 
   app.enableShutdownHooks();
   app.setGlobalPrefix(
@@ -59,76 +64,78 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
-  const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API docs')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addGlobalParameters({
-      in: 'header',
-      required: false,
-      name: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
-      schema: {
-        example: 'en',
-      },
-    })
-    .build();
+  // Swagger hanya untuk mode API
+  if (!isFrontend) {
+    const options = new DocumentBuilder()
+      .setTitle('API')
+      .setDescription('API docs')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .addGlobalParameters({
+        in: 'header',
+        required: false,
+        name: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
+        schema: {
+          example: 'en',
+        },
+      })
+      .build();
 
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('docs', app, document);
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('docs', app, document);
+  }
 
   // Daftarkan cookie-parser middleware
   app.use(cookieParser());
 
-  const viewService = app.get<ViewService>(VIEW_SERVICE);
-
-  // Sajikan aset statis (CSS/JS)
-  app.useStaticAssets(viewService.getActiveThemeAssetPath(), {
-    prefix: '/static/',
-  });
-
-  // Set base view directory
-  app.setBaseViewsDir(path.join(process.cwd(), 'themes'));
-
-  // Set view engine ke HBS
-  app.setViewEngine('hbs');
-
-  // 👇 2. GANTI BLOK TRY...CATCH DENGAN YANG INI 👇
-  // Daftarkan Partials dari folder default
-  const partialsDir = path.join(process.cwd(), 'themes/default/views/partials');
-
-  // Daftarkan Partials secara SYNCHRONOUS menggunakan fs
-  try {
-    const filenames = fs.readdirSync(partialsDir);
-    filenames.forEach((filename) => {
-      // Hanya ambil file .hbs
-      const matches = /^([^.]+)\.hbs$/.exec(filename);
-      if (!matches) return;
-
-      const name = matches[1]; // Ambil nama partial (misal: _post-item)
-      const template = fs.readFileSync(
-        path.join(partialsDir, filename),
-        'utf8',
-      );
-      hbs.registerPartial(name, template);
+  if (isFrontend) {
+    const viewService = app.get<ViewService>(VIEW_SERVICE);
+    // Sajikan aset statis (CSS/JS)
+    app.useStaticAssets(viewService.getActiveThemeAssetPath(), {
+      prefix: '/static/',
     });
-    console.log('✅ HBS Partials registered manually (synchronously).');
-  } catch (e) {
-    // Fallback jika ada masalah I/O
-    console.error(
-      '❌ Manual partial registration failed. Falling back to hbs.registerPartials(dir).',
-      e.message,
-    );
-    hbs.registerPartials(partialsDir);
-  }
 
-  // 👇 3. UNCOMMENT PEMANGGILAN INI 👇
-  // Panggil fungsi pendaftaran helper dari hbs.helpers.ts
-  registerHbsHelpers();
+    // Set base view directory (use project root for both ts-node and dist)
+    const viewsRoot = path.join(process.cwd(), 'themes');
+    app.setBaseViewsDir(viewsRoot);
+    // Set view engine ke HBS
+    app.setViewEngine('hbs');
+
+    // Daftarkan Partials secara SYNCHRONOUS menggunakan fs
+  const partialsDir = path.join(viewsRoot, 'default/views/partials');
+    try {
+      const filenames = fs.readdirSync(partialsDir);
+      filenames.forEach((filename) => {
+        const matches = /^([^.]+)\.hbs$/.exec(filename);
+        if (!matches) return;
+        const name = matches[1];
+        const template = fs.readFileSync(path.join(partialsDir, filename), 'utf8');
+        hbs.registerPartial(name, template);
+      });
+      console.log('✅ HBS Partials registered manually (synchronously).');
+    } catch (e) {
+      console.error(
+        '❌ Manual partial registration failed. Falling back to hbs.registerPartials(dir).',
+        (e as any).message,
+      );
+      hbs.registerPartials(partialsDir);
+    }
+
+    // Panggil helper HBS
+    registerHbsHelpers();
+    console.log(`[views] mode=frontend${isDevLike ? '-dev' : ''} base=${path.join(viewsRoot)} partials=${partialsDir}`);
+  } else {
+    // Mode API: set CORS origin spesifik (jika tersedia)
+    const allowed = process.env.FRONTEND_ORIGIN?.split(',').map((s) => s.trim());
+    app.enableCors({
+      origin: allowed && allowed.length > 0 ? allowed : true,
+      credentials: true,
+    });
+  }
 
   // Start aplikasi
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(`Application is running on: ${await app.getUrl()} [mode=${isFrontend ? 'frontend' : 'api'}]`);
 }
 
 void bootstrap();

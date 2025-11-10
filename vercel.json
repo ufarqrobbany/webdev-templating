@@ -1,9 +1,13 @@
 {
     "version": 2,
-    "rewrites": [
-        {
-        "source": "/(.*)",
-        "destination": "/dist/main.js"
+    "functions": {
+        "api/index.js": {
+            "runtime": "nodejs20.x",
+            "memory": 512,
+            "maxDuration": 30
         }
+    },
+    "routes": [
+        { "src": "/(.*)", "dest": "/api/index.js" }
     ]
 }
