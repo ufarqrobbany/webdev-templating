@@ -413,7 +413,7 @@
                 const result = await response.json();
                 
                 // 4. Simpen ID file ke hidden input (STEP 2)
-                photoIdInput.value = result.id;
+                photoIdInput.value = result.file.id;
                 uploadStatus.textContent = 'Foto berhasil diupload!';
 
             } catch (error) {
