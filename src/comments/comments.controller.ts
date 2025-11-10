@@ -57,7 +57,7 @@ export class CommentsController {
     @Res() res: Response,
   ) {
     await this.commentsService.create(req.user, createCommentDto);
-    return res.redirect(`/#post-${createCommentDto.postId}`);
+    return res.redirect('/');
   }
 
   @Post(':commentId/replies')
@@ -73,7 +73,7 @@ export class CommentsController {
       parentId,
       createCommentDto.content,
     );
-    return res.redirect(`/#post-${createCommentDto.postId}`);
+    return res.redirect('/');
   }
 
   @Get()
