@@ -63,7 +63,7 @@ export class PostsController {
 
     await this.postsService.create(user, createPostDto, file);
 
-    return res.redirect('/');
+    return res.redirect('/?status=created');
   }
 
   @Get()
@@ -117,7 +117,7 @@ export class PostsController {
     @Res() res: Response,
   ): Promise<void> {
     await this.postsService.remove(id, req.user);
-    return res.redirect('/');
+    return res.redirect('/?status=deleted');
   }
 
   @ApiBearerAuth()

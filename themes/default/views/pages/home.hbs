@@ -1,3 +1,84 @@
+{{!-- Ini adalah file themes/default/views/pages/home.hbs --}}
+
+<style>
+  /* ============================================= */
+  /* --- 🎨 CSS UNTUK TOAST NOTIFIKASI ELEGAN --- */
+  /* ============================================= */
+  #elegant-toast {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    bottom: -100px; /* Mulai dari bawah */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    background-color: #fff; 
+    color: #333;
+    font-weight: 600;
+    
+    border: 1px solid #e0e6ed;
+    border-left-width: 5px; /* Aksen akan diwarnai oleh modifier */
+    
+    border-radius: 10px;
+    padding: 16px 24px;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    
+    /* Transisi halus */
+    transition: all 0.4s ease-in-out; 
+  }
+
+  #elegant-toast .toast-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  /* Kelas .show ditambahkan oleh JS */
+  #elegant-toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 30px; /* Muncul ke posisi ini */
+  }
+
+  /* --- MODIFIER TIPE --- */
+
+  /* Modifier untuk Sukses (Aksen Biru Tema) */
+  #elegant-toast.toast--success {
+    border-left-color: #00b4db; /* var(--primary-start) */
+  }
+  #elegant-toast.toast--success .toast-icon {
+    fill: #00b4db; /* var(--primary-start) */
+  }
+
+  /* Modifier untuk Error (Aksen Merah) */
+  #elegant-toast.toast--error {
+    border-left-color: #E53935; 
+  }
+  #elegant-toast.toast--error .toast-icon {
+    fill: #E53935;
+  }
+
+  /* ============================================= */
+  /* ---      🎨 CSS BARU UNTUK 'DELETE' 🎨     --- */
+  /* ============================================= */
+  #elegant-toast.toast--delete {
+    border-left-color: #4B5563; /* Warna abu-abu tua (slate) */
+  }
+  #elegant-toast.toast--delete .toast-icon {
+    fill: #4B5563; /* Warna abu-abu tua (slate) */
+  }
+
+</style>
+
+{{!-- ======================================================== --}}
+{{!--           KONTEN UTAMA (KODE YANG KAMU BERIKAN)          --}}
+{{!-- ======================================================== --}}
+
 <div class="mx-auto max-w-2xl px-4 space-y-6">
   {{#if user}}
     {{!-- Form Buat Post (Unified Card Style) --}}
@@ -61,3 +142,90 @@
     {{/if}}
   </div>
 </div>
+
+
+<div id="elegant-toast">
+  <div id="toast-icon-container" class="toast-icon">
+    </div>
+  <span id="toast-message"></span>
+</div>
+
+
+<script>
+  // Timer global untuk mengelola toast
+  let toastTimer;
+
+  // Definisikan ikon SVG sebagai string
+  const TOAST_ICONS = {
+    success: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" /></svg>`,
+    error: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>`,
+    
+    /* ============================================= */
+    /* ---      🎨 IKON SVG BARU UNTUK 'DELETE' 🎨 --- */
+    /* ============================================= */
+    delete: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.088 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.803-3.162a.75.75 0 01.326.577c.026.103.054.204.084.305.023.073.048.145.074.217.027.073.05.147.07.22.02.07.037.14.052.21.015.07.028.14.04.21.012.07.02.14.024.21v.227h.834v-.227c0-.07.012-.14.024-.21.012-.07.025-.14.04-.21.015-.07.032-.14.052-.21.02-.07.043-.14.07-.22.026-.07.05-.14.074-.21.03-.1.058-.2.084-.305.043-.17.11-.33.194-.48a.75.75 0 01.326-.577C15.287 1.58 16.5 2.914 16.5 4.478zM8.084 6.082L8.83 18.75a1.5 1.5 0 001.496 1.403h5.348a1.5 1.5 0 001.496-1.403l.746-12.668H8.084z" clip-rule="evenodd" /></svg>`
+  };
+
+  /**
+   * Menampilkan toast notifikasi elegan.
+   * @param {string} message - Pesan yang akan ditampilkan.
+   * @param {string} [type='success'] - Tipe notifikasi ('success', 'error', 'delete').
+   */
+  function showElegantToast(message, type = 'success') {
+    const toast = document.getElementById('elegant-toast');
+    const toastMessage = document.getElementById('toast-message');
+    const iconContainer = document.getElementById('toast-icon-container');
+    
+    if (!toast || !toastMessage || !iconContainer) {
+      console.error('Elemen toast tidak ditemukan!');
+      return;
+    }
+
+    // Hapus timer lama jika ada
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+    }
+
+    // 1. Reset class dan atur konten
+    toast.className = 'elegant-toast'; // Hapus class type sebelumnya
+    toastMessage.textContent = message;
+    iconContainer.innerHTML = TOAST_ICONS[type] || TOAST_ICONS.success; // Ambil ikon berdasarkan 'type'
+    toast.classList.add(`toast--${type}`); // Tambah class tipe yg baru
+    
+    // 2. Tampilkan toast
+    toast.classList.add('show');
+
+    // 3. Atur timer untuk menyembunyikan
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000); // Tampilkan selama 3 detik
+  }
+
+
+  // ==========================================================
+  // LOGIKA UTAMA: Cek URL saat halaman dimuat
+  // ==========================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Cek status=created (untuk post baru)
+    if (urlParams.has('status') && urlParams.get('status') === 'created') {
+      showElegantToast('Postingan berhasil dibuat.', 'success');
+      
+      // Hapus query param dari URL agar tidak muncul lagi saat di-refresh
+      history.replaceState(null, '', window.location.pathname);
+    }
+
+    /* ============================================= */
+    /* ---     🎨 LOGIKA BARU UNTUK 'DELETE' 🎨   --- */
+    /* ============================================= */
+    // Cek status=deleted (untuk hapus post)
+    if (urlParams.has('status') && urlParams.get('status') === 'deleted') {
+      showElegantToast('Postingan telah dihapus.', 'delete'); // Panggil tipe 'delete' baru
+      
+      // Hapus query param
+      history.replaceState(null, '', window.location.pathname);
+    }
+  });
+
+</script>
