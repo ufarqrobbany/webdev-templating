@@ -1,4 +1,4 @@
-<div class="card post-item" data-post-id="{{this.id}}">
+<div class="card post-item" data-post-id="{{this.id}}" id="post-{{this.id}}">
         {{#if (eq this.author.id @root.user.id)}}
           <button class="post-menu-btn js-post-menu-btn" data-post-id="{{this.id}}" aria-haspopup="true" aria-expanded="false" aria-label="Opsi postingan">
             <i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
@@ -214,7 +214,19 @@
                                 </div>
                               {{/if}}
                               <div class="comment-body" style="display:flex; gap:8px; align-items:flex-start;">
-                                <div class="avatar avatar-sm flex-shrink-0 {{userGradient this.author.id}}">{{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}</div>
+                                <div class="avatar avatar-sm flex-shrink-0 {{userGradient this.author.id}}" style="overflow: hidden;">
+                                  {{#if this.author.photo.path}}
+                                    {{!-- Jika author punya foto, tampilkan <img> --}}
+                                    <img 
+                                      src="{{this.author.photo.path}}" 
+                                      alt="{{this.author.firstName}} {{this.author.lastName}}"
+                                      style="width: 100%; height: 100%; object-fit: cover;"
+                                    >
+                                  {{else}}
+                                    {{!-- Jika tidak punya, tampilkan inisial (kode lama) --}}
+                                    {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
+                                  {{/if}}
+                                </div>
                                 <div class="comment-main" style="flex:1; display:flex; flex-direction:column; gap:4px;">
                                   <div class="comment-name" style="font-weight:600;">
                                     {{#if this.author}}

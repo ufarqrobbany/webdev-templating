@@ -160,6 +160,6 @@ export class PostsController {
       ...createCommentDto,
       postId: postId,
     });
-    return res.redirect('/');
+    return res.redirect(`/#post-${postId}`);
   }
 }
