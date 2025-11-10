@@ -25,6 +25,8 @@ import cookieParser from 'cookie-parser';
 import { registerHbsHelpers } from './core/view/helpers/hbs.helpers';
 import * as fs from 'fs';
 
+import { NotFoundExceptionFilter } from './core/filters/not-found.filter';
+
 // --- AKHIR TAMBAHAN IMPORT ---
 
 async function bootstrap() {
@@ -125,6 +127,8 @@ async function bootstrap() {
   // 👇 3. UNCOMMENT PEMANGGILAN INI 👇
   // Panggil fungsi pendaftaran helper dari hbs.helpers.ts
   registerHbsHelpers();
+
+  app.useGlobalFilters(new NotFoundExceptionFilter(viewService));
 
   // Start aplikasi
   await app.listen(configService.getOrThrow('app.port', { infer: true }));

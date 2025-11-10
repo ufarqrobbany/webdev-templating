@@ -1,11 +1,3 @@
-{{!-- ===================================================== --}}
-{{!-- File: themes/default/views/pages/profile.hbs --}}
-{{!-- Halaman Profil (Desain Modern, sesuai screenshot) --}}
-{{!-- ===================================================== --}}
-
-{{!-- ====================== --}}
-{{!-- Bagian Konten Profil --}}
-{{!-- ====================== --}}
 <div class="profile-page px-4">
 
   {{!-- Header biru gradient di atas profil --}}
@@ -28,22 +20,6 @@
           {{slice profileUser.firstName 0 1}}{{slice profileUser.lastName 0 1}}
         {{/if}}
       </div>
-      {{!-- Tombol Ganti Foto Profil (hanya untuk pemilik) --}}
-      {{!-- {{#if user}}
-        {{#if (eq profileUser.id user.id)}}
-          <button class="btn-upload-pic" id="btn-upload-pic" aria-label="Ganti foto profil" style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.55); color:#fff; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; transition:background .2s;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-              <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 
-              2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 
-              2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 
-              2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 
-              7 0z"/>
-            </svg>
-          </button>
-          <input type="file" id="file-upload-input" accept="image/*" hidden>
-        {{/if}}
-      {{/if}} --}}
     </div>
 
     {{!-- Info Profil --}}
@@ -82,7 +58,7 @@
             </form>
           {{/if}}
           {{else}}
-            <a href="/api/v1/auth/profile/edit" class="btn btn-secondary">Edit Profil</a>
+            <a href="/api/v1/auth/profile/edit" class="btn btn-accent">Edit Profil</a>
         {{/unless}}
       </div>
     {{/if}}
