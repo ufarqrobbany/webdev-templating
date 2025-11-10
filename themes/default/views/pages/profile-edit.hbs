@@ -9,295 +9,339 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-   :root {
-       /* Definisikan warna tema Anda agar konsisten */
-       --primary-start: #00b4db;
-       --primary-end: #0083b0;
-       --primary-hover: #0083b0;
-       --bg-light: #f6f8fb;
-       --bg-input: #f9fafc;
-       --card-bg: #fff;
-       --text-dark: #333;
-       --text-light: #777;
-       --border-color: #e0e6ed;
-       --avatar-placeholder: #f5a623;
-     }
-
-     body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-light);
-    margin: 0;
-    padding: 0;
-       color: var(--text-dark);
-   }
-
-     /* --- 🎨 PERUBAHAN UI HEADER --- */
-   .profile-edit-header {
-    background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
-    padding: 2.5rem 1rem 6rem 1rem; /* Perbanyak padding bawah */
-    text-align: center;
-    color: white;
-    border-bottom-left-radius: 40px;
-    border-bottom-right-radius: 40px;
-       position: relative; /* Diperlukan untuk tombol kembali */
-   }
-
-     .back-button {
-       position: absolute;
-       top: 2.5rem; /* Sejajar dengan padding atas header */
-       left: 1.5rem;
-       transform: translateY(-50%);
-       color: white;
-       padding: 0.5rem;
-       border-radius: 50%;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       transition: background-color 0.2s ease;
-       text-decoration: none;
-     }
-     .back-button:hover {
-       background-color: rgba(255, 255, 255, 0.1);
-     }
-     .back-button svg {
-       width: 1.5rem;
-       height: 1.5rem;
-     }
-
-   .profile-edit-header h2 {
-    margin: 0;
-    font-size: 1.65rem; /* Sedikit lebih besar */
-    font-weight: 700; /* Lebih tegas */
-   }
-     /* --- Akhir Perubahan Header --- */
-
-
-   .profile-edit-card {
-    max-width: 800px;
-    background-color: var(--card-bg);
-    margin: -4.5rem auto 2rem auto; /* Tarik ke atas sedikit lagi */
-    padding: 2rem 2.5rem; /* Sesuaikan padding */
-    border-radius: 16px; /* Sedikit lebih besar */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-   }
-
-     /* --- 🎨 PERUBAHAN UI AVATAR --- */
-   .profile-avatar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-bottom: 2rem; /* Jarak ekstra */
-   }
-
-   .profile-avatar-circle {
-    width: 110px;
-    height: 110px;
-    background-color: var(--avatar-placeholder);
-    color: white;
-    font-size: 2rem;
-    font-weight: 700;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid var(--card-bg);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-       overflow: hidden; /* Memastikan gambar pas */
-   }
-
-     .profile-avatar-circle img {
-       width: 100%;
-       height: 100%;
-       object-fit: cover;
-     }
-
-     /* Ini adalah <label>, bukan <a>, agar bisa klik input file */
-     .change-photo-btn {
-       display: inline-flex;
-       align-items: center;
-       gap: 0.4rem;
-    color: var(--primary-end);
-    font-size: 0.95rem;
-    margin-top: 0.8rem;
-    text-decoration: none;
-       font-weight: 600;
-       padding: 0.4rem 0.8rem;
-       border-radius: 8px;
-       transition: background-color 0.2s ease;
-       cursor: pointer; /* Menandakan bisa di-klik */
-     }
-     .change-photo-btn:hover {
-       background-color: var(--bg-input);
-     }
-     .change-photo-btn svg {
-       width: 1rem;
-       height: 1rem;
-       fill: var(--primary-end);
-     }
-     /* --- Akhir Perubahan Avatar --- */
-
-
-     /* --- 🎨 PERUBAHAN UI FORM --- */
-     /* Baris untuk 2 kolom */
-     .form-row {
-       display: flex;
-       gap: 1.5rem;
-       margin-bottom: 1.25rem; /* Pindahkan margin-bottom ke row */
-     }
-     .form-row .form-group {
-       flex: 1;
-       margin-bottom: 0; /* Hapus margin-bottom dari group di dalam row */
-     }
-     
-   .form-group {
-    margin-bottom: 1.25rem;
-   }
-
-   .form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-dark);
-   }
-
-   .form-group input,
-   .form-group textarea {
-       box-sizing: border-box; /* Pastikan padding tidak merusak width */
-    width: 100%;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    color: var(--text-dark);
-    background-color: var(--bg-input);
-    transition: border 0.2s ease, box-shadow 0.2s ease; /* Tambah transisi box-shadow */
-   }
-
-     .form-group textarea {
-       resize: vertical; /* Izinkan resize vertikal saja */
-     }
-
-   .form-group input:focus,
-   .form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary-start);
-    background-color: var(--card-bg);
-       /* Tambahkan glow effect saat focus */
-       box-shadow: 0 0 0 3px rgba(0, 180, 219, 0.2);
-   }
-     /* --- Akhir Perubahan Form --- */
-
-
-   .form-group small {
-    display: block;
-    margin-top: 0.25rem;
-    color: var(--text-light);
-    font-size: 0.85rem;
-   }
-
-   .form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-   }
-
-   .btn {
-       display: inline-block;
-    border: none;
-    border-radius: 10px;
-    padding: 0.85rem 1.5rem; /* Sedikit lebih tinggi */
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: center;
-    font-weight: 600;
-       text-decoration: none; /* Untuk link <a> */
-    transition: all 0.2s ease;
-   }
-
-   .btn:hover {
-    transform: translateY(-1px);
-       filter: brightness(1.05); /* Efek hover lebih halus */
-   }
-
-   .btn-primary {
-    flex: 1;
-    color: white;
-    background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
-       box-shadow: 0 2px 8px rgba(0, 131, 176, 0.2); /* Bayangan halus */
-   }
-     .btn-primary:hover {
-       transform: translateY(-2px);
-       box-shadow: 0 4px 12px rgba(0, 131, 176, 0.3);
-     }
-
-   .btn-secondary {
-    flex: 1;
-    background-color: #f1f3f6;
-    color: var(--text-dark);
-   }
-
-   .btn-secondary:hover {
-    background-color: #e6e9ee;
-   }
-
-     /* --- 🎨 PERUBAHAN UI RESPONSIVE --- */
-   @media (max-width: 600px) {
-       .back-button {
-         left: 0.5rem;
-         top: 2.2rem;
-       }
-       .profile-edit-header {
-         padding: 2rem 1rem 5rem 1rem;
-       }
-    .profile-edit-card {
-     padding: 2rem 1.5rem;
-         margin-left: 1rem;
-         margin-right: 1rem;
+    :root {
+      /* Definisikan warna tema Anda agar konsisten */
+      --primary-start: #00b4db;
+      --primary-end: #0083b0;
+      --primary-hover: #0083b0;
+      --bg-light: #f6f8fb;
+      --bg-input: #f9fafc;
+      --card-bg: #fff;
+      --text-dark: #333;
+      --text-light: #777;
+      --border-color: #e0e6ed;
+      --avatar-placeholder: #f5a623;
+      /* Warna baru untuk notifikasi sukses (opsional, bisa pakai primary) */
+      --success-border: #4CAF50;
+      --success-bg: #f6fffb;
     }
 
-       /* Buat form-row kembali stacking di mobile */
-       .form-row {
-         flex-direction: column;
-         gap: 1.25rem; /* Tetap beri jarak */
-         margin-bottom: 1.25rem;
-       }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      margin: 0;
+      padding: 0;
+      color: var(--text-dark);
+    }
+
+    /* --- 🎨 UI HEADER --- */
+    .profile-edit-header {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 40%, rgba(255,255,255,0.45) 100%),
+        linear-gradient(135deg, #0a3e8c 0%, #2563eb 45%, #3b82f6 100%);
+      padding: 4rem 1rem 6rem 1rem;
+      text-align: center;
+      color: white;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 2.5rem; 
+      left: 1.5rem;
+      transform: translateY(-50%);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease;
+      text-decoration: none;
+    }
+    .back-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .back-button svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .profile-edit-header h2 {
+      margin: 0;
+      font-size: 1.65rem; 
+      font-weight: 700; 
+    }
+    /* --- Akhir Header --- */
+
+
+    .profile-edit-card {
+      max-width: 800px;
+      background-color: var(--card-bg);
+      margin: -4.5rem auto 2rem auto; 
+      padding: 2rem 2.5rem; 
+      border-radius: 16px; 
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* --- 🎨 UI AVATAR --- */
+    .profile-avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 2rem; 
+    }
+
+    .profile-avatar-circle {
+      width: 110px;
+      height: 110px;
+      background-color: var(--avatar-placeholder);
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid var(--card-bg);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden; 
+    }
+
+    .profile-avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .change-photo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--primary-end);
+      font-size: 0.95rem;
+      margin-top: 0.8rem;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
+      cursor: pointer; 
+    }
+    .change-photo-btn:hover {
+      background-color: var(--bg-input);
+    }
+    .change-photo-btn svg {
+      width: 1rem;
+      height: 1rem;
+      fill: var(--primary-end);
+    }
+    /* --- Akhir Avatar --- */
+
+
+    /* --- 🎨 UI FORM --- */
+    .form-row {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem; 
+    }
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0; 
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      box-sizing: border-box; 
+      width: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      color: var(--text-dark);
+      background-color: var(--bg-input);
+      transition: border 0.2s ease, box-shadow 0.2s ease; 
+    }
+
+    .form-group textarea {
+      resize: vertical; 
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-start);
+      background-color: var(--card-bg);
+      box-shadow: 0 0 0 3px rgba(0, 180, 219, 0.2);
+    }
+    /* --- Akhir Form --- */
+
+
+    .form-group small {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
 
     .form-actions {
-     flex-direction: column;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
     }
 
     .btn {
-     width: 100%;
-         box-sizing: border-box; /* Pastikan padding tidak merusak */
+      display: inline-block;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem 1.5rem; 
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      text-decoration: none; 
+      transition: all 0.2s ease;
     }
-   }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05); 
+    }
+
+    .btn-primary {
+      flex: 1;
+      color: white;
+      background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+      box-shadow: 0 2px 8px rgba(0, 131, 176, 0.2); 
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 131, 176, 0.3);
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background-color: #f1f3f6;
+      color: var(--text-dark);
+    }
+
+    .btn-secondary:hover {
+      background-color: #e6e9ee;
+    }
+
+    /* --- 🎨 UI RESPONSIVE --- */
+    @media (max-width: 600px) {
+      .back-button {
+        left: 0.5rem;
+        top: 2.2rem;
+      }
+      .profile-edit-header {
+        padding: 2rem 1rem 5rem 1rem;
+      }
+      .profile-edit-card {
+        padding: 2rem 1.5rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 1.25rem; 
+        margin-bottom: 1.25rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        box-sizing: border-box; 
+      }
+    }
+
+    /* ============================================= */
+    /* --- 🎨 CSS BARU: TOAST NOTIFIKASI ELEGAN --- */
+    /* ============================================= */
+    #elegant-toast {
+      visibility: hidden;
+      opacity: 0;
+      position: fixed;
+      bottom: -100px; /* Mulai dari bawah */
+      left: 50%;
+      transform: translateX(-50%);
+      
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      
+      background-color: var(--card-bg);
+      color: var(--text-dark);
+      font-weight: 600;
+      
+      border: 1px solid var(--border-color);
+      /* Aksen biru sesuai tema */
+      border-left: 5px solid var(--primary-start); 
+      
+      border-radius: 10px;
+      padding: 16px 24px;
+      z-index: 9999;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      
+      /* Transisi halus */
+      transition: all 0.4s ease-in-out; 
+    }
+
+    #elegant-toast .toast-icon {
+      width: 24px;
+      height: 24px;
+      /* Warna ikon checklist sesuai aksen */
+      fill: var(--primary-start); 
+    }
+
+    /* Kelas .show ditambahkan oleh JS */
+    #elegant-toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 30px; /* Muncul ke posisi ini */
+    }
+
   </style>
 </head>
 <body>
 
   <header class="profile-edit-header">
-     <a href="/api/v1/auth/profile" class="back-button" aria-label="Kembali">
-       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="24" height="24">
-         <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-       </svg>
-     </a>
-   <h2>Edit Profil</h2>
+    <a href="/users/{{user.id}}/profile" class="back-button" aria-label="Kembali">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="24" height="24">
+        <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+      </svg>
+    </a>
+    <h2>Edit Profil</h2>
   </header>
 
   <main class="profile-edit-card">
 
-    {{!-- ============================================= --}}
-    {{!-- BAGIAN INI YANG BERUBAH TOTAL SECARA FUNGSI --}}
-    {{!-- ============================================= --}}
     <div class="profile-avatar">
       <div class="profile-avatar-circle">
-        {{!-- 
-          1. Ganti <img> ini agar menampilkan user.photo.path
-          2. Kasih ID "avatar-preview" buat diupdate sama JS
-        --}}
         <img 
           id="avatar-preview" 
           src="{{#if user.photo.path}}{{user.photo.path}}{{else}}/path/to/default-avatar.png{{/if}}" 
@@ -305,14 +349,8 @@
         >
       </div>
 
-      {{!-- 
-        1. Input file asli, disembunyikan.
-      --}}
       <input type="file" id="file-upload-input" accept="image/*" style="display: none;">
       
-      {{!-- 
-        2. Ini <label> yang di-style kayak tombol, "for" nya nyambung ke "id" input di atas.
-      --}}
       <label for="file-upload-input" class="change-photo-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -320,17 +358,11 @@
           <span>Ganti Foto Profil</span>
       </label>
       
-      {{!-- Untuk menampilkan status upload dari JS --}}
       <small id="upload-status" style="margin-top: 8px; color: var(--text-light);"></small>
     </div>
 
-    {{!-- 
-      1. Hapus 'action' dan 'method'
-      2. Kasih ID "profile-form"
-    --}}
     <form id="profile-form">
       
-      {{!-- Input tersembunyi untuk nyimpen ID foto setelah di-upload --}}
       <input type="hidden" id="photoId" name="photo[id]" value="{{user.photo.id}}">
 
       <div class="form-row">
@@ -352,133 +384,135 @@
       </div>
 
       <div class="form-actions">
-        <a href="/api/v1/auth/profile" class="btn btn-secondary">Batal</a>
+        {{!-- Tombol Batal sudah diperbaiki --}}
+        <a href="/users/{{user.id}}/profile" class="btn btn-secondary">Batal</a>
         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
       </div>
     </form>
-    {{!-- ============================================= --}}
-    {{!--         AKHIR DARI BAGIAN YANG BERUBAH        --}}
-    {{!-- ============================================= --}}
   </main>
 
 
-  {{!-- ============================================= --}}
-  {{!--          TAMBAHAN JAVASCRIPT WAJIB            --}}
-  {{!-- ============================================= --}}
+  <div id="elegant-toast">
+    <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+    </svg>
+    <span id="toast-message"></span>
+  </div>
+
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        const fileInput = document.getElementById('file-upload-input');
-        const photoIdInput = document.getElementById('photoId');
-        const profileForm = document.getElementById('profile-form');
-        const avatarPreview = document.getElementById('avatar-preview');
-        const uploadStatus = document.getElementById('upload-status');
-        
-        // AMBIL AUTH TOKEN DARI MANA SAJA LO MENYIMPANNYA (localStorage, dll)
-        // INI PENTING BANGET, GANTI 'YOUR_AUTH_TOKEN_HERE'
-        const AUTH_TOKEN = 'Bearer YOUR_AUTH_TOKEN_HERE'; 
+      const fileInput = document.getElementById('file-upload-input');
+      const photoIdInput = document.getElementById('photoId');
+      const profileForm = document.getElementById('profile-form');
+      const avatarPreview = document.getElementById('avatar-preview');
+      const uploadStatus = document.getElementById('upload-status');
+      
+      // GANTI DENGAN TOKEN ASLI
+      const AUTH_TOKEN = 'Bearer YOUR_AUTH_TOKEN_HERE'; 
 
-        // ==========================================================
-        // STEP 1 & 2: NANGANIN UPLOAD FOTO
-        // ==========================================================
-        fileInput.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
+      // ==========================================================
+      // FUNGSI BARU: NAMPILIN TOAST ELEGAN
+      // ==========================================================
+      function showElegantToast(message) {
+        const toast = document.getElementById('elegant-toast');
+        const toastMessage = document.getElementById('toast-message');
+        if (!toast || !toastMessage) return; 
 
-            // 1. Tampilkan preview langsung
-            avatarPreview.src = URL.createObjectURL(file);
-            uploadStatus.textContent = 'Mengupload foto...';
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+      }
 
-            // 2. Siapin data buat upload
-            const formData = new FormData();
-            formData.append('file', file);
+      // ==========================================================
+      // STEP 1 & 2: UPLOAD FOTO (Tidak Berubah)
+      // ==========================================================
+      fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
 
-            try {
-                // 3. Panggil API Upload File (STEP 1)
-                const response = await fetch('/api/v1/files/upload', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': AUTH_TOKEN
-                    }
-                });
+        avatarPreview.src = URL.createObjectURL(file);
+        uploadStatus.textContent = 'Mengupload foto...';
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Upload gagal');
-                }
-
-                const result = await response.json();
-                
-                // 4. Simpen ID file ke hidden input (STEP 2)
-                photoIdInput.value = result.file.id;
-                uploadStatus.textContent = 'Foto berhasil diupload!';
-
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                uploadStatus.textContent = `Upload gagal: ${error.message}`;
-                // Balikin ke foto lama jika gagal
-                avatarPreview.src = "{{#if user.photo.path}}{{user.photo.path}}{{else}}/path/to/default-avatar.png{{/if}}"; 
-            }
-        });
-
-
-        // ==========================================================
-    // STEP 3: NANGANIN SIMPAN PERUBAHAN PROFIL
-    // ==========================================================
-    profileForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Stop form submit biasa
-
-        // 1. Ambil ID foto dari input hidden
-        let photoId = photoIdInput.value;
-
-        // 2. VALIDASI ID FOTO (INI YANG DIPERBAIKI)
-        // Cek apakah nilainya adalah string "undefined" atau string kosong
-        if (photoId === 'undefined' || photoId === '') {
-            photoId = null; // Kalo iya, ganti jadi null
-        }
-
-        // 3. Siapin data payload
-        const data = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            bio: document.getElementById('bio').value
-        };
-
-        // 4. CUMA tambahin properti 'photo' KALO ID-nya beneran ada (bukan null)
-        if (photoId) {
-            data.photo = {
-                id: photoId
-            };
-        }
-        // Kalo photoId jadi null, key 'photo' gak akan dikirim.
-        // Backend akan ngerti kalo foto gak diubah.
+        const formData = new FormData();
+        formData.append('file', file);
 
         try {
-            // 5. Panggil API Update User (STEP 3)
-            const response = await fetch('/api/v1/auth/me', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': AUTH_TOKEN
-                },
-                body: JSON.stringify(data) // Kirim data yang udah bersih
-            });
+          const response = await fetch('/api/v1/files/upload', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Authorization': AUTH_TOKEN }
+          });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Gagal menyimpan profil');
-            }
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Upload gagal');
+          }
 
-            // 6. Sukses! Arahin ke halaman profil
-            alert('Profil berhasil disimpan!');
-            window.location.href = '/users/{{user.id}}/profile';
+          const result = await response.json();
+          photoIdInput.value = result.file.id;
+          uploadStatus.textContent = 'Foto berhasil diupload!';
 
         } catch (error) {
-            console.error('Error updating profile:', error);
-            alert(`Gagal menyimpan profil: ${error.message}`);
+          console.error('Error uploading file:', error);
+          uploadStatus.textContent = `Upload gagal: ${error.message}`;
+          avatarPreview.src = "{{#if user.photo.path}}{{user.photo.path}}{{else}}/path/to/default-avatar.png{{/if}}"; 
+        }
+      });
+
+
+      // ==========================================================
+      // STEP 3: SIMPAN PROFIL (ALERT DIGANTI TOAST)
+      // ==========================================================
+      profileForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); 
+
+        let photoId = photoIdInput.value;
+        if (photoId === 'undefined' || photoId === '') {
+          photoId = null; 
+        }
+
+        const data = {
+          firstName: document.getElementById('firstName').value,
+          lastName: document.getElementById('lastName').value,
+          bio: document.getElementById('bio').value
+        };
+
+        if (photoId) {
+          data.photo = { id: photoId };
+        }
+
+        try {
+          const response = await fetch('/api/v1/auth/me', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': AUTH_TOKEN
+            },
+            body: JSON.stringify(data) 
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Gagal menyimpan profil');
+          }
+
+          // =============================================
+          // --- 🎨 PERUBAHAN ALERT KE TOAST DI SINI 🎨 ---
+          // =============================================
+          
+          // 6. Sukses! Panggil toast
+          showElegantToast('Profil berhasil diperbarui.');
+
+          // 7. Tunggu 2 detik baru redirect, biar user sempet baca
+          setTimeout(() => {
+            window.location.href = '/users/{{user.id}}/profile';
+          }, 2000); // 2 detik
+
+        } catch (error) {
+          console.error('Error updating profile:', error);
+          // Biarkan error tetap pakai alert standar
+          alert(`Gagal menyimpan profil: ${error.message}`);
         }
       });
     });

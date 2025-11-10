@@ -281,8 +281,10 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Render('default/views/pages/profile-edit')
   async getProfileEditPage(@Request() req) {
+    const fullUser = await this.usersService.findById(req.user.id);
+
     return {
-      user: req.user,
+      user: fullUser,
       title: 'Edit Profil',
     };
   }
