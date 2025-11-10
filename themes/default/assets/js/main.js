@@ -447,8 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const confirmed = window.confirm('Yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan.');
       if (!confirmed) return;
       try {
-        const base = window.location.origin;
-        const url = `${base}/api/v1/posts/${postId}/delete`;
+        const apiV1 = (window.API_V1 && window.API_V1.trim()) || `${(window.API_ORIGIN || window.location.origin).replace(/\/+$/, '')}/${(window.API_PREFIX || 'api')}/v1`;
+        const url = `${apiV1}/posts/${postId}/delete`;
         const resp = await fetch(url, { method: 'DELETE', headers: { 'Accept': 'application/json' }, credentials: 'same-origin', redirect: 'manual' });
         // Anggap redirect sebagai sukses (server memang redirect ke '/')
         const isRedirect = resp.type === 'opaqueredirect' || (resp.status >= 300 && resp.status < 400);
@@ -523,8 +523,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const ok = window.confirm('Yakin ingin menghapus komentar ini?');
       if (!ok) return;
       try {
-        const base = window.location.origin;
-        const url = `${base}/api/v1/comments/${commentId}/delete`;
+        const apiV1 = (window.API_V1 && window.API_V1.trim()) || `${(window.API_ORIGIN || window.location.origin).replace(/\/+$/, '')}/${(window.API_PREFIX || 'api')}/v1`;
+        const url = `${apiV1}/comments/${commentId}/delete`;
         const resp = await fetch(url, { method: 'DELETE', headers: { 'Accept': 'application/json' }, credentials: 'same-origin', redirect: 'manual' });
         const isRedirect = resp.type === 'opaqueredirect' || (resp.status >= 300 && resp.status < 400);
         const isSuccess = resp.ok || isRedirect;

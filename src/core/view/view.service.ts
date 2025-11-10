@@ -7,6 +7,8 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import { Response } from 'express';
+import appConfig from '../../config/app.config';
+import { AppConfig } from '../../config/app-config.type';
 // import viewConfig from 'src/config/view.config'; // <-- Hapus
 
 @Injectable()
@@ -33,10 +35,21 @@ export class ViewService {
     const defaultLayoutPath = this.resolveViewPath('layouts/main', false);
     const layoutPath = data.layout ? data.layout : defaultLayoutPath;
 
+    // Inject global template vars for API origin/prefix
+    const appCfg = appConfig() as AppConfig;
+    const backendOrigin = (appCfg.backendDomain || '').replace(/\/+$/, '');
+    const apiPrefix = appCfg.apiPrefix || 'api';
+    const apiBase = backendOrigin ? `${backendOrigin}/${apiPrefix}` : `/${apiPrefix}`;
+    const apiV1 = `${apiBase}/v1`;
+
     const fullData = {
       ...data,
       layout: layoutPath, // Memberi tahu HBS layout mana yang harus digunakan
       year: new Date().getFullYear(),
+      backendOrigin,
+      apiPrefix,
+      apiBase,
+      apiV1,
     };
 
     // Memanggil fungsi render Express/HBS yang sebenarnya
