@@ -14,8 +14,18 @@
         <div class="post-author-row" style="display: flex; align-items: center; gap: 10px;">
           {{#if this.author}}
             {{!-- Profile Picture with Initials --}}
-            <div class="avatar avatar-sm flex-shrink-0 {{userGradient this.author.id}}">
-              {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
+            <div class="avatar avatar-sm flex-shrink-0 {{#unless this.author.photo.path}}{{userGradient this.author.id}}{{/unless}}" style="overflow: hidden;">
+              {{#if this.author.photo.path}}
+                {{!-- Jika author punya foto, tampilkan <img> --}}
+                <img 
+                  src="{{this.author.photo.path}}" 
+                  alt="{{this.author.firstName}} {{this.author.lastName}}"
+                  style="width: 100%; height: 100%; object-fit: cover;"
+                >
+              {{else}}
+                {{!-- Jika tidak punya, tampilkan inisial (kode lama) --}}
+                {{slice this.author.firstName 0 1}}{{slice this.author.lastName 0 1}}
+              {{/if}}
             </div>
             {{!-- Author Name and "Anda" Label --}}
             <div style="display: flex; align-items: center; gap: 8px;">
