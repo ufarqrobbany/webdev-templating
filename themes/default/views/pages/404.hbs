@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{pageTitle}} - Ctalk</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-start: #00b4db;
+      --primary-end: #0083b0;
+      --text-dark: #333;
+      --text-light: #777;
+      --border-color: #e0e6ed;
+      
+      /* ================================================= */
+      /* ---     WARNA BACKGROUND BARU UNTUK 404     --- */
+      /* ================================================= */
+      --404-bg-dark: #1A2C42; /* Biru gelap seperti bagian kiri di screenshot */
+      --404-card-bg: #FFFFFF; /* Warna putih untuk kartu utama */
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      /* ================================================= */
+      /* ---   BACKGROUND GLOBAL UNTUK SELURUH HALAMAN --- */
+      /* ================================================= */
+      background-color: var(--404-bg-dark); 
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0; /* Hapus padding agar mengisi penuh */
+      display: flex;
+      flex-direction: column; /* Tata letak kolom */
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    /* ================================================= */
+    /* ---      STYLE BARU UNTUK KARTU KONTEN      --- */
+    /* ================================================= */
+    .content-card {
+      background-color: var(--404-card-bg); /* Latar belakang putih untuk card */
+      padding: 3rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Bayangan yang lebih menonjol */
+      max-width: 450px;
+      width: 90%; /* Responsive width */
+      margin-top: 3rem;
+      box-sizing: border-box;
+    }
+
+    /* Logo di atas kartu */
+    .logo-container {
+      margin-bottom: 2rem;
+      position: absolute; /* Posisikan logo di atas card */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -170%); /* Sesuaikan posisi vertikal */
+      z-index: 10;
+    }
+    .logo-container img {
+      height: 40px; /* Ukuran logo */
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+    }
+
+
+    /* Ikon SVG untuk 'postingan hilang' */
+    .icon-404 {
+      width: 70px; /* Sedikit lebih kecil dari sebelumnya */
+      height: 70px;
+      color: var(--primary-start);
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    /* Angka 404 yang besar */
+    h1 {
+      font-size: 5rem; /* Sedikit lebih kecil agar proporsional */
+      font-weight: 900;
+      color: var(--primary-start);
+      background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      line-height: 1;
+    }
+
+    /* Judul halaman */
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 1.25rem 0 0.5rem 0;
+    }
+
+    /* Teks deskripsi */
+    p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin: 0 0 1.75rem 0;
+      line-height: 1.6;
+    }
+
+    /* Tombol kembali (style dari btn-primary) */
+    .btn-back {
+      display: inline-block;
+      border: none;
+      border-radius: 10px;
+      padding: 0.8rem 1.6rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+      box-shadow: 0 2px 8px rgba(0, 131, 176, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 131, 176, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="content-card">
+    
+    <h1>404</h1>
+    <h2>Halaman Tidak Ditemukan</h2>
+    <p>
+      Waduh, sepertinya halaman yang kamu cari tidak ada. Mungkin link-nya salah ketik atau postingannya sudah dihapus.
+    </p>
+    <a href="/" class="btn-back">Kembali ke Timeline</a>
+  </div>
+
+</body>
+</html>
